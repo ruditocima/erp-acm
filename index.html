@@ -134,19 +134,19 @@
                             </div>
                             <div class="space-y-0.5">
                                 <a href="#" @click.prevent="switchTab('prj-khs')" :class="currentTab === 'prj-khs' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien (Multi-Versi)
+                                    <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-subcont')" :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont & Rate Card
+                                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-list')" :class="currentTab === 'prj-list' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Progress Keuangan
+                                    <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Keuangan
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-boq')" :class="currentTab === 'prj-boq' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & Multi-Subcont
+                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & Subcont
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Pengajuan Invoice Subcont
+                                    <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Invoice Subcont
                                 </a>
                             </div>
                         </div>
@@ -330,8 +330,7 @@
                 <div x-show="currentTab === 'prj-khs'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Master KHS (Kontrak Harga Satuan) Multi-Versi & Klien</h3>
-                            <p class="text-[11px] text-slate-400">Harga satuan dapat berubah sewaktu-waktu. Buat KHS versi berbeda (misal KHS 2026, KHS 2025) per Klien.</p>
+                            <h3 class="text-sm font-bold text-white">Master KHS (Kontrak Harga Satuan) & Klien</h3>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <!-- Filter Klien -->
@@ -357,7 +356,6 @@
                         <div>
                             <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Versi KHS Yang Sedang Ditampilkan:</span>
                             <div class="text-sm font-bold text-white mt-0.5" x-text="getActiveKhsVersionName()"></div>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Semua perubahan harga satuan pada tahun berjalan dapat dibuatkan versi KHS terpisah tanpa menimpa data history KHS sebelumnya.</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs text-slate-300" x-text="getFilteredKhsItems().length + ' Item Pekerjaan dalam KHS ini'"></span>
@@ -406,8 +404,7 @@
                 <div x-show="currentTab === 'prj-subcont'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Manajemen Tim Subcont & Rate Card Item Berbeda per Subcont</h3>
-                            <p class="text-[11px] text-slate-400">Setiap tim subkontraktor memiliki daftar harga satuan item pekerjaan tersendiri.</p>
+                            <h3 class="text-sm font-bold text-white">Manajemen Subcont</h3>
                         </div>
                         <div class="flex items-center gap-2">
                             <select x-model="selectedSubcontId" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-300 font-semibold">
@@ -450,8 +447,7 @@
                 <div x-show="currentTab === 'prj-list'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Daftar Project (Multi-Subcont) & Live Progress Keuangan</h3>
-                            <p class="text-[11px] text-slate-400">Setiap project dapat dikerjakan oleh lebih dari 1 Subcont pelaksana dengan porsi item & volume berbeda.</p>
+                            <h3 class="text-sm font-bold text-white">Daftar Project & Progress Keuangan</h3>
                         </div>
                         <button type="button" @click="openNewProjectModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg shadow-cyan-600/20 flex items-center gap-1.5">
                             <i data-lucide="plus" class="w-4 h-4"></i> Input Project Baru
@@ -601,7 +597,7 @@
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
                         <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
                             <div>
-                                <h4 class="text-xs font-bold text-cyan-400 uppercase">Bagian A • BoQ Utama Klien (Kontrak Induk)</h4>
+                                <h4 class="text-xs font-bold text-cyan-400 uppercase">Bagian A • BoQ Utama</h4>
                                 <p class="text-[10px] text-slate-400">Total volume kontrak ke Klien beserta perbandingan akumulasi volume yang sudah dialokasikan ke Subcont.</p>
                             </div>
                             <div class="text-right">
@@ -652,8 +648,7 @@
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
                         <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/40">
                             <div>
-                                <h4 class="text-xs font-bold text-amber-400 uppercase">Bagian B • Rincian Item & Volume per Subcont Pelaksana (Multi-Subcont)</h4>
-                                <p class="text-[10px] text-slate-400">Setiap subcont memiliki item pekerjaan, volume target, volume realisasi lapangan, dan harga satuan berbeda.</p>
+                                <h4 class="text-xs font-bold text-amber-400 uppercase">Bagian B • Rincian Item & Volume per Subcont Pelaksana</h4>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] text-slate-400">Filter Subcont:</span>
@@ -735,7 +730,7 @@
                 <div x-show="currentTab === 'prj-subcont-inv'" class="space-y-4" x-cloak>
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Pengajuan Invoice / Tagihan per Subcont Pelaksana</h3>
+                            <h3 class="text-sm font-bold text-white">Pengajuan Invoice Subcont</h3>
                             <p class="text-[11px] text-slate-400">Pilih Project lalu pilih Subcont spesifik yang menagih. Sistem menampilkan nilai BoQ & progress fisik subcont tersebut.</p>
                         </div>
                         <button type="button" @click="openSubcontInvoiceModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg">+ Input Tagihan Subcont</button>
@@ -778,8 +773,7 @@
                 <!-- ==================== MENU WASPANG: INPUT VOLUME HARIAN PER SUBCONT ==================== -->
                 <div x-show="currentTab === 'waspang-daily'" class="space-y-5" x-cloak>
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-sm font-bold text-white mb-1">Input Volume Harian Lapangan (Waspang per Subcont)</h3>
-                        <p class="text-[11px] text-slate-400 mb-4">Pilih Project, lalu pilih Subcont Pelaksana yang mengerjakan item tersebut. Realisasi otomatis memperbarui BoQ Subcont & BoQ Utama Klien.</p>
+                        <h3 class="text-sm font-bold text-white mb-1">Input Vol Harian Waspang</h3>
                         
                         <form @submit.prevent="submitWaspangDaily()" class="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
                             <div>
@@ -1439,7 +1433,7 @@
                     </div>
                 </div>
                 <div class="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-300">
-                    💡 Setelah project dibuat, alokasikan item & volume pekerjaan berbeda untuk tiap Subcont di menu <strong>BoQ Project & Multi-Subcont</strong>.
+                    💡 Setelah project dibuat, alokasikan item & volume pekerjaan berbeda untuk tiap Subcont di menu <strong>BoQ Project & Subcont</strong>.
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
