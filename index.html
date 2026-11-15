@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACM-ERP | Integrated Multi-Subcont Project, Warehouse & Accounting System</title>
+    <title>ACM-ERP | Integrated System</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1087,7 +1087,6 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white">Notifikasi Real-Time dari Divisi Project</h3>
-                            <p class="text-[11px] text-slate-400">Otomatis muncul saat Tim Project menginputkan Project Baru atau Tagihan dari masing-masing Subcont.</p>
                         </div>
                         <button type="button" @click="markAllNotificationsRead()" class="bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 px-3 py-1.5 rounded-lg">Tandai Semua Dibaca</button>
                     </div>
@@ -1126,8 +1125,7 @@
                 <div x-show="currentTab === 'acc-client-inv'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Input Invoice Masuk kepada Klien & Rekap Cash Bank (Format REKAP_CB_EMR_YOFC_2026)</h3>
-                            <p class="text-[11px] text-slate-400">Otomatis menghitung PPh 1.75%, PPN 11%, dan Nett Terima / Cash & Bank.</p>
+                            <h3 class="text-sm font-bold text-white">Input Invoice & Rekap Cash Bank</h3>
                         </div>
                         <button type="button" @click="openClientInvoiceModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg shadow-emerald-600/20 flex items-center gap-1.5">
                             <i data-lucide="plus" class="w-4 h-4"></i> Input Invoice Klien Baru
@@ -1192,7 +1190,6 @@
                 <div x-show="currentTab === 'acc-subcont-pay'" class="space-y-4" x-cloak>
                     <div>
                         <h3 class="text-sm font-bold text-white">Proses Verifikasi & Pembayaran Tagihan Subcont</h3>
-                        <p class="text-[11px] text-slate-400">Menampilkan perbandingan tagihan terhadap total BoQ & progress fisik subcont terkait pada project tersebut.</p>
                     </div>
 
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
@@ -1241,7 +1238,6 @@
                 <div x-show="currentTab === 'acc-rekap-bulanan'" class="space-y-4" x-cloak>
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
                         <h3 class="text-sm font-bold text-white mb-1">Executive Summary & Rekapitulasi Cash Bank 2026</h3>
-                        <p class="text-[11px] text-slate-400 mb-4">Ringkasan realisasi penagihan DPP, PPh 1.75%, PPN 11%, dan Nett Cash & Bank per Area.</p>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
@@ -2421,7 +2417,7 @@
 
                 // ==================== ACCOUNTING: INVOICE KLIEN ====================
                 openClientInvoiceModal() {
-                    this.modalTitle = 'Input Invoice Klien (Format Rekap CB YOFC 2026)';
+                    this.modalTitle = 'Input Invoice Klien';
                     this.formClientInv = { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: new Date().toISOString().split('T')[0], noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' };
                     this.activeModal = 'client-inv';
                 },
