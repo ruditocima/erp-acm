@@ -82,7 +82,7 @@
                     <label class="block text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1.5">Mode Akses / Simulasi Login Divisi</label>
                     <select x-model="loginForm.demoRole" @change="applyDemoPreset()" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg px-3 py-2 text-xs text-cyan-300 focus:outline-none">
                         <option value="Super Admin">Super Admin (Akses Semua Menu Utama)</option>
-                        <option value="Project">Divisi Project (KHS, Multi-Subcont BoQ, Project & Tagihan)</option>
+                        <option value="Project">Divisi Project (KHS Versi, Multi-Subcont BoQ, Project & Tagihan)</option>
                         <option value="Warehouse">Divisi Warehouse (Gudang, Stok, Pelacakan Drum & BAST)</option>
                         <option value="Accounting">Divisi Accounting (Notifikasi, Invoice Klien & Subcont, Cash & Bank)</option>
                         <option value="Waspang">Divisi Waspang (Input Volume Harian per Subcont)</option>
@@ -96,7 +96,7 @@
             </form>
 
             <div class="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
-                <span>Divisi YOFC • V3.5 Multi-Subcont</span>
+                <span>Divisi YOFC • V3.6 Multi-Version KHS</span>
                 <span>by: Rudi</span>
             </div>
         </div>
@@ -134,7 +134,7 @@
                             </div>
                             <div class="space-y-0.5">
                                 <a href="#" @click.prevent="switchTab('prj-khs')" :class="currentTab === 'prj-khs' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien
+                                    <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien (Multi-Versi)
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-subcont')" :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont & Rate Card
@@ -294,21 +294,21 @@
                         </div>
                         <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4">
                             <div class="flex items-center justify-between text-slate-400 text-[10px] font-semibold uppercase">
-                                <span>Total Item SKU Gudang</span>
-                                <i data-lucide="boxes" class="w-4 h-4 text-indigo-400"></i>
+                                <span>Total Versi KHS Aktif</span>
+                                <i data-lucide="book-open" class="w-4 h-4 text-indigo-400"></i>
                             </div>
-                            <div class="mt-2 text-lg font-bold text-white font-mono" x-text="masterBarang.length + ' SKU'"></div>
-                            <div class="mt-1 text-[10px] text-indigo-400" x-text="drumLedger.length + ' Drum Kabel Terlacak'"></div>
+                            <div class="mt-2 text-lg font-bold text-white font-mono" x-text="khsVersions.length + ' Versi KHS'"></div>
+                            <div class="mt-1 text-[10px] text-indigo-400" x-text="khsItems.length + ' Total Item KHS Terdaftar'"></div>
                         </div>
                     </div>
 
                     <!-- Alur Integrasi Multi-Subcont Antar Divisi -->
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont & Integrasi Real-Time Antar Divisi</h3>
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont & Versi KHS Berbeda per Tahun</h3>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-cyan-500/20">
-                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. Tim Project (Multi-Subcont)</span>
-                                <p class="text-slate-300 mt-1">1 Project mendukung <strong class="text-white">banyak Subcont pelaksana</strong> dengan item & volume kerja masing-masing. Otomatis kirim notif ke Accounting.</p>
+                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. Master KHS Multi-Versi</span>
+                                <p class="text-slate-300 mt-1">KHS dipisah per tahun (misal <strong class="text-white">KHS 2026</strong>, KHS 2025) untuk mengantisipasi perubahan harga satuan sewaktu-waktu.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-amber-500/20">
                                 <span class="text-[10px] font-bold text-amber-400 uppercase">2. Tim Waspang (Per Subcont)</span>
@@ -326,21 +326,41 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 1: MASTER KHS PER KLIEN ==================== -->
+                <!-- ==================== MENU PROJECT 1: MASTER KHS & KLIEN (MULTI-VERSI) ==================== -->
                 <div x-show="currentTab === 'prj-khs'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Master KHS (Kontrak Harga Satuan) per Klien</h3>
-                            <p class="text-[11px] text-slate-400">Harga satuan berbeda per Klien. Material Free-Issue (disediakan klien) otomatis bernilai Rp 0.</p>
+                            <h3 class="text-sm font-bold text-white">Master KHS (Kontrak Harga Satuan) Multi-Versi & Klien</h3>
+                            <p class="text-[11px] text-slate-400">Harga satuan dapat berubah sewaktu-waktu. Buat KHS versi berbeda (misal KHS 2026, KHS 2025) per Klien.</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Filter Klien -->
                             <select x-model="selectedKhsClient" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-300 font-semibold">
                                 <template x-for="c in clients" :key="c.id">
                                     <option :value="c.id" x-text="'Klien: ' + c.name"></option>
                                 </template>
                             </select>
+                            <!-- Filter Versi KHS -->
+                            <select x-model="selectedKhsVersionId" class="bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                                <template x-for="v in getFilteredKhsVersions()" :key="v.id">
+                                    <option :value="v.id" x-text="v.versionName + (v.isDefault ? ' (Aktif / Default)' : '')"></option>
+                                </template>
+                            </select>
                             <button type="button" @click="openClientModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700">+ Tambah Klien</button>
+                            <button type="button" @click="openKhsVersionModal()" class="bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 text-xs px-3 py-2 rounded-lg border border-amber-500/30">+ Buat Versi KHS Baru</button>
                             <button type="button" @click="openKhsItemModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg">+ Item KHS Baru</button>
+                        </div>
+                    </div>
+
+                    <!-- Info Banner Versi KHS Aktif -->
+                    <div class="bg-[#0c1222] border border-amber-500/30 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Versi KHS Yang Sedang Ditampilkan:</span>
+                            <div class="text-sm font-bold text-white mt-0.5" x-text="getActiveKhsVersionName()"></div>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Semua perubahan harga satuan pada tahun berjalan dapat dibuatkan versi KHS terpisah tanpa menimpa data history KHS sebelumnya.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-300" x-text="getFilteredKhsItems().length + ' Item Pekerjaan dalam KHS ini'"></span>
                         </div>
                     </div>
 
@@ -348,7 +368,7 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
-                                    <th class="p-3">Klien</th>
+                                    <th class="p-3">Klien & Versi KHS</th>
                                     <th class="p-3">Designator</th>
                                     <th class="p-3">Nama Pekerjaan</th>
                                     <th class="p-3">Satuan</th>
@@ -361,7 +381,10 @@
                             <tbody class="divide-y divide-slate-800/60 text-xs">
                                 <template x-for="item in getFilteredKhsItems()" :key="item.id">
                                     <tr class="hover:bg-slate-800/30">
-                                        <td class="p-3 font-semibold text-cyan-400" x-text="getClientName(item.clientId)"></td>
+                                        <td class="p-3">
+                                            <div class="font-semibold text-cyan-400" x-text="getClientName(item.clientId)"></div>
+                                            <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono" x-text="getKhsVersionNameById(item.khsVersionId)"></span>
+                                        </td>
                                         <td class="p-3 font-mono text-indigo-300 font-semibold" x-text="item.designator"></td>
                                         <td class="p-3 text-white" x-text="item.namaPekerjaan"></td>
                                         <td class="p-3 text-slate-400" x-text="item.satuan"></td>
@@ -1273,8 +1296,38 @@
                 </div>
             </form>
 
+            <!-- Modal: Tambah Versi KHS Baru (Misal KHS 2026, KHS 2025) -->
+            <form x-show="activeModal === 'khs-version'" @submit.prevent="saveKhsVersion()" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Klien</label>
+                    <select x-model="formKhsVersion.clientId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <template x-for="c in clients" :key="c.id"><option :value="c.id" x-text="c.name"></option></template>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Nama Versi KHS / Tahun Kontrak</label>
+                    <input type="text" x-model="formKhsVersion.versionName" required placeholder="Contoh: KHS 2026, KHS 2025 Adendum 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold">
+                </div>
+                <div class="flex items-center gap-2 py-1">
+                    <input type="checkbox" id="chkDefaultVers" x-model="formKhsVersion.isDefault" class="rounded bg-slate-950 border-slate-700 text-amber-500">
+                    <label for="chkDefaultVers" class="text-xs text-amber-300">Jadikan Versi KHS Utama (Default Aktif)</label>
+                </div>
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg text-xs">Simpan Versi KHS</button>
+                </div>
+            </form>
+
             <!-- Modal: Tambah Item KHS Klien -->
             <form x-show="activeModal === 'khs'" @submit.prevent="saveKhsItem()" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Versi KHS</label>
+                    <select x-model="formKhs.khsVersionId" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                        <template x-for="v in getFilteredKhsVersions()" :key="v.id">
+                            <option :value="v.id" x-text="v.versionName"></option>
+                        </template>
+                    </select>
+                </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Designator</label>
@@ -1421,7 +1474,7 @@
                     <select x-model="formBoqAdd.khsItemId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                         <option value="">-- Pilih Designator KHS --</option>
                         <template x-for="k in khsItems" :key="k.id">
-                            <option :value="k.id" x-text="k.designator + ' - ' + k.namaPekerjaan + ' (' + (k.isClientMaterial ? 'Mat Klien Rp 0' : 'Mat ' + formatRupiah(k.hargaMaterial)) + ' | Jasa ' + formatRupiah(k.hargaJasa) + ')'"></option>
+                            <option :value="k.id" x-text="'[' + getKhsVersionNameById(k.khsVersionId) + '] ' + k.designator + ' - ' + k.namaPekerjaan + ' (' + (k.isClientMaterial ? 'Mat Klien Rp 0' : 'Mat ' + formatRupiah(k.hargaMaterial)) + ' | Jasa ' + formatRupiah(k.hargaJasa) + ')'"></option>
                         </template>
                     </select>
                 </div>
@@ -1457,7 +1510,7 @@
                     <select x-model="formSubcontBoq.khsItemId" @change="autoFillSubcontRateOnModal()" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                         <option value="">-- Pilih Designator Pekerjaan --</option>
                         <template x-for="k in khsItems" :key="k.id">
-                            <option :value="k.id" x-text="k.designator + ' - ' + k.namaPekerjaan + ' (' + k.satuan + ')'"></option>
+                            <option :value="k.id" x-text="'[' + getKhsVersionNameById(k.khsVersionId) + '] ' + k.designator + ' - ' + k.namaPekerjaan + ' (' + k.satuan + ')'"></option>
                         </template>
                     </select>
                 </div>
@@ -1757,19 +1810,7 @@
                 }
             ];
 
-            // Migrasi otomatis data lama bila masih memakai subcontId tunggal
-            let loadedProjects = JSON.parse(localStorage.getItem('acm_projects_v2') || 'null');
-            if (!loadedProjects) {
-                const legacy = JSON.parse(localStorage.getItem('acm_projects') || 'null');
-                if (legacy && Array.isArray(legacy)) {
-                    loadedProjects = legacy.map(p => ({
-                        ...p,
-                        subcontIds: p.subcontIds || (p.subcontId ? [p.subcontId] : ['SUB-01'])
-                    }));
-                } else {
-                    loadedProjects = defaultProjects;
-                }
-            }
+            let loadedProjects = JSON.parse(localStorage.getItem('acm_projects_v2') || 'null') || defaultProjects;
 
             return {
                 supabaseReady: !!sbClient,
@@ -1782,8 +1823,9 @@
 
                 loginForm: { email: 'rudi@acerocetha.co.id', password: '••••••••', demoRole: 'Super Admin' },
 
-                // State Seleksi
+                // State Seleksi KHS & Klien
                 selectedKhsClient: 'CLI-YOFC',
+                selectedKhsVersionId: 'VERS-2026',
                 selectedSubcontId: 'SUB-01',
                 selectedBoqProject: 'PLB-2026-001',
                 selectedBoqSubcontFilter: 'ALL',
@@ -1791,16 +1833,22 @@
                 activeModal: '',
                 modalTitle: '',
 
-                // Data Master Klien & KHS
+                // Data Master Klien & Versi KHS
                 clients: JSON.parse(localStorage.getItem('acm_clients') || 'null') || [
                     { id: 'CLI-YOFC', code: 'YOFC', name: 'PT YOFC Fiber Indonesia' },
                     { id: 'CLI-TLK', code: 'TELKOM', name: 'PT Telkom Akses' }
                 ],
-                khsItems: JSON.parse(localStorage.getItem('acm_khsItems') || 'null') || [
-                    { id: 'KHS-1', clientId: 'CLI-YOFC', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 4500 },
-                    { id: 'KHS-2', clientId: 'CLI-YOFC', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', isClientMaterial: false, hargaMaterial: 1150000, hargaJasa: 250000 },
-                    { id: 'KHS-3', clientId: 'CLI-YOFC', designator: 'ODP-SOLID-16', namaPekerjaan: 'Pemasangan & Terminasi ODP 16 Core', satuan: 'Unit', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 320000 },
-                    { id: 'KHS-4', clientId: 'CLI-TLK', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core Telkom', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 8500, hargaJasa: 5000 }
+                khsVersions: JSON.parse(localStorage.getItem('acm_khsVersions') || 'null') || [
+                    { id: 'VERS-2026', clientId: 'CLI-YOFC', versionName: 'KHS 2026 (Aktif)', isDefault: true },
+                    { id: 'VERS-2025', clientId: 'CLI-YOFC', versionName: 'KHS 2025 (Arsip)', isDefault: false },
+                    { id: 'VERS-TLK-2026', clientId: 'CLI-TLK', versionName: 'KHS Telkom 2026', isDefault: true }
+                ],
+                khsItems: JSON.parse(localStorage.getItem('acm_khsItems_v2') || 'null') || [
+                    { id: 'KHS-1', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2026', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 4500 },
+                    { id: 'KHS-2', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2026', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', isClientMaterial: false, hargaMaterial: 1150000, hargaJasa: 250000 },
+                    { id: 'KHS-3', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2026', designator: 'ODP-SOLID-16', namaPekerjaan: 'Pemasangan & Terminasi ODP 16 Core', satuan: 'Unit', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 320000 },
+                    { id: 'KHS-4', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2025', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (KHS 2025 Lama)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 4200 },
+                    { id: 'KHS-5', clientId: 'CLI-TLK', khsVersionId: 'VERS-TLK-2026', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core Telkom', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 8500, hargaJasa: 5000 }
                 ],
 
                 // Data Subcont & Rate Card
@@ -1869,7 +1917,8 @@
 
                 // Form Models
                 formClient: { name: '', code: '' },
-                formKhs: { designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 },
+                formKhsVersion: { clientId: 'CLI-YOFC', versionName: 'KHS 2027', isDefault: false },
+                formKhs: { khsVersionId: 'VERS-2026', designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 },
                 formSubcont: { name: '', area: '' },
                 formSubcontRate: { khsItemId: '', hargaSubcont: 0 },
                 formProject: { clientId: 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: ['SUB-01'], projectName: '', nominalAwal: 0 },
@@ -1888,7 +1937,8 @@
 
                 persistAll() {
                     localStorage.setItem('acm_clients', JSON.stringify(this.clients));
-                    localStorage.setItem('acm_khsItems', JSON.stringify(this.khsItems));
+                    localStorage.setItem('acm_khsVersions', JSON.stringify(this.khsVersions));
+                    localStorage.setItem('acm_khsItems_v2', JSON.stringify(this.khsItems));
                     localStorage.setItem('acm_subconts', JSON.stringify(this.subconts));
                     localStorage.setItem('acm_subcontRates', JSON.stringify(this.subcontRates));
                     localStorage.setItem('acm_projects_v2', JSON.stringify(this.masterProject));
@@ -1951,8 +2001,8 @@
 
                 getTabTitle() {
                     const map = {
-                        'dashboard': 'Dashboard Terintegrasi ACM-ERP (Multi-Subcont)',
-                        'prj-khs': 'Project • Master KHS & Harga per Klien',
+                        'dashboard': 'Dashboard Terintegrasi ACM-ERP (Multi-Subcont & Multi-Versi KHS)',
+                        'prj-khs': 'Project • Master KHS Multi-Versi & Klien',
                         'prj-subcont': 'Project • Master Subcont & Rate Card',
                         'prj-list': 'Project • Daftar Project (Multi-Subcont) & Progress Keuangan',
                         'prj-boq': 'Project • BoQ Utama Klien & Alokasi Multi-Subcont',
@@ -1988,7 +2038,19 @@
                 getClientName(id) { return this.clients.find(c => c.id === id)?.name || id; },
                 getSubcontName(id) { return this.subconts.find(s => s.id === id)?.name || id; },
                 getProjectByCode(code) { return this.masterProject.find(p => p.kodeProject === code); },
-                getFilteredKhsItems() { return this.khsItems.filter(k => k.clientId === this.selectedKhsClient); },
+                
+                getFilteredKhsVersions() {
+                    return this.khsVersions.filter(v => v.clientId === this.selectedKhsClient);
+                },
+                getActiveKhsVersionName() {
+                    return this.khsVersions.find(v => v.id === this.selectedKhsVersionId)?.versionName || this.selectedKhsVersionId;
+                },
+                getKhsVersionNameById(id) {
+                    return this.khsVersions.find(v => v.id === id)?.versionName || id;
+                },
+                getFilteredKhsItems() {
+                    return this.khsItems.filter(k => k.clientId === this.selectedKhsClient && k.khsVersionId === this.selectedKhsVersionId);
+                },
                 getFilteredSubcontRates() { return this.subcontRates.filter(r => r.subcontId === this.selectedSubcontId); },
 
                 openClientModal() { this.modalTitle = 'Tambah Klien Baru'; this.formClient = { name: '', code: '' }; this.activeModal = 'client'; },
@@ -1997,15 +2059,40 @@
                     this.persistAll(); this.activeModal = ''; this.showToast('Klien baru berhasil ditambahkan');
                 },
 
+                openKhsVersionModal() {
+                    this.modalTitle = 'Buat Versi KHS Baru (Misal KHS 2026 / KHS 2027)';
+                    this.formKhsVersion = { clientId: this.selectedKhsClient, versionName: 'KHS ' + new Date().getFullYear(), isDefault: false };
+                    this.activeModal = 'khs-version';
+                },
+                saveKhsVersion() {
+                    const newId = 'VERS-' + Date.now();
+                    if (this.formKhsVersion.isDefault) {
+                        this.khsVersions.filter(v => v.clientId === this.formKhsVersion.clientId).forEach(v => v.isDefault = false);
+                    }
+                    this.khsVersions.push({
+                        id: newId,
+                        clientId: this.formKhsVersion.clientId,
+                        versionName: this.formKhsVersion.versionName,
+                        isDefault: this.formKhsVersion.isDefault
+                    });
+                    this.selectedKhsVersionId = newId;
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast(`Versi KHS "${this.formKhsVersion.versionName}" berhasil dibuat!`);
+                },
+
                 openKhsItemModal() {
                     this.modalTitle = 'Tambah Item KHS Klien';
-                    this.formKhs = { designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 };
+                    this.formKhs = { khsVersionId: this.selectedKhsVersionId, designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 };
                     this.activeModal = 'khs';
                 },
                 saveKhsItem() {
+                    const ver = this.khsVersions.find(v => v.id === this.formKhs.khsVersionId);
+                    if (!ver) return;
                     this.khsItems.push({
                         id: 'KHS-' + Date.now(),
-                        clientId: this.selectedKhsClient,
+                        clientId: ver.clientId,
+                        khsVersionId: ver.id,
                         ...this.formKhs,
                         hargaMaterial: this.formKhs.isClientMaterial ? 0 : Number(this.formKhs.hargaMaterial)
                     });
@@ -2197,7 +2284,6 @@
                         hargaSubcont: Number(this.formSubcontBoq.hargaSubcont)
                     });
 
-                    // Pastikan BoQ Utama Klien juga memiliki designator ini jika belum ada
                     const existsInMain = this.projectBoqLines.some(l => l.kodeProject === this.selectedBoqProject && l.designator === khs.designator);
                     if (!existsInMain) {
                         this.projectBoqLines.push({
@@ -2233,7 +2319,6 @@
                     const volAdd = Number(this.waspangForm.volume) || 0;
                     sline.volAkhir = (Number(sline.volAkhir) || 0) + volAdd;
 
-                    // Sinkronkan juga ke BoQ Utama Klien untuk designator yang sama
                     const mainLine = this.projectBoqLines.find(l => l.kodeProject === prj.kodeProject && l.designator === sline.designator);
                     if (mainLine) {
                         mainLine.volAkhir = (Number(mainLine.volAkhir) || 0) + volAdd;
