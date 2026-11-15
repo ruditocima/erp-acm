@@ -96,7 +96,7 @@
             </form>
 
             <div class="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
-                <span>Divisi YOFC • V3.6 Multi-Version KHS</span>
+                <span>Divisi YOFC • V4.0 Production Ready</span>
                 <span>by: Rudi</span>
             </div>
         </div>
@@ -105,23 +105,32 @@
     <!-- ==================== 2. MAIN INTEGRATED WORKSPACE ==================== -->
     <div x-show="isLoggedIn" class="h-screen flex flex-col md:flex-row overflow-hidden print:hidden" x-cloak>
         
-        <!-- SIDEBAR NAVIGATION -->
-        <aside class="w-full md:w-64 bg-[#0c1222] border-r border-slate-800 flex flex-col justify-between shrink-0 md:h-screen overflow-y-auto">
+        <!-- MOBILE SIDEBAR BACKDROP -->
+        <div x-show="mobileMenuOpen" @click="mobileMenuOpen = false" class="fixed inset-0 z-30 bg-slate-950/80 backdrop-blur-sm md:hidden" x-cloak></div>
+
+        <!-- SIDEBAR NAVIGATION (Responsive Drawer on Mobile, Fixed on Desktop) -->
+        <aside :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+               class="fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#0c1222] border-r border-slate-800 flex flex-col justify-between shrink-0 h-screen overflow-y-auto transition-transform duration-200 ease-in-out">
             <div>
                 <!-- Brand -->
-                <div class="h-14 flex items-center px-5 border-b border-slate-800 gap-3 sticky top-0 bg-[#0c1222] z-10">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/20">
-                        <i data-lucide="layers" class="w-4 h-4"></i>
+                <div class="h-14 flex items-center justify-between px-5 border-b border-slate-800 sticky top-0 bg-[#0c1222] z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/20">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-sm tracking-wide text-white">ACM-ERP</span>
+                            <span class="block text-[9px] text-cyan-400 font-semibold uppercase tracking-widest" x-text="'DIVISI ' + currentRole.toUpperCase()"></span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-bold text-sm tracking-wide text-white">ACM-ERP</span>
-                        <span class="block text-[9px] text-cyan-400 font-semibold uppercase tracking-widest" x-text="'DIVISI ' + currentRole.toUpperCase()"></span>
-                    </div>
+                    <button type="button" @click="mobileMenuOpen = false" class="md:hidden text-slate-400 hover:text-white p-1.5 rounded-lg">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
                 </div>
 
                 <nav class="p-3 space-y-1 text-xs">
                     <!-- DASHBOARD UMUM -->
-                    <a href="#" @click.prevent="switchTab('dashboard')" :class="currentTab === 'dashboard' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                    <a href="#" @click.prevent="switchTab('dashboard')" :class="currentTab === 'dashboard' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard Utama
                     </a>
 
@@ -133,19 +142,19 @@
                                 <span class="text-[9px] bg-cyan-500/10 text-cyan-300 px-1.5 py-0.5 rounded">PM / Ops</span>
                             </div>
                             <div class="space-y-0.5">
-                                <a href="#" @click.prevent="switchTab('prj-khs')" :class="currentTab === 'prj-khs' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('prj-khs')" :class="currentTab === 'prj-khs' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien
                                 </a>
-                                <a href="#" @click.prevent="switchTab('prj-subcont')" :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('prj-subcont')" :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont
                                 </a>
-                                <a href="#" @click.prevent="switchTab('prj-list')" :class="currentTab === 'prj-list' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('prj-list')" :class="currentTab === 'prj-list' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Keuangan
                                 </a>
-                                <a href="#" @click.prevent="switchTab('prj-boq')" :class="currentTab === 'prj-boq' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('prj-boq')" :class="currentTab === 'prj-boq' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & Subcont
                                 </a>
-                                <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Invoice Subcont
                                 </a>
                             </div>
@@ -159,7 +168,7 @@
                                 <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Lapangan / Waspang</span>
                                 <span class="text-[9px] bg-amber-500/10 text-amber-300 px-1.5 py-0.5 rounded">Field</span>
                             </div>
-                            <a href="#" @click.prevent="switchTab('waspang-daily')" :class="currentTab === 'waspang-daily' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                            <a href="#" @click.prevent="switchTab('waspang-daily')" :class="currentTab === 'waspang-daily' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                 <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i> Input Volume Harian Waspang
                             </a>
                         </div>
@@ -173,22 +182,22 @@
                                 <span class="text-[9px] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded">WMS</span>
                             </div>
                             <div class="space-y-0.5">
-                                <a href="#" @click.prevent="switchTab('wh-barang')" :class="currentTab === 'wh-barang' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('wh-barang')" :class="currentTab === 'wh-barang' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="package" class="w-3.5 h-3.5"></i> Master Barang
                                 </a>
-                                <a href="#" @click.prevent="switchTab('wh-gudang')" :class="currentTab === 'wh-gudang' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('wh-gudang')" :class="currentTab === 'wh-gudang' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="warehouse" class="w-3.5 h-3.5"></i> Master Gudang
                                 </a>
-                                <a href="#" @click.prevent="openInputTransaction()" :class="currentTab === 'wh-input' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="openInputTransaction()" :class="currentTab === 'wh-input' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="file-plus" class="w-3.5 h-3.5"></i> Input Transaksi
                                 </a>
-                                <a href="#" @click.prevent="switchTab('wh-stok')" :class="currentTab === 'wh-stok' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('wh-stok')" :class="currentTab === 'wh-stok' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="boxes" class="w-3.5 h-3.5"></i> Stok & Pelacakan Drum
                                 </a>
-                                <a href="#" @click.prevent="switchTab('wh-usage')" :class="currentTab === 'wh-usage' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('wh-usage')" :class="currentTab === 'wh-usage' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="activity" class="w-3.5 h-3.5"></i> Material Usage
                                 </a>
-                                <a href="#" @click.prevent="switchTab('wh-transaksi')" :class="currentTab === 'wh-transaksi' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('wh-transaksi')" :class="currentTab === 'wh-transaksi' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Data Transaksi & BAST
                                 </a>
                             </div>
@@ -203,17 +212,17 @@
                                 <span x-show="unreadNotificationsCount() > 0" class="text-[9px] bg-rose-500 text-white font-bold px-1.5 py-0.5 rounded-full animate-pulse" x-text="unreadNotificationsCount()"></span>
                             </div>
                             <div class="space-y-0.5">
-                                <a href="#" @click.prevent="switchTab('acc-notif')" :class="currentTab === 'acc-notif' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center justify-between px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('acc-notif')" :class="currentTab === 'acc-notif' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center justify-between px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <span class="flex items-center gap-2.5"><i data-lucide="bell-ring" class="w-3.5 h-3.5"></i> Notifikasi & Antrian Proses</span>
                                     <span x-show="unreadNotificationsCount() > 0" class="w-2 h-2 rounded-full bg-rose-500"></span>
                                 </a>
-                                <a href="#" @click.prevent="switchTab('acc-client-inv')" :class="currentTab === 'acc-client-inv' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('acc-client-inv')" :class="currentTab === 'acc-client-inv' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Invoice Klien & Rekap CB
                                 </a>
-                                <a href="#" @click.prevent="switchTab('acc-subcont-pay')" :class="currentTab === 'acc-subcont-pay' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('acc-subcont-pay')" :class="currentTab === 'acc-subcont-pay' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="wallet" class="w-3.5 h-3.5"></i> Pembayaran Tagihan Subcont
                                 </a>
-                                <a href="#" @click.prevent="switchTab('acc-rekap-bulanan')" :class="currentTab === 'acc-rekap-bulanan' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
+                                <a href="#" @click.prevent="switchTab('acc-rekap-bulanan')" :class="currentTab === 'acc-rekap-bulanan' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Rekap Bulanan & Cash Flow
                                 </a>
                             </div>
@@ -231,7 +240,7 @@
                         <p class="text-[9px] text-cyan-400 font-medium truncate" x-text="'Role: ' + currentRole"></p>
                     </div>
                 </div>
-                <button type="button" @click="logout" class="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-800 transition" title="Keluar Sistem">
+                <button type="button" @click="logout" class="text-slate-400 hover:text-rose-400 p-2 rounded-lg hover:bg-slate-800 transition" title="Keluar Sistem">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -240,30 +249,34 @@
         <!-- MAIN WORKSPACE AREA -->
         <main class="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#060913]">
             <!-- Top Header -->
-            <header class="h-14 border-b border-slate-800 bg-[#0c1222]/80 backdrop-blur sticky top-0 z-20 flex items-center justify-between px-6 shrink-0">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-sm font-bold text-white tracking-wide" x-text="getTabTitle()"></h2>
+            <header class="h-14 border-b border-slate-800 bg-[#0c1222]/80 backdrop-blur sticky top-0 z-20 flex items-center justify-between px-4 md:px-6 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <button type="button" @click="mobileMenuOpen = true" class="md:hidden p-2 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white">
+                        <i data-lucide="menu" class="w-4 h-4"></i>
+                    </button>
+                    <h2 class="text-xs sm:text-sm font-bold text-white tracking-wide truncate" x-text="getTabTitle()"></h2>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <template x-if="canAccessModule('accounting')">
                         <button type="button" @click="switchTab('acc-notif')" class="relative p-2 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-cyan-400 transition">
                             <i data-lucide="bell" class="w-4 h-4"></i>
                             <span x-show="unreadNotificationsCount() > 0" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center" x-text="unreadNotificationsCount()"></span>
                         </button>
                     </template>
-                    <div class="hidden sm:flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 text-slate-300 px-3 py-1 rounded-full text-[10px] font-medium">
+                    <div class="hidden lg:flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 text-slate-300 px-3 py-1 rounded-full text-[10px] font-medium">
                         <span>Area:</span>
                         <strong class="text-cyan-400" x-text="userRegion()"></strong>
                     </div>
                     <div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full text-[10px] font-medium">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span x-text="supabaseReady ? 'Supabase Sync' : 'Local Integrated'"></span>
+                        <span class="hidden sm:inline" x-text="supabaseReady ? 'Supabase Sync' : 'Local Integrated'"></span>
+                        <span class="sm:hidden">Sync</span>
                     </div>
                 </div>
             </header>
 
             <!-- CONTENT BODY -->
-            <div class="p-6 space-y-6">
+            <div class="p-4 md:p-6 space-y-6">
 
                 <!-- ==================== TAB: DASHBOARD UTAMA ==================== -->
                 <div x-show="currentTab === 'dashboard'" class="space-y-6" x-cloak>
@@ -304,23 +317,23 @@
 
                     <!-- Alur Integrasi Multi-Subcont Antar Divisi -->
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont & Versi KHS Berbeda per Tahun</h3>
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont, Audit Adendum & Validasi Terpadu</h3>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-cyan-500/20">
-                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. Master KHS Multi-Versi</span>
-                                <p class="text-slate-300 mt-1">KHS dipisah per tahun (misal <strong class="text-white">KHS 2026</strong>, KHS 2025) untuk mengantisipasi perubahan harga satuan sewaktu-waktu.</p>
+                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. BoQ & Audit Adendum</span>
+                                <p class="text-slate-300 mt-1">Nilai kontrak project otomatis terhitung dari BoQ Klien, dilengkapi kontrol anti *over-allocation* & log riwayat adendum harga/volume.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-amber-500/20">
-                                <span class="text-[10px] font-bold text-amber-400 uppercase">2. Tim Waspang (Per Subcont)</span>
-                                <p class="text-slate-300 mt-1">Input volume harian memilih <strong class="text-white">Project → Subcont → Item Pekerjaan</strong>. Progress fisik per subcont & project terhitung otomatis.</p>
+                                <span class="text-[10px] font-bold text-amber-400 uppercase">2. Tim Waspang & Bukti Foto</span>
+                                <p class="text-slate-300 mt-1">Input volume harian tervalidasi batas target subcont serta mendukung lampiran bukti foto lapangan.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-indigo-500/20">
-                                <span class="text-[10px] font-bold text-indigo-400 uppercase">3. Tim Warehouse</span>
-                                <p class="text-slate-300 mt-1">Material klien (Rp 0 Free-Issue) dicatat stok & drum tanpa membebani HPP/pengeluaran project.</p>
+                                <span class="text-[10px] font-bold text-indigo-400 uppercase">3. Tim Warehouse & SJ</span>
+                                <p class="text-slate-300 mt-1">Transaksi stok & drum kabel dilengkapi lampiran foto surat jalan serta ekspor laporan CSV/Excel.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-emerald-500/20">
                                 <span class="text-[10px] font-bold text-emerald-400 uppercase">4. Tim Accounting</span>
-                                <p class="text-slate-300 mt-1">Validasi invoice masing-masing Subcont terhadap BoQ & progress fisiknya, serta kelola Rekap Cash & Bank Klien.</p>
+                                <p class="text-slate-300 mt-1">Validasi tagihan subcont dengan lampiran BAP/Kwitansi serta ekspor rekap Cash & Bank siap audit.</p>
                             </div>
                         </div>
                     </div>
@@ -333,13 +346,11 @@
                             <h3 class="text-sm font-bold text-white">Master KHS (Kontrak Harga Satuan) & Klien</h3>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <!-- Filter Klien -->
-                            <select x-model="selectedKhsClient" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-300 font-semibold">
+                            <select x-model="selectedKhsClient" @change="onClientFilterChange()" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-300 font-semibold">
                                 <template x-for="c in clients" :key="c.id">
                                     <option :value="c.id" x-text="'Klien: ' + c.name"></option>
                                 </template>
                             </select>
-                            <!-- Filter Versi KHS -->
                             <select x-model="selectedKhsVersionId" class="bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
                                 <template x-for="v in getFilteredKhsVersions()" :key="v.id">
                                     <option :value="v.id" x-text="v.versionName + (v.isDefault ? ' (Aktif / Default)' : '')"></option>
@@ -351,7 +362,6 @@
                         </div>
                     </div>
 
-                    <!-- Info Banner Versi KHS Aktif -->
                     <div class="bg-[#0c1222] border border-amber-500/30 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Versi KHS Yang Sedang Ditampilkan:</span>
@@ -406,7 +416,7 @@
                         <div>
                             <h3 class="text-sm font-bold text-white">Manajemen Subcont</h3>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <select x-model="selectedSubcontId" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-300 font-semibold">
                                 <template x-for="s in subconts" :key="s.id">
                                     <option :value="s.id" x-text="'Tim Subcont: ' + s.name + ' (' + s.area + ')'"></option>
@@ -449,12 +459,74 @@
                         <div>
                             <h3 class="text-sm font-bold text-white">Daftar Project & Progress Keuangan</h3>
                         </div>
-                        <button type="button" @click="openNewProjectModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg shadow-cyan-600/20 flex items-center gap-1.5">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Input Project Baru
-                        </button>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="exportProjectsCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2.5 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export CSV / Excel
+                            </button>
+                            <button type="button" @click="openNewProjectModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow-lg shadow-cyan-600/20 flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Input Project Baru
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
+                    <!-- MOBILE CARD VIEW (block md:hidden) -->
+                    <div class="block md:hidden space-y-3">
+                        <template x-for="prj in masterProject" :key="'mob-prj-' + prj.kodeProject">
+                            <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <span class="font-mono font-bold text-cyan-400 text-xs" x-text="prj.kodeProject"></span>
+                                        <span class="ml-1.5 px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-slate-300" x-text="prj.region"></span>
+                                        <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'PO: ' + (prj.noPO || '-')"></div>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono" x-text="'Fisik: ' + getProjectPhysicalProgress(prj.kodeProject) + '%'"></span>
+                                </div>
+
+                                <div>
+                                    <div class="text-[10px] font-bold text-indigo-400" x-text="getClientName(prj.clientId)"></div>
+                                    <div class="font-semibold text-white text-xs mt-0.5" x-text="prj.projectName"></div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono">
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">BoQ Klien (Awal / Akhir)</span>
+                                        <span class="text-slate-300 block" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal'))"></span>
+                                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir'))"></span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">Total BoQ Subcont</span>
+                                        <span class="text-amber-300 block" x-text="formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'awal'))"></span>
+                                        <span class="text-amber-400 font-bold" x-text="formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'akhir'))"></span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <span class="text-[10px] font-semibold text-slate-400 uppercase block">Tim Subcont Pelaksana:</span>
+                                    <template x-if="!prj.subcontIds || prj.subcontIds.length === 0">
+                                        <div class="text-[11px] text-slate-500 italic">Belum ada subcont ditugaskan</div>
+                                    </template>
+                                    <template x-for="sid in (prj.subcontIds || [])" :key="'mob-sub-' + sid">
+                                        <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-[11px]">
+                                            <span class="font-semibold text-amber-300" x-text="getSubcontName(sid)"></span>
+                                            <span class="font-mono text-amber-400" x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-800">
+                                    <button type="button" @click="openManageProjectSubconts(prj)" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[11px] font-semibold flex items-center gap-1">
+                                        <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> + Kelola Subcont
+                                    </button>
+                                    <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="px-3 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
+                                        Atur BoQ →
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- DESKTOP TABLE VIEW (hidden md:block) -->
+                    <div class="hidden md:block bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
@@ -482,6 +554,9 @@
                                         </td>
                                         <td class="p-3">
                                             <div class="space-y-1.5">
+                                                <template x-if="!prj.subcontIds || prj.subcontIds.length === 0">
+                                                    <div class="text-[11px] text-slate-500 italic">Belum ada subcont</div>
+                                                </template>
                                                 <template x-for="sid in (prj.subcontIds || [])" :key="sid">
                                                     <div class="flex items-center justify-between gap-2 bg-slate-950/90 border border-slate-800 px-2.5 py-1 rounded-lg">
                                                         <div>
@@ -550,7 +625,7 @@
                         <div class="flex flex-wrap items-center gap-3">
                             <div>
                                 <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Project</label>
-                                <select x-model="selectedBoqProject" @change="selectedBoqSubcontFilter = 'ALL'" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold min-w-[260px]">
+                                <select x-model="selectedBoqProject" @change="selectedBoqSubcontFilter = 'ALL'" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold min-w-[240px] max-w-full">
                                     <template x-for="p in masterProject" :key="p.kodeProject">
                                         <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
                                     </template>
@@ -565,6 +640,9 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="exportBoqCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export BoQ CSV
+                            </button>
                             <button type="button" @click="openAddBoqFromKhsModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
                                 <i data-lucide="plus-circle" class="w-4 h-4"></i> + Item BoQ Klien (KHS)
                             </button>
@@ -597,14 +675,53 @@
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
                         <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
                             <div>
-                                <h4 class="text-xs font-bold text-cyan-400 uppercase">Bagian A • BoQ Utama</h4>
+                                <h4 class="text-xs font-bold text-cyan-400 uppercase">Bagian A • BoQ Utama Klien</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Gunakan tombol <strong class="text-amber-300">Revisi / Adendum</strong> jika terjadi penyesuaian volume atau harga kontrak tengah jalan.</p>
                             </div>
                             <div class="text-right">
                                 <span class="text-[10px] text-slate-400 block">Subtotal BoQ Klien</span>
                                 <span class="text-sm font-bold font-mono text-emerald-400" x-text="formatRupiah(getProjectBoqTotal(selectedBoqProject, boqMode))"></span>
                             </div>
                         </div>
-                        <div class="overflow-x-auto">
+
+                        <!-- Mobile Card View Bagian A -->
+                        <div class="block md:hidden p-3 space-y-3">
+                            <template x-for="line in getProjectBoqLines(selectedBoqProject)" :key="'mob-boq-' + line.id">
+                                <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div>
+                                            <span class="font-mono font-bold text-cyan-400 text-xs" x-text="line.designator"></span>
+                                            <div class="text-white font-medium text-xs mt-0.5" x-text="line.namaPekerjaan"></div>
+                                            <span x-show="line.isClientMaterial" class="text-[9px] text-amber-400 font-semibold">[Material Klien - Rp 0]</span>
+                                        </div>
+                                        <button type="button" @click="openBoqAdendumModal(line)" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[10px] font-semibold shrink-0">
+                                            Revisi / Adendum
+                                        </button>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 text-[11px] font-mono bg-[#0c1222] p-2 rounded-lg border border-slate-800/80">
+                                        <div>
+                                            <span class="block text-[9px] font-sans text-slate-400">Vol Awal</span>
+                                            <span class="text-slate-200" x-text="line.volAwal + ' ' + (line.satuan || '')"></span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-[9px] font-sans text-slate-400">Alokasi Sub</span>
+                                            <span class="text-indigo-300" x-text="getAllocatedSubcontVolumeForDesignator(selectedBoqProject, line.designator) + '/' + line.volAwal"></span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-[9px] font-sans text-slate-400">Vol Akhir</span>
+                                            <span class="text-emerald-300 font-bold" x-text="line.volAkhir"></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs font-mono pt-1">
+                                        <span class="text-slate-400 font-sans text-[10px]" x-text="'Jasa: ' + formatRupiah(line.hargaJasa)"></span>
+                                        <span class="font-bold text-emerald-400" x-text="formatRupiah(calcBoqLineClientTotal(line, boqMode))"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Desktop Table Bagian A -->
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
@@ -616,6 +733,7 @@
                                         <th class="p-3 text-right">Harga Sat. Material</th>
                                         <th class="p-3 text-right">Harga Sat. Jasa</th>
                                         <th class="p-3 text-right">Total Nilai Klien</th>
+                                        <th class="p-3 text-center">Audit / Adendum</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-800/60 text-xs">
@@ -636,8 +754,18 @@
                                             <td class="p-3 text-right font-mono" :class="line.isClientMaterial ? 'text-slate-500 line-through' : 'text-slate-200'" x-text="line.isClientMaterial ? 'Rp 0' : formatRupiah(line.hargaMaterial)"></td>
                                             <td class="p-3 text-right font-mono text-slate-200" x-text="formatRupiah(line.hargaJasa)"></td>
                                             <td class="p-3 text-right font-mono font-bold text-emerald-400" x-text="formatRupiah(calcBoqLineClientTotal(line, boqMode))"></td>
+                                            <td class="p-3 text-center">
+                                                <button type="button" @click="openBoqAdendumModal(line)" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded text-[10px] font-semibold inline-flex items-center gap-1">
+                                                    <i data-lucide="file-edit" class="w-3 h-3"></i> Revisi / Adendum
+                                                </button>
+                                            </td>
                                         </tr>
                                     </template>
+                                    <tr x-show="getProjectBoqLines(selectedBoqProject).length === 0">
+                                        <td colspan="9" class="p-6 text-center text-slate-500 text-xs">
+                                            Belum ada item pada BoQ Klien project ini. Klik <strong class="text-cyan-400">+ Item BoQ Klien (KHS)</strong> untuk menambahkan item kontrak.
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -678,7 +806,40 @@
                             </template>
                         </div>
 
-                        <div class="overflow-x-auto">
+                        <!-- Mobile Card View Bagian B -->
+                        <div class="block md:hidden p-3 space-y-3">
+                            <template x-for="sline in getFilteredSubcontBoqLines()" :key="'mob-sboq-' + sline.id">
+                                <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div>
+                                            <span class="text-[11px] font-bold text-amber-300 block" x-text="getSubcontName(sline.subcontId)"></span>
+                                            <span class="font-mono text-[11px] text-indigo-300 font-semibold" x-text="sline.designator"></span>
+                                            <div class="text-xs text-white mt-0.5" x-text="sline.namaPekerjaan"></div>
+                                        </div>
+                                        <button type="button" @click="removeSubcontBoqLine(sline.id)" class="text-slate-400 hover:text-rose-400 p-1.5 bg-slate-900 rounded-lg">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 text-[11px] font-mono bg-[#0c1222] p-2 rounded-lg">
+                                        <div>
+                                            <span class="block text-[9px] font-sans text-slate-400">Target</span>
+                                            <span class="text-slate-200" x-text="sline.volAwal + ' ' + (sline.satuan || '')"></span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-[9px] font-sans text-slate-400">Realisasi</span>
+                                            <span class="text-amber-300 font-bold" x-text="sline.volAkhir + ' ' + (sline.satuan || '')"></span>
+                                        </div>
+                                        <div>
+                                            <span class="block text-[9px] font-sans text-slate-400">Total SPK</span>
+                                            <span class="text-amber-400 font-bold" x-text="formatRupiah((boqMode === 'awal' ? sline.volAwal : sline.volAkhir) * sline.hargaSubcont)"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Desktop Table Bagian B -->
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
@@ -723,15 +884,69 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- BAGIAN C: LOG RIWAYAT REVISI / ADENDUM KONTRAK (AUDIT TRAIL) -->
+                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="history" class="w-4 h-4 text-amber-400"></i>
+                                <h4 class="text-xs font-bold text-white uppercase">Log Riwayat Revisi / Adendum Kontrak (Audit Trail Accounting)</h4>
+                            </div>
+                            <span class="text-[10px] text-slate-400" x-text="getProjectAdendumLogs(selectedBoqProject).length + ' Catatan Revisi'"></span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                        <th class="p-3">Waktu & User</th>
+                                        <th class="p-3">Designator</th>
+                                        <th class="p-3">Perubahan Volume Awal</th>
+                                        <th class="p-3">Perubahan Harga Material</th>
+                                        <th class="p-3">Perubahan Harga Jasa</th>
+                                        <th class="p-3">Alasan / No. Adendum</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60 text-xs">
+                                    <template x-for="rev in getProjectAdendumLogs(selectedBoqProject)" :key="rev.id">
+                                        <tr class="hover:bg-slate-800/30">
+                                            <td class="p-3">
+                                                <div class="text-slate-200 font-mono text-[11px]" x-text="rev.timestamp"></div>
+                                                <div class="text-[10px] text-cyan-400" x-text="'Oleh: ' + rev.user"></div>
+                                            </td>
+                                            <td class="p-3 font-mono font-bold text-indigo-300" x-text="rev.designator"></td>
+                                            <td class="p-3 font-mono text-[11px]">
+                                                <span class="text-slate-400" x-text="rev.oldVolAwal"></span> → <strong class="text-emerald-400" x-text="rev.newVolAwal"></strong>
+                                            </td>
+                                            <td class="p-3 font-mono text-[11px]">
+                                                <span class="text-slate-400" x-text="formatRupiah(rev.oldHargaMaterial)"></span> → <strong class="text-emerald-400" x-text="formatRupiah(rev.newHargaMaterial)"></strong>
+                                            </td>
+                                            <td class="p-3 font-mono text-[11px]">
+                                                <span class="text-slate-400" x-text="formatRupiah(rev.oldHargaJasa)"></span> → <strong class="text-emerald-400" x-text="formatRupiah(rev.newHargaJasa)"></strong>
+                                            </td>
+                                            <td class="p-3 text-amber-200" x-text="rev.alasan"></td>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="getProjectAdendumLogs(selectedBoqProject).length === 0">
+                                        <td colspan="6" class="p-5 text-center text-slate-500 text-xs">Belum ada riwayat adendum atau perubahan harga/volume pada project ini.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ==================== MENU PROJECT 5: PENGAJUAN INVOICE SUBCONT ==================== -->
                 <div x-show="currentTab === 'prj-subcont-inv'" class="space-y-4" x-cloak>
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
                             <h3 class="text-sm font-bold text-white">Pengajuan Invoice Subcont</h3>
                         </div>
-                        <button type="button" @click="openSubcontInvoiceModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg">+ Input Tagihan Subcont</button>
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="exportSubcontInvoicesCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export CSV
+                            </button>
+                            <button type="button" @click="openSubcontInvoiceModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg">+ Input Tagihan Subcont</button>
+                        </div>
                     </div>
 
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
@@ -744,6 +959,7 @@
                                     <th class="p-3">Subcont Penagih</th>
                                     <th class="p-3">Termin / Progress</th>
                                     <th class="p-3 text-right">Nominal Tagihan</th>
+                                    <th class="p-3 text-center">Lampiran BAP / Kwitansi</th>
                                     <th class="p-3 text-center">Status Proses Keuangan</th>
                                 </tr>
                             </thead>
@@ -756,6 +972,14 @@
                                         <td class="p-3 font-semibold text-amber-300" x-text="inv.subcontName"></td>
                                         <td class="p-3 text-slate-300" x-text="inv.termin"></td>
                                         <td class="p-3 text-right font-mono font-bold text-white" x-text="formatRupiah(inv.nominal)"></td>
+                                        <td class="p-3 text-center">
+                                            <template x-if="inv.attachmentUrl">
+                                                <button type="button" @click="openAttachmentPreview('Lampiran BAP / Kwitansi • ' + inv.noInvoice, inv.attachmentUrl, inv.attachmentName)" class="px-2.5 py-1 rounded bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                    <i data-lucide="eye" class="w-3 h-3"></i> Lihat Bukti
+                                                </button>
+                                            </template>
+                                            <span x-show="!inv.attachmentUrl" class="text-[10px] text-slate-500">-</span>
+                                        </td>
                                         <td class="p-3 text-center">
                                             <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
                                                 :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'"
@@ -771,52 +995,76 @@
                 <!-- ==================== MENU WASPANG: INPUT VOLUME HARIAN PER SUBCONT ==================== -->
                 <div x-show="currentTab === 'waspang-daily'" class="space-y-5" x-cloak>
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-sm font-bold text-white mb-1">Input Vol Harian Waspang</h3>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Input Vol Harian Waspang</h3>
+                                <p class="text-[11px] text-slate-400">Volume harian otomatis divalidasi terhadap sisa target volume awal Subcont serta mendukung unggah foto lapangan.</p>
+                            </div>
+                        </div>
                         
-                        <form @submit.prevent="submitWaspangDaily()" class="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
-                            <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Tanggal</label>
-                                <input type="date" x-model="waspangForm.tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
-                                <select x-model="waspangForm.kodeProject" @change="waspangForm.subcontId = ''; waspangForm.subcontBoqLineId = ''" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
-                                    <option value="">-- Pilih Project --</option>
-                                    <template x-for="p in masterProject" :key="p.kodeProject">
-                                        <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
+                        <form @submit.prevent="submitWaspangDaily()" class="space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Tanggal</label>
+                                    <input type="date" x-model="waspangForm.tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
+                                    <select x-model="waspangForm.kodeProject" @change="waspangForm.subcontId = ''; waspangForm.subcontBoqLineId = ''" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                        <option value="">-- Pilih Project --</option>
+                                        <template x-for="p in masterProject" :key="p.kodeProject">
+                                            <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-amber-400 uppercase mb-1">2. Pilih Tim Subcont</label>
+                                    <select x-model="waspangForm.subcontId" @change="waspangForm.subcontBoqLineId = ''" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                                        <option value="">-- Pilih Subcont --</option>
+                                        <template x-for="sid in (getProjectByCode(waspangForm.kodeProject)?.subcontIds || [])" :key="sid">
+                                            <option :value="sid" x-text="getSubcontName(sid)"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">3. Item Pekerjaan Subcont</label>
+                                    <select x-model="waspangForm.subcontBoqLineId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                        <option value="">-- Pilih Item Kerja --</option>
+                                        <template x-for="sline in getSubcontBoqLines(waspangForm.kodeProject, waspangForm.subcontId)" :key="sline.id">
+                                            <option :value="sline.id" x-text="sline.designator + ' - ' + sline.namaPekerjaan + ' (Realisasi: ' + sline.volAkhir + ' / Target: ' + sline.volAwal + ')'"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">4. Volume Harian</label>
+                                    <input type="number" step="any" min="0.01" x-model="waspangForm.volume" required placeholder="Contoh: 250" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                                    <template x-if="getSelectedWaspangBoqLine()">
+                                        <span class="block text-[10px] text-cyan-400 font-mono mt-1" x-text="'Sisa Target Subcont: ' + Math.max(0, (Number(getSelectedWaspangBoqLine().volAwal) - Number(getSelectedWaspangBoqLine().volAkhir))) + ' ' + (getSelectedWaspangBoqLine().satuan || '')"></span>
                                     </template>
-                                </select>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-[10px] text-amber-400 uppercase mb-1">2. Pilih Tim Subcont</label>
-                                <select x-model="waspangForm.subcontId" @change="waspangForm.subcontBoqLineId = ''" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
-                                    <option value="">-- Pilih Subcont --</option>
-                                    <template x-for="sid in (getProjectByCode(waspangForm.kodeProject)?.subcontIds || [])" :key="sid">
-                                        <option :value="sid" x-text="getSubcontName(sid)"></option>
-                                    </template>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">3. Item Pekerjaan Subcont</label>
-                                <select x-model="waspangForm.subcontBoqLineId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
-                                    <option value="">-- Pilih Item Kerja --</option>
-                                    <template x-for="sline in getSubcontBoqLines(waspangForm.kodeProject, waspangForm.subcontId)" :key="sline.id">
-                                        <option :value="sline.id" x-text="sline.designator + ' - ' + sline.namaPekerjaan + ' (' + sline.volAkhir + '/' + sline.volAwal + ')'"></option>
-                                    </template>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">4. Volume Harian</label>
-                                <input type="number" step="any" min="0.01" x-model="waspangForm.volume" required placeholder="Contoh: 250" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
-                            </div>
-                            <div>
-                                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg text-xs transition">Simpan Progress</button>
+
+                            <!-- Lampiran Foto Dokumentasi Lapangan -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-slate-800/80 items-end">
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">5. Unggah Foto Lapangan (JPG/PNG/PDF)</label>
+                                    <input type="file" accept="image/*,.pdf" @change="handleFileUpload($event, 'waspang')" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-amber-600/20 file:text-amber-300">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Atau Link Dokumentasi (Google Drive / URL)</label>
+                                    <input type="url" x-model="waspangForm.attachmentUrl" placeholder="https://drive.google.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200">
+                                </div>
+                                <div>
+                                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2.5 px-4 rounded-lg text-xs transition flex items-center justify-center gap-1.5">
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i> Simpan Progress & Bukti
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
 
                     <!-- Log Laporan Waspang -->
-                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
@@ -826,6 +1074,7 @@
                                     <th class="p-3">Designator & Pekerjaan</th>
                                     <th class="p-3 text-right">Volume Harian</th>
                                     <th class="p-3 text-center">Progress Subcont</th>
+                                    <th class="p-3 text-center">Bukti Foto</th>
                                     <th class="p-3">Input Oleh</th>
                                 </tr>
                             </thead>
@@ -838,6 +1087,14 @@
                                         <td class="p-3 text-cyan-400" x-text="log.designator + ' - ' + log.namaPekerjaan"></td>
                                         <td class="p-3 text-right font-mono font-bold text-amber-400" x-text="'+' + log.volume"></td>
                                         <td class="p-3 text-center font-bold text-emerald-400" x-text="(log.subcontId ? getSubcontPhysicalProgress(log.kodeProject, log.subcontId) : getProjectPhysicalProgress(log.kodeProject)) + '%'"></td>
+                                        <td class="p-3 text-center">
+                                            <template x-if="log.attachmentUrl">
+                                                <button type="button" @click="openAttachmentPreview('Foto Lapangan Waspang • ' + log.designator, log.attachmentUrl, log.attachmentName)" class="px-2.5 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                    <i data-lucide="image" class="w-3 h-3"></i> Lihat Bukti
+                                                </button>
+                                            </template>
+                                            <span x-show="!log.attachmentUrl" class="text-[10px] text-slate-500">-</span>
+                                        </td>
                                         <td class="p-3 text-slate-400" x-text="log.waspangName"></td>
                                     </tr>
                                 </template>
@@ -849,16 +1106,16 @@
                 <!-- ==================== MENU WAREHOUSE ==================== -->
                 <div x-show="currentTab.startsWith('wh-')" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center gap-2 bg-[#0c1222] p-2.5 rounded-xl border border-slate-800">
-                        <button type="button" @click="switchTab('wh-barang')" :class="currentTab === 'wh-barang' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Master Barang</button>
-                        <button type="button" @click="switchTab('wh-gudang')" :class="currentTab === 'wh-gudang' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Master Gudang</button>
-                        <button type="button" @click="openInputTransaction()" :class="currentTab === 'wh-input' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Input Transaksi</button>
-                        <button type="button" @click="switchTab('wh-stok')" :class="currentTab === 'wh-stok' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Stok & Pelacakan Drum</button>
-                        <button type="button" @click="switchTab('wh-usage')" :class="currentTab === 'wh-usage' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Material Usage</button>
-                        <button type="button" @click="switchTab('wh-transaksi')" :class="currentTab === 'wh-transaksi' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Data Transaksi & BAST</button>
+                        <button type="button" @click="switchTab('wh-barang')" :class="currentTab === 'wh-barang' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-2 rounded-lg text-xs font-medium">Master Barang</button>
+                        <button type="button" @click="switchTab('wh-gudang')" :class="currentTab === 'wh-gudang' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-2 rounded-lg text-xs font-medium">Master Gudang</button>
+                        <button type="button" @click="openInputTransaction()" :class="currentTab === 'wh-input' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-2 rounded-lg text-xs font-medium">Input Transaksi</button>
+                        <button type="button" @click="switchTab('wh-stok')" :class="currentTab === 'wh-stok' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-2 rounded-lg text-xs font-medium">Stok & Pelacakan Drum</button>
+                        <button type="button" @click="switchTab('wh-usage')" :class="currentTab === 'wh-usage' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-2 rounded-lg text-xs font-medium">Material Usage</button>
+                        <button type="button" @click="switchTab('wh-transaksi')" :class="currentTab === 'wh-transaksi' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-2 rounded-lg text-xs font-medium">Data Transaksi & BAST</button>
                     </div>
 
                     <!-- WH: Master Barang -->
-                    <div x-show="currentTab === 'wh-barang'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                    <div x-show="currentTab === 'wh-barang'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                             <h3 class="text-xs font-bold text-white uppercase">Master Barang Warehouse</h3>
                             <button type="button" @click="openWhMasterModal('barang')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg">+ Tambah Barang</button>
@@ -893,7 +1150,7 @@
                     </div>
 
                     <!-- WH: Master Gudang -->
-                    <div x-show="currentTab === 'wh-gudang'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                    <div x-show="currentTab === 'wh-gudang'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                             <h3 class="text-xs font-bold text-white uppercase">Master Gudang Regional</h3>
                             <button type="button" @click="openWhMasterModal('gudang')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg">+ Tambah Gudang</button>
@@ -978,8 +1235,21 @@
                                     <input type="text" x-model="newTrans.keterangan" required placeholder="SJ / DO Klien / Subcont Penerima" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                                 </div>
                             </div>
+
+                            <!-- Lampiran Foto Surat Jalan / Fisik Material -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Unggah Foto Surat Jalan / Fisik Material</label>
+                                    <input type="file" accept="image/*,.pdf" @change="handleFileUpload($event, 'wh-tx')" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-600/20 file:text-indigo-300">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Atau Link Dokumen Surat Jalan (Google Drive / URL)</label>
+                                    <input type="url" x-model="newTrans.attachmentUrl" placeholder="https://drive.google.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200">
+                                </div>
+                            </div>
+
                             <div class="flex justify-end">
-                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2 rounded-lg text-xs">Simpan Transaksi & Update Stok/Drum</button>
+                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-lg text-xs">Simpan Transaksi & Update Stok/Drum</button>
                             </div>
                         </form>
                     </div>
@@ -990,35 +1260,57 @@
                             <div class="p-4 border-b border-slate-800">
                                 <h3 class="text-xs font-bold text-white uppercase">Stok Gudang & Pelacakan Drum Kabel</h3>
                             </div>
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
-                                        <th class="p-3">Drum ID</th>
-                                        <th class="p-3">Kode Barang</th>
-                                        <th class="p-3">Nama Material</th>
-                                        <th class="p-3">Gudang</th>
-                                        <th class="p-3 text-right">Panjang Awal</th>
-                                        <th class="p-3 text-right">Sisa Panjang</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-800/60 text-xs font-mono">
-                                    <template x-for="d in drumLedger" :key="d.drumId">
-                                        <tr class="hover:bg-slate-800/30">
-                                            <td class="p-3 text-indigo-400 font-bold" x-text="d.drumId"></td>
-                                            <td class="p-3 text-slate-300" x-text="d.kodeBarang"></td>
-                                            <td class="p-3 font-sans text-white" x-text="d.namaBarang"></td>
-                                            <td class="p-3 font-sans text-slate-300" x-text="d.gudang"></td>
-                                            <td class="p-3 text-right" x-text="d.initialLength + ' m'"></td>
-                                            <td class="p-3 text-right font-bold text-emerald-400" x-text="d.remainingLength + ' m'"></td>
+
+                            <!-- Mobile Card View Drum Ledger -->
+                            <div class="block md:hidden p-3 space-y-3">
+                                <template x-for="d in drumLedger" :key="'mob-drum-' + d.drumId">
+                                    <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-mono font-bold text-indigo-400 text-xs" x-text="d.drumId"></span>
+                                            <span class="font-mono text-[10px] text-slate-400" x-text="d.kodeBarang"></span>
+                                        </div>
+                                        <div class="text-xs text-white font-medium" x-text="d.namaBarang"></div>
+                                        <div class="text-[11px] text-slate-400" x-text="d.gudang"></div>
+                                        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs font-mono">
+                                            <span class="text-slate-400" x-text="'Awal: ' + d.initialLength + ' m'"></span>
+                                            <span class="font-bold text-emerald-400" x-text="'Sisa: ' + d.remainingLength + ' m'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Desktop Table Drum Ledger -->
+                            <div class="hidden md:block overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                            <th class="p-3">Drum ID</th>
+                                            <th class="p-3">Kode Barang</th>
+                                            <th class="p-3">Nama Material</th>
+                                            <th class="p-3">Gudang</th>
+                                            <th class="p-3 text-right">Panjang Awal</th>
+                                            <th class="p-3 text-right">Sisa Panjang</th>
                                         </tr>
-                                    </template>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/60 text-xs font-mono">
+                                        <template x-for="d in drumLedger" :key="d.drumId">
+                                            <tr class="hover:bg-slate-800/30">
+                                                <td class="p-3 text-indigo-400 font-bold" x-text="d.drumId"></td>
+                                                <td class="p-3 text-slate-300" x-text="d.kodeBarang"></td>
+                                                <td class="p-3 font-sans text-white" x-text="d.namaBarang"></td>
+                                                <td class="p-3 font-sans text-slate-300" x-text="d.gudang"></td>
+                                                <td class="p-3 text-right" x-text="d.initialLength + ' m'"></td>
+                                                <td class="p-3 text-right font-bold text-emerald-400" x-text="d.remainingLength + ' m'"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
                     <!-- WH: Material Usage -->
-                    <div x-show="currentTab === 'wh-usage'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                    <div x-show="currentTab === 'wh-usage'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <div class="p-4 border-b border-slate-800">
                             <h3 class="text-xs font-bold text-white uppercase">Rekap Material Usage per Project</h3>
                         </div>
@@ -1047,9 +1339,12 @@
                     </div>
 
                     <!-- WH: Data Transaksi & BAST -->
-                    <div x-show="currentTab === 'wh-transaksi'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
-                        <div class="p-4 border-b border-slate-800">
+                    <div x-show="currentTab === 'wh-transaksi'" class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
+                        <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
                             <h3 class="text-xs font-bold text-white uppercase">Data Transaksi Gudang & Cetak BAST</h3>
+                            <button type="button" @click="exportWarehouseTxCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Transaksi CSV
+                            </button>
                         </div>
                         <table class="w-full text-left border-collapse">
                             <thead>
@@ -1059,6 +1354,7 @@
                                     <th class="p-3">Tipe</th>
                                     <th class="p-3">Asal → Tujuan/Project</th>
                                     <th class="p-3">Keterangan</th>
+                                    <th class="p-3 text-center">Bukti SJ</th>
                                     <th class="p-3 text-right">Cetak BAST</th>
                                 </tr>
                             </thead>
@@ -1068,8 +1364,16 @@
                                         <td class="p-3 text-indigo-400 font-bold" x-text="tx.noTransaksi"></td>
                                         <td class="p-3 text-slate-300" x-text="tx.tanggal"></td>
                                         <td class="p-3 font-sans"><span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300" x-text="tx.tipeTransaksi"></span></td>
-                                        <td class="p-3 font-sans text-slate-300" x-text="tx.gudangAsal + ' → ' + (tx.kodeProject || tx.gudangTujuan)"></td>
+                                        <td class="p-3 font-sans text-slate-300" x-text="tx.gudangAsal + ' → ' + (tx.kodeProject || tx.gudangTujuan || '-')"></td>
                                         <td class="p-3 font-sans text-slate-400" x-text="tx.keterangan"></td>
+                                        <td class="p-3 text-center font-sans">
+                                            <template x-if="tx.attachmentUrl">
+                                                <button type="button" @click="openAttachmentPreview('Bukti Surat Jalan • ' + tx.noTransaksi, tx.attachmentUrl, tx.attachmentName)" class="px-2 py-1 rounded bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                    <i data-lucide="eye" class="w-3 h-3"></i> Lihat Bukti
+                                                </button>
+                                            </template>
+                                            <span x-show="!tx.attachmentUrl" class="text-[10px] text-slate-500">-</span>
+                                        </td>
                                         <td class="p-3 text-right font-sans">
                                             <button type="button" @click="printBAST(tx)" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 px-2.5 py-1 rounded text-[11px] inline-flex items-center gap-1">
                                                 <i data-lucide="printer" class="w-3 h-3"></i> BAST
@@ -1100,7 +1404,7 @@
                                         <i :data-lucide="n.type === 'NEW_PROJECT' ? 'folder-plus' : 'receipt'" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex flex-wrap items-center gap-2">
                                             <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded"
                                                   :class="n.type === 'NEW_PROJECT' ? 'bg-cyan-500/10 text-cyan-300' : 'bg-amber-500/10 text-amber-300'"
                                                   x-text="n.type === 'NEW_PROJECT' ? 'PROJECT BARU DIINPUT' : 'TAGIHAN SUBCONT MASUK'"></span>
@@ -1127,12 +1431,53 @@
                         <div>
                             <h3 class="text-sm font-bold text-white">Input Invoice & Rekap Cash Bank</h3>
                         </div>
-                        <button type="button" @click="openClientInvoiceModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg shadow-emerald-600/20 flex items-center gap-1.5">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Input Invoice Klien Baru
-                        </button>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="exportClientInvoicesCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Rekap CB CSV
+                            </button>
+                            <button type="button" @click="openClientInvoiceModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg shadow-emerald-600/20 flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Input Invoice Klien Baru
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
+                    <!-- Mobile Card View Client Invoices -->
+                    <div class="block md:hidden space-y-3">
+                        <template x-for="(inv, idx) in clientInvoices" :key="'mob-cinv-' + inv.id">
+                            <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 space-y-2.5">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <span class="font-mono font-bold text-white text-xs" x-text="inv.noInvoice || 'Draft Invoice'"></span>
+                                        <div class="text-[10px] text-cyan-400 font-mono" x-text="'PO: ' + inv.noPO + ' • ' + inv.area"></div>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                          :class="inv.statusPembayaran === 'LUNAS' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'"
+                                          x-text="inv.statusPembayaran"></span>
+                                </div>
+                                <div class="text-xs text-slate-200" x-text="inv.lokasiPekerjaan"></div>
+                                <div class="text-[10px] text-indigo-300 font-semibold" x-text="inv.termInv + (inv.tglInvoice ? ' • Tgl: ' + inv.tglInvoice : '')"></div>
+                                <div class="grid grid-cols-2 gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono">
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">Nilai DPP</span>
+                                        <span class="text-slate-200" x-text="formatRupiah(inv.nilaiDpp)"></span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">Nett Cash & Bank</span>
+                                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(inv.nettTerima)"></span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between pt-1">
+                                    <span class="text-[10px] text-slate-400 font-mono" x-text="inv.tglCb ? 'Tgl CB: ' + inv.tglCb : 'Belum Cair'"></span>
+                                    <button type="button" x-show="inv.statusPembayaran !== 'LUNAS'" @click="markClientInvoicePaid(inv)" class="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-[11px] font-semibold">
+                                        Set Cair / LUNAS
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Desktop Table Client Invoices -->
+                    <div class="hidden md:block bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/80">
@@ -1188,11 +1533,50 @@
 
                 <!-- ==================== MENU ACCOUNTING 3: PEMBAYARAN TAGIHAN SUBCONT ==================== -->
                 <div x-show="currentTab === 'acc-subcont-pay'" class="space-y-4" x-cloak>
-                    <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2">
                         <h3 class="text-sm font-bold text-white">Proses Verifikasi & Pembayaran Tagihan Subcont</h3>
+                        <button type="button" @click="exportSubcontInvoicesCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Tagihan CSV
+                        </button>
                     </div>
 
-                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
+                    <!-- Mobile Card View Subcont Payment -->
+                    <div class="block md:hidden space-y-3">
+                        <template x-for="inv in subcontInvoices" :key="'mob-spay-' + inv.id">
+                            <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 space-y-2.5">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <span class="font-mono font-bold text-cyan-400 text-xs" x-text="inv.noInvoice"></span>
+                                        <div class="font-semibold text-amber-300 text-xs mt-0.5" x-text="inv.subcontName"></div>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                          :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-amber-500/10 text-amber-400'"
+                                          x-text="inv.status"></span>
+                                </div>
+                                <div class="text-xs text-white" x-text="inv.projectName"></div>
+                                <div class="flex items-center justify-between text-xs font-mono bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                                    <span class="text-slate-400 font-sans text-[11px]" x-text="inv.termin"></span>
+                                    <span class="font-bold text-white" x-text="formatRupiah(inv.nominal)"></span>
+                                </div>
+                                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                                    <div>
+                                        <template x-if="inv.attachmentUrl">
+                                            <button type="button" @click="openAttachmentPreview('Lampiran BAP • ' + inv.noInvoice, inv.attachmentUrl, inv.attachmentName)" class="px-2.5 py-1.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                <i data-lucide="eye" class="w-3 h-3"></i> Bukti BAP
+                                            </button>
+                                        </template>
+                                    </div>
+                                    <div class="space-x-1.5">
+                                        <button type="button" x-show="inv.status === 'Pending'" @click="processSubcontInvoice(inv, 'Verified')" class="bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1.5 rounded text-[11px] font-semibold">Verifikasi</button>
+                                        <button type="button" x-show="inv.status !== 'Paid'" @click="processSubcontInvoice(inv, 'Paid')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded text-[11px] font-semibold">Bayar (Lunas)</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Desktop Table Subcont Payment -->
+                    <div class="hidden md:block bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
@@ -1202,6 +1586,7 @@
                                     <th class="p-3">Referensi BoQ & Fisik</th>
                                     <th class="p-3">Termin</th>
                                     <th class="p-3 text-right">Nominal Tagihan</th>
+                                    <th class="p-3 text-center">Lampiran BAP</th>
                                     <th class="p-3 text-center">Status</th>
                                     <th class="p-3 text-right">Aksi Keuangan</th>
                                 </tr>
@@ -1218,6 +1603,14 @@
                                         </td>
                                         <td class="p-3 text-slate-300" x-text="inv.termin"></td>
                                         <td class="p-3 text-right font-mono font-bold text-white" x-text="formatRupiah(inv.nominal)"></td>
+                                        <td class="p-3 text-center">
+                                            <template x-if="inv.attachmentUrl">
+                                                <button type="button" @click="openAttachmentPreview('Lampiran BAP / Kwitansi • ' + inv.noInvoice, inv.attachmentUrl, inv.attachmentName)" class="px-2.5 py-1 rounded bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                    <i data-lucide="eye" class="w-3 h-3"></i> Lihat Bukti
+                                                </button>
+                                            </template>
+                                            <span x-show="!inv.attachmentUrl" class="text-[10px] text-slate-500">-</span>
+                                        </td>
                                         <td class="p-3 text-center">
                                             <span class="px-2 py-0.5 rounded text-[10px] font-bold"
                                                   :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-amber-500/10 text-amber-400'"
@@ -1237,7 +1630,7 @@
                 <!-- ==================== MENU ACCOUNTING 4: REKAP BULANAN ==================== -->
                 <div x-show="currentTab === 'acc-rekap-bulanan'" class="space-y-4" x-cloak>
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-sm font-bold text-white mb-1">Executive Summary & Rekapitulasi Cash Bank</h3>
+                        <h3 class="text-sm font-bold text-white mb-3">Executive Summary & Rekapitulasi Cash Bank</h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
@@ -1268,6 +1661,28 @@
                 <button type="button" @click="activeModal = ''" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
 
+            <!-- Modal: Preview Lampiran Bukti Foto / Dokumen -->
+            <div x-show="activeModal === 'attachment-preview'" class="space-y-4">
+                <div class="text-xs text-slate-300" x-text="previewAttachment.name || 'Dokumen Lampiran'"></div>
+                <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 flex flex-col items-center justify-center min-h-[220px] max-h-[60vh] overflow-auto">
+                    <template x-if="isImageUrl(previewAttachment.url)">
+                        <img :src="previewAttachment.url" alt="Bukti Lampiran" class="max-w-full max-h-[52vh] rounded-lg object-contain">
+                    </template>
+                    <template x-if="!isImageUrl(previewAttachment.url)">
+                        <div class="text-center space-y-3 py-6">
+                            <i data-lucide="file-text" class="w-10 h-10 text-cyan-400 mx-auto"></i>
+                            <p class="text-xs text-slate-300">Dokumen eksternal / file PDF siap dibuka:</p>
+                            <a :href="previewAttachment.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Buka Dokumen di Tab Baru
+                            </a>
+                        </div>
+                    </template>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs">Tutup Pratinjau</button>
+                </div>
+            </div>
+
             <!-- Modal: Tambah Klien -->
             <form x-show="activeModal === 'client'" @submit.prevent="saveClient()" class="space-y-3">
                 <div>
@@ -1284,7 +1699,7 @@
                 </div>
             </form>
 
-            <!-- Modal: Tambah Versi KHS Baru (Misal KHS 2026, KHS 2025) -->
+            <!-- Modal: Tambah Versi KHS Baru -->
             <form x-show="activeModal === 'khs-version'" @submit.prevent="saveKhsVersion()" class="space-y-3">
                 <div>
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Klien</label>
@@ -1387,7 +1802,7 @@
                 </div>
             </form>
 
-            <!-- Modal: Input Project Baru (Multi-Subcont Checkbox) -->
+            <!-- Modal: Input Project Baru (Nominal Awal Tetap 0 Auto-Calculated & Subcont Opsional) -->
             <form x-show="activeModal === 'new-project'" @submit.prevent="saveNewProject()" class="space-y-3 max-h-[80vh] overflow-y-auto pr-1">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -1408,7 +1823,7 @@
                     </div>
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Estimasi Nominal Kontrak Awal (Rp)</label>
-                        <input type="number" x-model.number="formProject.nominalAwal" required placeholder="52513600" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold">
+                        <input type="text" value="Rp 0 (Otomatis dari BoQ)" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold cursor-not-allowed">
                     </div>
                 </div>
                 <div>
@@ -1416,7 +1831,7 @@
                     <input type="text" x-model="formProject.projectName" required placeholder="DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1.5">Pilih Tim Subcont Pelaksana</label>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1.5">Pilih Tim Subcont Pelaksana <span class="text-slate-400 font-normal">(Opsional / Boleh Dikosongkan)</span></label>
                     <div class="space-y-1.5 max-h-32 overflow-y-auto p-2.5 rounded-lg bg-slate-950 border border-slate-800">
                         <template x-for="s in subconts" :key="s.id">
                             <label class="flex items-center gap-2.5 text-xs text-slate-200 cursor-pointer hover:text-amber-300">
@@ -1427,11 +1842,11 @@
                     </div>
                 </div>
                 <div class="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-300">
-                    💡 Setelah project dibuat, alokasikan item & volume pekerjaan berbeda untuk tiap Subcont di menu <strong>BoQ Project & Subcont</strong>.
+                    💡 Nominal kontrak awal otomatis dimulai dari <strong>Rp 0</strong> dan akan terupdate secara otomatis saat Anda menambahkan/mengubah item di menu <strong>BoQ Project & Subcont</strong>. Tim Subcont juga dapat diatur kapan saja di menu <strong>Daftar Project</strong>.
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg text-xs">Simpan & Kirim Notif Keuangan</button>
+                    <button type="submit" class="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg text-xs">Simpan Project</button>
                 </div>
             </form>
 
@@ -1482,7 +1897,37 @@
                 </div>
             </form>
 
-            <!-- Modal: Alokasi Item & Volume Pekerjaan ke Subcont Tertentu -->
+            <!-- Modal: Revisi / Adendum Item BoQ Klien (Audit Trail) -->
+            <form x-show="activeModal === 'boq-adendum'" @submit.prevent="saveBoqAdendum()" class="space-y-3">
+                <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                    <span class="font-mono font-bold text-cyan-400 text-xs" x-text="formBoqAdendum.designator"></span>
+                    <div class="text-xs text-white mt-0.5" x-text="formBoqAdendum.namaPekerjaan"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Vol Kontrak Awal</label>
+                        <input type="number" step="any" min="0" x-model.number="formBoqAdendum.volAwal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Harga Sat. Material</label>
+                        <input type="number" step="any" min="0" x-model.number="formBoqAdendum.hargaMaterial" :disabled="formBoqAdendum.isClientMaterial" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono disabled:opacity-40">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Harga Sat. Jasa</label>
+                        <input type="number" step="any" min="0" x-model.number="formBoqAdendum.hargaJasa" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">Alasan Revisi / Nomor Adendum Kontrak</label>
+                    <input type="text" x-model="formBoqAdendum.alasan" required placeholder="Contoh: Adendum 01 - Penyesuaian Rute & Harga Jasa" class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-white">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg text-xs">Simpan Adendum & Catat Log</button>
+                </div>
+            </form>
+
+            <!-- Modal: Alokasi Item & Volume Pekerjaan ke Subcont Tertentu (Dengan Preventive Validation) -->
             <form x-show="activeModal === 'subcont-boq-add'" @submit.prevent="saveSubcontBoqLine()" class="space-y-3">
                 <div>
                     <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">1. Pilih Subcont Pelaksana di Project Ini</label>
@@ -1494,14 +1939,30 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] text-slate-400 uppercase mb-1">2. Pilih Designator / Item Pekerjaan</label>
-                    <select x-model="formSubcontBoq.khsItemId" @change="autoFillSubcontRateOnModal()" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
-                        <option value="">-- Pilih Designator Pekerjaan --</option>
-                        <template x-for="k in khsItems" :key="k.id">
-                            <option :value="k.id" x-text="'[' + getKhsVersionNameById(k.khsVersionId) + '] ' + k.designator + ' - ' + k.namaPekerjaan + ' (' + k.satuan + ')'"></option>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">2. Pilih Item dari BoQ Klien Project Ini</label>
+                    <select x-model="formSubcontBoq.boqLineId" @change="autoFillSubcontRateOnModal()" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <option value="">-- Pilih Item BoQ Kontrak Klien --</option>
+                        <template x-for="bl in getProjectBoqLines(selectedBoqProject)" :key="bl.id">
+                            <option :value="bl.id" x-text="bl.designator + ' - ' + bl.namaPekerjaan + ' (Sisa Kuota: ' + getRemainingClientBoqVolume(selectedBoqProject, bl.designator) + ' ' + (bl.satuan || '') + ')'"></option>
                         </template>
                     </select>
                 </div>
+
+                <!-- Indikator Kuota Volume Kontrak Klien -->
+                <template x-if="getSelectedClientBoqLineForAllocation()">
+                    <div class="p-2.5 rounded-lg bg-slate-950 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+                        <div>
+                            <span class="text-slate-400 font-sans block text-[10px]">Total Kontrak Klien:</span>
+                            <strong class="text-white" x-text="getSelectedClientBoqLineForAllocation().volAwal + ' ' + (getSelectedClientBoqLineForAllocation().satuan || '')"></strong>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-slate-400 font-sans block text-[10px]">Sisa Kuota Tersedia:</span>
+                            <strong :class="getRemainingClientBoqVolume(selectedBoqProject, getSelectedClientBoqLineForAllocation().designator) <= 0 ? 'text-rose-400' : 'text-emerald-400'"
+                                    x-text="getRemainingClientBoqVolume(selectedBoqProject, getSelectedClientBoqLineForAllocation().designator) + ' ' + (getSelectedClientBoqLineForAllocation().satuan || '')"></strong>
+                        </div>
+                    </div>
+                </template>
+
                 <div class="grid grid-cols-3 gap-3">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Vol Target (Awal)</label>
@@ -1516,15 +1977,15 @@
                         <input type="number" step="any" min="0" x-model.number="formSubcontBoq.hargaSubcont" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-amber-300 font-mono font-bold">
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-400">* Harga satuan otomatis diambil dari Rate Card Subcont jika sudah terdaftar, atau dapat disesuaikan manual.</p>
+                <p class="text-[10px] text-slate-400">* Sistem memblokir alokasi jika melebihi sisa kuota volume kontrak Klien.</p>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
                     <button type="submit" class="px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg text-xs">Simpan Alokasi Subcont</button>
                 </div>
             </form>
 
-            <!-- Modal: Input Tagihan Subcont (Multi-Subcont Aware) -->
-            <form x-show="activeModal === 'subcont-inv'" @submit.prevent="saveSubcontInvoice()" class="space-y-3">
+            <!-- Modal: Input Tagihan Subcont (Dengan Lampiran BAP / Kwitansi) -->
+            <form x-show="activeModal === 'subcont-inv'" @submit.prevent="saveSubcontInvoice()" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1">
                 <div>
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
                     <select x-model="formSubcontInv.kodeProject" @change="formSubcontInv.subcontId = (getProjectByCode(formSubcontInv.kodeProject)?.subcontIds?.[0] || '')" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
@@ -1543,7 +2004,6 @@
                         </template>
                     </select>
                 </div>
-                <!-- Info Referensi BoQ & Progress Fisik Subcont -->
                 <div x-show="formSubcontInv.kodeProject && formSubcontInv.subcontId" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between text-[11px] font-mono">
                     <div>
                         <span class="text-slate-400 font-sans block text-[10px]">Total SPK / BoQ Subcont Ini:</span>
@@ -1567,6 +2027,11 @@
                 <div>
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Nominal Tagihan Subcont (Rp)</label>
                     <input type="number" x-model.number="formSubcontInv.nominal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-amber-400 font-mono font-bold">
+                </div>
+                <div class="space-y-2 pt-2 border-t border-slate-800">
+                    <label class="block text-[10px] text-indigo-400 font-bold uppercase">Lampiran BAP / Kwitansi Subcont (Foto atau PDF)</label>
+                    <input type="file" accept="image/*,.pdf" @change="handleFileUpload($event, 'subcont-inv')" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-600/20 file:text-indigo-300">
+                    <input type="url" x-model="formSubcontInv.attachmentUrl" placeholder="Atau tempel link Google Drive / URL dokumen BAP..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200">
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
@@ -1733,8 +2198,9 @@
     </div>
 
     <!-- TOAST NOTIFICATION -->
-    <div x-show="toast.show" class="fixed bottom-5 right-5 z-50 max-w-md p-4 rounded-xl shadow-2xl border bg-slate-900/95 border-cyan-500/40 text-cyan-200 flex items-center gap-3 backdrop-blur-xl print:hidden" x-cloak>
-        <i data-lucide="bell-ring" class="w-5 h-5 text-cyan-400 shrink-0"></i>
+    <div x-show="toast.show" class="fixed bottom-5 right-5 z-50 max-w-md p-4 rounded-xl shadow-2xl border flex items-center gap-3 backdrop-blur-xl print:hidden"
+         :class="toast.type === 'error' ? 'bg-rose-950/95 border-rose-500/50 text-rose-200' : 'bg-slate-900/95 border-cyan-500/40 text-cyan-200'" x-cloak>
+        <i :data-lucide="toast.type === 'error' ? 'alert-triangle' : 'bell-ring'" class="w-5 h-5 shrink-0" :class="toast.type === 'error' ? 'text-rose-400' : 'text-cyan-400'"></i>
         <div class="text-xs font-medium" x-text="toast.message"></div>
     </div>
 
@@ -1782,7 +2248,9 @@
         const SUPABASE_ANON_KEY = 'SUPABASE_ANON_KEY';
         let sbClient = null;
         try {
-            if (window.supabase) sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            if (window.supabase && SUPABASE_URL !== 'SUPABASE_URL') {
+                sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
         } catch (e) { console.warn('Supabase fallback to local storage'); }
 
         function acmErpApp() {
@@ -1794,7 +2262,7 @@
                     noPO: 'POS25-26011535',
                     projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG',
                     subcontIds: ['SUB-01', 'SUB-02'],
-                    nominalAwal: 52513600
+                    nominalAwal: 0
                 }
             ];
 
@@ -1806,8 +2274,9 @@
                 currentUser: localStorage.getItem('acm_erp_user') || 'Rudi (PM YOFC)',
                 currentRole: localStorage.getItem('acm_erp_role') || 'Super Admin',
                 currentTab: 'dashboard',
+                mobileMenuOpen: false,
                 isLoading: false,
-                toast: { show: false, message: '' },
+                toast: { show: false, message: '', type: 'info' },
 
                 loginForm: { email: 'rudi@acerocetha.co.id', password: '••••••••', demoRole: 'Super Admin' },
 
@@ -1820,6 +2289,7 @@
                 boqMode: 'awal',
                 activeModal: '',
                 modalTitle: '',
+                previewAttachment: { url: '', name: '' },
 
                 // Data Master Klien & Versi KHS
                 clients: JSON.parse(localStorage.getItem('acm_clients') || 'null') || [
@@ -1862,11 +2332,12 @@
                     { id: 'SBL-2', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Selatan)', satuan: 'Meter', volAwal: 1500, volAkhir: 900, hargaSubcont: 3000 },
                     { id: 'SBL-3', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7m', satuan: 'Batang', volAwal: 23, volAkhir: 18, hargaSubcont: 980000 }
                 ],
+                boqAdendumLogs: JSON.parse(localStorage.getItem('acm_boq_adendum_logs') || 'null') || [],
 
                 // Data Waspang Harian
-                waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', subcontBoqLineId: '', volume: '' },
+                waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', subcontBoqLineId: '', volume: '', attachmentUrl: '', attachmentName: '' },
                 waspangLogs: JSON.parse(localStorage.getItem('acm_waspang_logs_v2') || 'null') || [
-                    { id: 1, tanggal: '2026-11-12', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Utara)', volume: 1500, waspangName: 'Waspang Palembang' }
+                    { id: 1, tanggal: '2026-11-12', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Utara)', volume: 1500, waspangName: 'Waspang Palembang', attachmentUrl: '', attachmentName: '' }
                 ],
 
                 // Data Warehouse
@@ -1885,18 +2356,18 @@
                     { id: 1, tanggal: '2026-11-10', kodeProject: 'PLB-2026-001', namaBarang: 'Kabel ADSS 24 Core YOFC', drumId: 'PLB01-ADSS024YOFC-D01', qty: 2150 }
                 ],
                 transactions: JSON.parse(localStorage.getItem('acm_wh_tx') || 'null') || [
-                    { noTransaksi: 'PLB01-OUT-2611-001', tanggal: '2026-11-10', tipeTransaksi: 'Keluar', gudangAsal: 'Gudang Regional Palembang', kodeProject: 'PLB-2026-001', keterangan: 'Pengambilan Kabel Tim Subcont', singleKodeBarang: 'ADSS-024-YOFC', singleNamaBarang: 'Kabel ADSS 24 Core YOFC', singleDrumId: 'PLB01-ADSS024YOFC-D01', singleQty: 2150 }
+                    { noTransaksi: 'PLB01-OUT-2611-001', tanggal: '2026-11-10', tipeTransaksi: 'Keluar', gudangAsal: 'Gudang Regional Palembang', kodeProject: 'PLB-2026-001', keterangan: 'Pengambilan Kabel Tim Subcont', singleKodeBarang: 'ADSS-024-YOFC', singleNamaBarang: 'Kabel ADSS 24 Core YOFC', singleDrumId: 'PLB01-ADSS024YOFC-D01', singleQty: 2150, attachmentUrl: '', attachmentName: '' }
                 ],
-                newTrans: { tanggal: new Date().toISOString().split('T')[0], tipeTransaksi: 'Masuk', gudangAsal: '', kodeProject: '', singleKodeBarang: '', singleDrumId: '', singleQty: '', keterangan: '' },
+                newTrans: { tanggal: new Date().toISOString().split('T')[0], tipeTransaksi: 'Masuk', gudangAsal: '', kodeProject: '', singleKodeBarang: '', singleDrumId: '', singleQty: '', keterangan: '', attachmentUrl: '', attachmentName: '' },
                 activeBast: {},
 
                 // Data Accounting & Notifikasi
                 notifications: JSON.parse(localStorage.getItem('acm_notifications') || 'null') || [
-                    { id: 1, type: 'NEW_PROJECT', title: 'Project Baru: DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', nominal: 52513600, detail: 'No PO: POS25-26011535 | Area: PALEMBANG | 2 Subcont', timestamp: 'Hari ini, 09:15', isRead: false },
+                    { id: 1, type: 'NEW_PROJECT', title: 'Project Baru: DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', nominal: 52450000, detail: 'No PO: POS25-26011535 | Area: PALEMBANG | 2 Subcont', timestamp: 'Hari ini, 09:15', isRead: false },
                     { id: 2, type: 'SUBCONT_INV', title: 'Tagihan Subcont: CV Sriwijaya Fiberindo', nominal: 4200000, detail: 'Project PLB-2026-001 | Termin 1 (50% Segmen Utara)', timestamp: 'Hari ini, 11:30', isRead: false }
                 ],
                 subcontInvoices: JSON.parse(localStorage.getItem('acm_subcont_inv_v2') || 'null') || [
-                    { id: 1, noInvoice: 'INV-SUB/PLB/2026/001', tanggal: '2026-11-13', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', termin: 'Termin 1 (50% Fisik)', nominal: 4200000, status: 'Pending' }
+                    { id: 1, noInvoice: 'INV-SUB/PLB/2026/001', tanggal: '2026-11-13', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', termin: 'Termin 1 (50% Fisik)', nominal: 4200000, status: 'Pending', attachmentUrl: '', attachmentName: '' }
                 ],
                 clientInvoices: JSON.parse(localStorage.getItem('acm_client_inv') || 'null') || [
                     { id: 1, area: 'PALEMBANG', noPO: 'POS25-26011535', lokasiPekerjaan: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', termInv: 'INV I (40%)', noInvoice: '074/ACM-INV-YOFC/III/2026', tglInvoice: '2026-03-02', noFakturPajak: '4012600069041490', nilaiDpp: 21005440, pph175: 367595, ppn11: 2310598, nettTerima: 22948443, tglCb: '2026-03-27', statusPembayaran: 'LUNAS' },
@@ -1909,12 +2380,13 @@
                 formKhs: { khsVersionId: 'VERS-2026', designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 },
                 formSubcont: { name: '', area: '' },
                 formSubcontRate: { khsItemId: '', hargaSubcont: 0 },
-                formProject: { clientId: 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: ['SUB-01'], projectName: '', nominalAwal: 0 },
+                formProject: { clientId: 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: [], projectName: '', nominalAwal: 0 },
                 manageSubcontProject: null,
                 managedSubcontIds: [],
                 formBoqAdd: { khsItemId: '', volAwal: 0, volAkhir: 0 },
-                formSubcontBoq: { subcontId: '', khsItemId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 },
-                formSubcontInv: { kodeProject: '', subcontId: '', noInvoice: '', termin: '', nominal: 0 },
+                formBoqAdendum: { lineId: '', designator: '', namaPekerjaan: '', isClientMaterial: false, volAwal: 0, hargaMaterial: 0, hargaJasa: 0, alasan: '' },
+                formSubcontBoq: { subcontId: '', boqLineId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 },
+                formSubcontInv: { kodeProject: '', subcontId: '', noInvoice: '', termin: '', nominal: 0, attachmentUrl: '', attachmentName: '' },
                 formClientInv: { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: '', noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' },
                 formWhBarang: { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' },
                 formWhGudang: { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' },
@@ -1924,27 +2396,33 @@
                 },
 
                 persistAll() {
-                    localStorage.setItem('acm_clients', JSON.stringify(this.clients));
-                    localStorage.setItem('acm_khsVersions', JSON.stringify(this.khsVersions));
-                    localStorage.setItem('acm_khsItems_v2', JSON.stringify(this.khsItems));
-                    localStorage.setItem('acm_subconts', JSON.stringify(this.subconts));
-                    localStorage.setItem('acm_subcontRates', JSON.stringify(this.subcontRates));
-                    localStorage.setItem('acm_projects_v2', JSON.stringify(this.masterProject));
-                    localStorage.setItem('acm_boq_lines_v2', JSON.stringify(this.projectBoqLines));
-                    localStorage.setItem('acm_subcont_boq_lines_v2', JSON.stringify(this.subcontBoqLines));
-                    localStorage.setItem('acm_waspang_logs_v2', JSON.stringify(this.waspangLogs));
-                    localStorage.setItem('acm_wh_barang', JSON.stringify(this.masterBarang));
-                    localStorage.setItem('acm_wh_gudang', JSON.stringify(this.masterGudang));
-                    localStorage.setItem('acm_wh_drums', JSON.stringify(this.drumLedger));
-                    localStorage.setItem('acm_wh_usage', JSON.stringify(this.materialUsage));
-                    localStorage.setItem('acm_wh_tx', JSON.stringify(this.transactions));
-                    localStorage.setItem('acm_notifications', JSON.stringify(this.notifications));
-                    localStorage.setItem('acm_subcont_inv_v2', JSON.stringify(this.subcontInvoices));
-                    localStorage.setItem('acm_client_inv', JSON.stringify(this.clientInvoices));
+                    try {
+                        localStorage.setItem('acm_clients', JSON.stringify(this.clients));
+                        localStorage.setItem('acm_khsVersions', JSON.stringify(this.khsVersions));
+                        localStorage.setItem('acm_khsItems_v2', JSON.stringify(this.khsItems));
+                        localStorage.setItem('acm_subconts', JSON.stringify(this.subconts));
+                        localStorage.setItem('acm_subcontRates', JSON.stringify(this.subcontRates));
+                        localStorage.setItem('acm_projects_v2', JSON.stringify(this.masterProject));
+                        localStorage.setItem('acm_boq_lines_v2', JSON.stringify(this.projectBoqLines));
+                        localStorage.setItem('acm_subcont_boq_lines_v2', JSON.stringify(this.subcontBoqLines));
+                        localStorage.setItem('acm_boq_adendum_logs', JSON.stringify(this.boqAdendumLogs));
+                        localStorage.setItem('acm_waspang_logs_v2', JSON.stringify(this.waspangLogs));
+                        localStorage.setItem('acm_wh_barang', JSON.stringify(this.masterBarang));
+                        localStorage.setItem('acm_wh_gudang', JSON.stringify(this.masterGudang));
+                        localStorage.setItem('acm_wh_drums', JSON.stringify(this.drumLedger));
+                        localStorage.setItem('acm_wh_usage', JSON.stringify(this.materialUsage));
+                        localStorage.setItem('acm_wh_tx', JSON.stringify(this.transactions));
+                        localStorage.setItem('acm_notifications', JSON.stringify(this.notifications));
+                        localStorage.setItem('acm_subcont_inv_v2', JSON.stringify(this.subcontInvoices));
+                        localStorage.setItem('acm_client_inv', JSON.stringify(this.clientInvoices));
+                    } catch (err) {
+                        console.warn('Storage quota warning:', err);
+                        this.showToast('Peringatan kapasitas penyimpanan lokal penuh, gunakan link URL untuk file berukuran besar.', 'error');
+                    }
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                 },
 
-                // ==================== ROLE-BASED ACCESS ====================
+                // ==================== ROLE-BASED ACCESS & NAVIGATION ====================
                 applyDemoPreset() {
                     const roleMap = {
                         'Super Admin': 'rudi@acerocetha.co.id',
@@ -1984,6 +2462,7 @@
 
                 switchTab(tab) {
                     this.currentTab = tab;
+                    this.mobileMenuOpen = false;
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                 },
 
@@ -1993,7 +2472,7 @@
                         'prj-khs': 'Project • Master KHS • Klien',
                         'prj-subcont': 'Project • Master Subcont',
                         'prj-list': 'Project • Daftar Project • Subcont • Progress Keuangan',
-                        'prj-boq': 'Project • BoQ Utama •  Subcont',
+                        'prj-boq': 'Project • BoQ Utama • Alokasi Subcont & Adendum',
                         'prj-subcont-inv': 'Project • Tagihan Subcont',
                         'waspang-daily': 'Waspang • Input Volume Harian Subcont',
                         'wh-barang': 'Warehouse • Master Barang',
@@ -2012,9 +2491,10 @@
 
                 userRegion() { return 'ALL AREA (SUMATERA)'; },
 
-                showToast(msg) {
-                    this.toast = { show: true, message: msg };
-                    setTimeout(() => { this.toast.show = false; }, 4500);
+                showToast(msg, type = 'info') {
+                    this.toast = { show: true, message: msg, type: type };
+                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                    setTimeout(() => { this.toast.show = false; }, 4800);
                 },
 
                 formatRupiah(val) {
@@ -2022,11 +2502,186 @@
                     return 'Rp ' + num.toLocaleString('id-ID');
                 },
 
+                // ==================== FILE ATTACHMENT & PREVIEW HELPERS ====================
+                handleFileUpload(event, target) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    if (file.size > 1500000) {
+                        this.showToast('Ukuran file melebihi 1.5MB untuk penyimpanan lokal. Disarankan memakai link Google Drive.', 'error');
+                        event.target.value = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const dataUrl = e.target.result;
+                        if (target === 'waspang') {
+                            this.waspangForm.attachmentUrl = dataUrl;
+                            this.waspangForm.attachmentName = file.name;
+                        } else if (target === 'wh-tx') {
+                            this.newTrans.attachmentUrl = dataUrl;
+                            this.newTrans.attachmentName = file.name;
+                        } else if (target === 'subcont-inv') {
+                            this.formSubcontInv.attachmentUrl = dataUrl;
+                            this.formSubcontInv.attachmentName = file.name;
+                        }
+                        this.showToast(`Lampiran "${file.name}" siap disimpan.`);
+                    };
+                    reader.readAsDataURL(file);
+                },
+
+                openAttachmentPreview(title, url, name) {
+                    this.modalTitle = title;
+                    this.previewAttachment = { url: url, name: name || url };
+                    this.activeModal = 'attachment-preview';
+                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                },
+
+                isImageUrl(url) {
+                    if (!url) return false;
+                    if (url.startsWith('data:image/')) return true;
+                    return /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(url);
+                },
+
+                // ==================== EXPORT CSV / EXCEL HELPERS ====================
+                downloadCSV(filename, headers, rows) {
+                    const escapeCell = (val) => {
+                        const str = String(val === null || val === undefined ? '' : val);
+                        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                            return '"' + str.replace(/"/g, '""') + '"';
+                        }
+                        return str;
+                    };
+                    const csvContent = '\uFEFF' + [
+                        headers.map(escapeCell).join(','),
+                        ...rows.map(r => r.map(escapeCell).join(','))
+                    ].join('\n');
+
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    this.showToast(`File ${filename} berhasil diunduh!`);
+                },
+
+                exportProjectsCSV() {
+                    const headers = ['Kode Project', 'No PO', 'Klien', 'Region', 'Nama Project', 'Tim Subcont', 'BoQ Klien Awal', 'BoQ Klien Akhir', 'BoQ Subcont Awal', 'Progress Fisik (%)', 'Cair Klien', 'Bayar Subcont'];
+                    const rows = this.masterProject.map(p => [
+                        p.kodeProject,
+                        p.noPO,
+                        this.getClientName(p.clientId),
+                        p.region,
+                        p.projectName,
+                        (p.subcontIds || []).map(sid => this.getSubcontName(sid)).join('; '),
+                        this.getProjectBoqTotal(p.kodeProject, 'awal'),
+                        this.getProjectBoqTotal(p.kodeProject, 'akhir'),
+                        this.getAllSubcontsProjectBoqTotal(p.kodeProject, 'awal'),
+                        this.getProjectPhysicalProgress(p.kodeProject),
+                        this.getProjectClientPaid(p.noPO),
+                        this.getProjectSubcontPaid(p.kodeProject)
+                    ]);
+                    this.downloadCSV(`ACM_Daftar_Project_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                exportBoqCSV() {
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    const headers = ['Tipe', 'Subcont', 'Designator', 'Nama Pekerjaan', 'Satuan', 'Vol Awal', 'Vol Akhir', 'Harga Material', 'Harga Jasa / Subcont', 'Total Awal', 'Total Akhir'];
+                    const clientRows = this.getProjectBoqLines(this.selectedBoqProject).map(l => [
+                        'BoQ Klien',
+                        '-',
+                        l.designator,
+                        l.namaPekerjaan,
+                        l.satuan,
+                        l.volAwal,
+                        l.volAkhir,
+                        l.isClientMaterial ? 0 : l.hargaMaterial,
+                        l.hargaJasa,
+                        this.calcBoqLineClientTotal(l, 'awal'),
+                        this.calcBoqLineClientTotal(l, 'akhir')
+                    ]);
+                    const subRows = this.getSubcontBoqLines(this.selectedBoqProject, 'ALL').map(s => [
+                        'BoQ Subcont',
+                        this.getSubcontName(s.subcontId),
+                        s.designator,
+                        s.namaPekerjaan,
+                        s.satuan,
+                        s.volAwal,
+                        s.volAkhir,
+                        0,
+                        s.hargaSubcont,
+                        s.volAwal * s.hargaSubcont,
+                        s.volAkhir * s.hargaSubcont
+                    ]);
+                    this.downloadCSV(`ACM_BoQ_${prj?.kodeProject || 'Project'}_${new Date().toISOString().slice(0,10)}.csv`, headers, [...clientRows, ...subRows]);
+                },
+
+                exportClientInvoicesCSV() {
+                    const headers = ['No', 'Area', 'No PO', 'Lokasi Pekerjaan', 'Termin', 'No Invoice', 'Tgl Invoice', 'No Faktur Pajak', 'Nilai DPP', 'PPh 1.75%', 'PPN 11%', 'Nett Cash Bank', 'Tgl CB', 'Status'];
+                    const rows = this.clientInvoices.map((inv, idx) => [
+                        idx + 1,
+                        inv.area,
+                        inv.noPO,
+                        inv.lokasiPekerjaan,
+                        inv.termInv,
+                        inv.noInvoice,
+                        inv.tglInvoice,
+                        inv.noFakturPajak,
+                        inv.nilaiDpp,
+                        inv.pph175,
+                        inv.ppn11,
+                        inv.nettTerima,
+                        inv.tglCb,
+                        inv.statusPembayaran
+                    ]);
+                    this.downloadCSV(`ACM_Rekap_Invoice_Klien_CB_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                exportSubcontInvoicesCSV() {
+                    const headers = ['No Tagihan', 'Tanggal', 'Kode Project', 'Nama Project', 'Subcont Penagih', 'Termin', 'Nominal Tagihan', 'Status'];
+                    const rows = this.subcontInvoices.map(inv => [
+                        inv.noInvoice,
+                        inv.tanggal,
+                        inv.kodeProject,
+                        inv.projectName,
+                        inv.subcontName,
+                        inv.termin,
+                        inv.nominal,
+                        inv.status
+                    ]);
+                    this.downloadCSV(`ACM_Tagihan_Subcont_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                exportWarehouseTxCSV() {
+                    const headers = ['No Transaksi', 'Tanggal', 'Tipe', 'Gudang Asal', 'Kode Project', 'Kode Barang', 'Nama Barang', 'Drum ID', 'Qty', 'Keterangan'];
+                    const rows = this.transactions.map(tx => [
+                        tx.noTransaksi,
+                        tx.tanggal,
+                        tx.tipeTransaksi,
+                        tx.gudangAsal,
+                        tx.kodeProject,
+                        tx.singleKodeBarang,
+                        tx.singleNamaBarang,
+                        tx.singleDrumId,
+                        tx.singleQty,
+                        tx.keterangan
+                    ]);
+                    this.downloadCSV(`ACM_Transaksi_Warehouse_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
                 // ==================== KHS & CLIENT HELPERS ====================
                 getClientName(id) { return this.clients.find(c => c.id === id)?.name || id; },
                 getSubcontName(id) { return this.subconts.find(s => s.id === id)?.name || id; },
                 getProjectByCode(code) { return this.masterProject.find(p => p.kodeProject === code); },
                 
+                onClientFilterChange() {
+                    const vers = this.getFilteredKhsVersions();
+                    if (vers.length > 0) {
+                        const def = vers.find(v => v.isDefault) || vers[0];
+                        this.selectedKhsVersionId = def.id;
+                    }
+                },
                 getFilteredKhsVersions() {
                     return this.khsVersions.filter(v => v.clientId === this.selectedKhsClient);
                 },
@@ -2116,27 +2771,24 @@
                         clientId: this.clients[0]?.id || '',
                         region: 'PALEMBANG',
                         noPO: '',
-                        subcontIds: this.subconts[0] ? [this.subconts[0].id] : [],
+                        subcontIds: [],
                         projectName: '',
                         nominalAwal: 0
                     };
                     this.activeModal = 'new-project';
                 },
                 saveNewProject() {
-                    if (!this.formProject.subcontIds || this.formProject.subcontIds.length === 0) {
-                        this.showToast('Pilih minimal 1 Tim Subcont Pelaksana!');
-                        return;
-                    }
                     const regCode = (this.formProject.region || 'PRJ').substring(0, 3).toUpperCase();
                     const kode = `${regCode}-2026-${String(this.masterProject.length + 1).padStart(3, '0')}`;
+                    const subIds = Array.isArray(this.formProject.subcontIds) ? [...this.formProject.subcontIds] : [];
                     const newPrj = {
                         kodeProject: kode,
                         clientId: this.formProject.clientId,
                         region: this.formProject.region,
                         noPO: this.formProject.noPO,
-                        subcontIds: [...this.formProject.subcontIds],
+                        subcontIds: subIds,
                         projectName: this.formProject.projectName,
-                        nominalAwal: Number(this.formProject.nominalAwal) || 0
+                        nominalAwal: 0
                     };
                     this.masterProject.push(newPrj);
 
@@ -2144,8 +2796,8 @@
                         id: Date.now(),
                         type: 'NEW_PROJECT',
                         title: `Project Baru: ${newPrj.projectName} (${kode})`,
-                        nominal: Number(newPrj.nominalAwal) || 0,
-                        detail: `No PO: ${newPrj.noPO} | Klien: ${this.getClientName(newPrj.clientId)} | ${newPrj.subcontIds.length} Subcont`,
+                        nominal: 0,
+                        detail: `No PO: ${newPrj.noPO} | Klien: ${this.getClientName(newPrj.clientId)} | ${subIds.length} Subcont`,
                         timestamp: 'Baru saja',
                         isRead: false
                     });
@@ -2153,7 +2805,7 @@
                     this.selectedBoqProject = kode;
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Project ${kode} dengan ${newPrj.subcontIds.length} Subcont disimpan & Notif dikirim ke Accounting!`);
+                    this.showToast(`Project ${kode} berhasil dibuat! Silakan lengkapi BoQ & Tim Subcont.`);
                 },
 
                 openManageProjectSubconts(prj) {
@@ -2164,17 +2816,26 @@
                 },
                 saveManagedProjectSubconts() {
                     if (!this.manageSubcontProject) return;
-                    if (this.managedSubcontIds.length === 0) {
-                        this.showToast('Minimal harus ada 1 Subcont pelaksana pada project!');
-                        return;
-                    }
                     this.manageSubcontProject.subcontIds = [...this.managedSubcontIds];
                     this.persistAll();
                     this.activeModal = '';
                     this.showToast('Daftar Tim Subcont pada project berhasil diperbarui!');
                 },
 
-                // ==================== BoQ KLIEN & ALOKASI MULTI-SUBCONT ====================
+                syncProjectContractSummary(kodeProject) {
+                    const prj = this.getProjectByCode(kodeProject);
+                    if (!prj) return;
+                    const newTotal = this.getProjectBoqTotal(kodeProject, 'awal');
+                    prj.nominalAwal = newTotal;
+
+                    // Update juga nominal pada notifikasi project baru jika masih ada
+                    const notif = this.notifications.find(n => n.type === 'NEW_PROJECT' && n.title.includes(`(${kodeProject})`));
+                    if (notif) {
+                        notif.nominal = newTotal;
+                    }
+                },
+
+                // ==================== BoQ KLIEN, PREVENTIVE VALIDATION & ADENDUM ====================
                 getProjectBoqLines(kodeProject) {
                     return this.projectBoqLines.filter(l => l.kodeProject === kodeProject);
                 },
@@ -2189,6 +2850,12 @@
                         .filter(l => l.kodeProject === kodeProject && l.designator === designator)
                         .reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
                 },
+                getRemainingClientBoqVolume(kodeProject, designator) {
+                    const clientLine = this.projectBoqLines.find(l => l.kodeProject === kodeProject && l.designator === designator);
+                    if (!clientLine) return 0;
+                    const allocated = this.getAllocatedSubcontVolumeForDesignator(kodeProject, designator);
+                    return Math.max(0, Number(clientLine.volAwal) - allocated);
+                },
                 calcBoqLineClientTotal(line, mode) {
                     const vol = mode === 'awal' ? Number(line.volAwal) : Number(line.volAkhir);
                     const mat = line.isClientMaterial ? 0 : Number(line.hargaMaterial);
@@ -2196,9 +2863,6 @@
                 },
                 getProjectBoqTotal(kodeProject, mode) {
                     const lines = this.getProjectBoqLines(kodeProject);
-                    if (lines.length === 0 && mode === 'awal') {
-                        return this.getProjectByCode(kodeProject)?.nominalAwal || 0;
-                    }
                     return lines.reduce((sum, l) => sum + this.calcBoqLineClientTotal(l, mode), 0);
                 },
                 getSubcontProjectBoqTotal(kodeProject, subcontId, mode) {
@@ -2214,6 +2878,9 @@
                         return sum + (vol * Number(l.hargaSubcont || 0));
                     }, 0);
                 },
+                getProjectAdendumLogs(kodeProject) {
+                    return this.boqAdendumLogs.filter(r => r.kodeProject === kodeProject);
+                },
 
                 openAddBoqFromKhsModal() {
                     this.modalTitle = 'Tambah Item BoQ Utama Klien (KHS)';
@@ -2223,6 +2890,13 @@
                 saveBoqFromKhs() {
                     const khs = this.khsItems.find(k => k.id === this.formBoqAdd.khsItemId);
                     if (!khs) return;
+
+                    const existing = this.projectBoqLines.find(l => l.kodeProject === this.selectedBoqProject && l.designator === khs.designator);
+                    if (existing) {
+                        this.showToast(`Designator ${khs.designator} sudah ada di BoQ Klien. Gunakan tombol "Revisi / Adendum" untuk mengubah volume/harga.`, 'error');
+                        return;
+                    }
+
                     this.projectBoqLines.push({
                         id: 'BL-' + Date.now(),
                         kodeProject: this.selectedBoqProject,
@@ -2235,62 +2909,126 @@
                         hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
                         hargaJasa: Number(khs.hargaJasa)
                     });
+                    this.syncProjectContractSummary(this.selectedBoqProject);
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Item BoQ Utama Klien berhasil ditambahkan');
+                    this.showToast('Item BoQ Utama Klien ditambahkan & Nilai Kontrak Awal otomatis terupdate!');
+                },
+
+                // Modal & Simpan Revisi / Adendum Kontrak
+                openBoqAdendumModal(line) {
+                    this.modalTitle = 'Revisi / Adendum Item BoQ Klien';
+                    this.formBoqAdendum = {
+                        lineId: line.id,
+                        designator: line.designator,
+                        namaPekerjaan: line.namaPekerjaan,
+                        isClientMaterial: line.isClientMaterial,
+                        volAwal: Number(line.volAwal),
+                        hargaMaterial: Number(line.hargaMaterial),
+                        hargaJasa: Number(line.hargaJasa),
+                        alasan: ''
+                    };
+                    this.activeModal = 'boq-adendum';
+                },
+                saveBoqAdendum() {
+                    const line = this.projectBoqLines.find(l => l.id === this.formBoqAdendum.lineId);
+                    if (!line) return;
+
+                    const allocatedVol = this.getAllocatedSubcontVolumeForDesignator(line.kodeProject, line.designator);
+                    if (Number(this.formBoqAdendum.volAwal) < allocatedVol) {
+                        this.showToast(`Gagal! Volume kontrak klien (${this.formBoqAdendum.volAwal}) tidak boleh lebih kecil dari volume yang sudah dialokasikan ke Subcont (${allocatedVol}).`, 'error');
+                        return;
+                    }
+
+                    const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                    this.boqAdendumLogs.unshift({
+                        id: 'REV-' + Date.now(),
+                        kodeProject: line.kodeProject,
+                        timestamp: nowStr,
+                        user: this.currentUser,
+                        designator: line.designator,
+                        oldVolAwal: line.volAwal,
+                        newVolAwal: Number(this.formBoqAdendum.volAwal),
+                        oldHargaMaterial: line.hargaMaterial,
+                        newHargaMaterial: line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial),
+                        oldHargaJasa: line.hargaJasa,
+                        newHargaJasa: Number(this.formBoqAdendum.hargaJasa),
+                        alasan: this.formBoqAdendum.alasan
+                    });
+
+                    line.volAwal = Number(this.formBoqAdendum.volAwal);
+                    line.hargaMaterial = line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial);
+                    line.hargaJasa = Number(this.formBoqAdendum.hargaJasa);
+
+                    this.syncProjectContractSummary(line.kodeProject);
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast(`Adendum ${line.designator} disimpan & tercatat di Log Audit!`);
                 },
 
                 openAddSubcontBoqModal() {
                     const prj = this.getProjectByCode(this.selectedBoqProject);
-                    const defaultSub = (this.selectedBoqSubcontFilter !== 'ALL' ? this.selectedBoqSubcontFilter : prj?.subcontIds?.[0]) || '';
+                    if (!prj?.subcontIds || prj.subcontIds.length === 0) {
+                        this.showToast('Project ini belum memiliki Tim Subcont. Tambahkan subcont terlebih dahulu di menu Daftar Project.', 'error');
+                        return;
+                    }
+                    if (this.getProjectBoqLines(this.selectedBoqProject).length === 0) {
+                        this.showToast('BoQ Utama Klien masih kosong. Input item BoQ Klien terlebih dahulu sebelum mengalokasikan ke Subcont.', 'error');
+                        return;
+                    }
+                    const defaultSub = (this.selectedBoqSubcontFilter !== 'ALL' ? this.selectedBoqSubcontFilter : prj.subcontIds[0]) || '';
                     this.modalTitle = 'Alokasi Item & Volume Pekerjaan ke Subcont';
-                    this.formSubcontBoq = { subcontId: defaultSub, khsItemId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 };
+                    this.formSubcontBoq = { subcontId: defaultSub, boqLineId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 };
                     this.activeModal = 'subcont-boq-add';
                 },
+                getSelectedClientBoqLineForAllocation() {
+                    if (!this.formSubcontBoq.boqLineId) return null;
+                    return this.projectBoqLines.find(l => l.id === this.formSubcontBoq.boqLineId) || null;
+                },
                 autoFillSubcontRateOnModal() {
-                    if (!this.formSubcontBoq.subcontId || !this.formSubcontBoq.khsItemId) return;
-                    const khs = this.khsItems.find(k => k.id === this.formSubcontBoq.khsItemId);
-                    if (!khs) return;
-                    const rate = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === khs.designator);
+                    const bl = this.getSelectedClientBoqLineForAllocation();
+                    if (!this.formSubcontBoq.subcontId || !bl) return;
+                    const rate = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === bl.designator);
                     if (rate) {
                         this.formSubcontBoq.hargaSubcont = Number(rate.hargaSubcont);
                     }
                 },
                 saveSubcontBoqLine() {
-                    const khs = this.khsItems.find(k => k.id === this.formSubcontBoq.khsItemId);
-                    if (!khs || !this.formSubcontBoq.subcontId) return;
+                    const bl = this.getSelectedClientBoqLineForAllocation();
+                    if (!bl || !this.formSubcontBoq.subcontId) {
+                        this.showToast('Pilih Tim Subcont dan Item BoQ Klien terlebih dahulu!', 'error');
+                        return;
+                    }
+
+                    const remainingQuota = this.getRemainingClientBoqVolume(this.selectedBoqProject, bl.designator);
+                    const reqVol = Number(this.formSubcontBoq.volAwal) || 0;
+
+                    // PREVENTIVE VALIDATION: Blokir jika melebihi sisa kuota BoQ Klien
+                    if (reqVol > remainingQuota) {
+                        this.showToast(`DITOLAK (Over-Allocation): Volume alokasi (${reqVol}) melebihi sisa kuota kontrak Klien (${remainingQuota} ${bl.satuan || ''}) untuk ${bl.designator}!`, 'error');
+                        return;
+                    }
+
+                    if (Number(this.formSubcontBoq.volAkhir || 0) > reqVol) {
+                        this.showToast(`DITOLAK: Volume realisasi awal (${this.formSubcontBoq.volAkhir}) tidak boleh melebihi volume target (${reqVol})!`, 'error');
+                        return;
+                    }
 
                     this.subcontBoqLines.push({
                         id: 'SBL-' + Date.now(),
                         kodeProject: this.selectedBoqProject,
                         subcontId: this.formSubcontBoq.subcontId,
-                        designator: khs.designator,
-                        namaPekerjaan: khs.namaPekerjaan,
-                        satuan: khs.satuan,
-                        volAwal: Number(this.formSubcontBoq.volAwal),
+                        designator: bl.designator,
+                        namaPekerjaan: bl.namaPekerjaan,
+                        satuan: bl.satuan,
+                        volAwal: reqVol,
                         volAkhir: Number(this.formSubcontBoq.volAkhir || 0),
                         hargaSubcont: Number(this.formSubcontBoq.hargaSubcont)
                     });
 
-                    const existsInMain = this.projectBoqLines.some(l => l.kodeProject === this.selectedBoqProject && l.designator === khs.designator);
-                    if (!existsInMain) {
-                        this.projectBoqLines.push({
-                            id: 'BL-' + (Date.now() + 1),
-                            kodeProject: this.selectedBoqProject,
-                            designator: khs.designator,
-                            namaPekerjaan: khs.namaPekerjaan,
-                            satuan: khs.satuan,
-                            isClientMaterial: khs.isClientMaterial,
-                            volAwal: Number(this.formSubcontBoq.volAwal),
-                            volAkhir: Number(this.formSubcontBoq.volAkhir || 0),
-                            hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
-                            hargaJasa: Number(khs.hargaJasa)
-                        });
-                    }
-
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Item ${khs.designator} berhasil dialokasikan ke ${this.getSubcontName(this.formSubcontBoq.subcontId)}!`);
+                    this.showToast(`Item ${bl.designator} (${reqVol} ${bl.satuan || ''}) berhasil dialokasikan ke ${this.getSubcontName(this.formSubcontBoq.subcontId)}!`);
                 },
                 removeSubcontBoqLine(id) {
                     this.subcontBoqLines = this.subcontBoqLines.filter(l => l.id !== id);
@@ -2298,18 +3036,36 @@
                     this.showToast('Item alokasi subcont dihapus');
                 },
 
-                // ==================== WASPANG DAILY VOLUME PER SUBCONT ====================
+                // ==================== WASPANG DAILY VOLUME PER SUBCONT (PREVENTIVE VALIDATION) ====================
+                getSelectedWaspangBoqLine() {
+                    if (!this.waspangForm.subcontBoqLineId) return null;
+                    return this.subcontBoqLines.find(l => l.id === this.waspangForm.subcontBoqLineId) || null;
+                },
                 submitWaspangDaily() {
-                    const sline = this.subcontBoqLines.find(l => l.id === this.waspangForm.subcontBoqLineId);
+                    const sline = this.getSelectedWaspangBoqLine();
                     const prj = this.getProjectByCode(this.waspangForm.kodeProject);
                     if (!sline || !prj) return;
 
                     const volAdd = Number(this.waspangForm.volume) || 0;
-                    sline.volAkhir = (Number(sline.volAkhir) || 0) + volAdd;
+                    const currentAct = Number(sline.volAkhir) || 0;
+                    const targetVol = Number(sline.volAwal) || 0;
+                    const remainingTarget = Math.max(0, targetVol - currentAct);
 
+                    // PREVENTIVE VALIDATION: Blokir jika akumulasi volume harian melebihi target SPK subcont
+                    if (currentAct + volAdd > targetVol) {
+                        this.showToast(`DITOLAK (Melebihi Target SPK): Akumulasi volume (${currentAct + volAdd}) melebihi target awal Subcont (${targetVol} ${sline.satuan || ''}). Sisa maksimal: ${remainingTarget}.`, 'error');
+                        return;
+                    }
+
+                    sline.volAkhir = currentAct + volAdd;
+
+                    // Sinkronkan total volAkhir pada BoQ Utama Klien berdasarkan akumulasi seluruh subcont pada designator tersebut
                     const mainLine = this.projectBoqLines.find(l => l.kodeProject === prj.kodeProject && l.designator === sline.designator);
                     if (mainLine) {
-                        mainLine.volAkhir = (Number(mainLine.volAkhir) || 0) + volAdd;
+                        const totalSubAct = this.subcontBoqLines
+                            .filter(l => l.kodeProject === prj.kodeProject && l.designator === sline.designator)
+                            .reduce((sum, l) => sum + (Number(l.volAkhir) || 0), 0);
+                        mainLine.volAkhir = totalSubAct;
                     }
 
                     const subName = this.getSubcontName(sline.subcontId);
@@ -2323,12 +3079,16 @@
                         designator: sline.designator,
                         namaPekerjaan: sline.namaPekerjaan,
                         volume: volAdd,
-                        waspangName: this.currentUser
+                        waspangName: this.currentUser,
+                        attachmentUrl: this.waspangForm.attachmentUrl || '',
+                        attachmentName: this.waspangForm.attachmentName || ''
                     });
 
                     this.waspangForm.volume = '';
+                    this.waspangForm.attachmentUrl = '';
+                    this.waspangForm.attachmentName = '';
                     this.persistAll();
-                    this.showToast(`Volume +${volAdd} tersimpan untuk ${subName}! Progress Subcont & Project otomatis terupdate.`);
+                    this.showToast(`Volume +${volAdd} tersimpan untuk ${subName}! Nilai Akhir Project & Progress otomatis diperbarui.`);
                 },
 
                 getSubcontPhysicalProgress(kodeProject, subcontId) {
@@ -2358,7 +3118,9 @@
                         subcontId: firstPrj?.subcontIds?.[0] || '',
                         noInvoice: '',
                         termin: '',
-                        nominal: 0
+                        nominal: 0,
+                        attachmentUrl: '',
+                        attachmentName: ''
                     };
                     this.activeModal = 'subcont-inv';
                 },
@@ -2377,7 +3139,9 @@
                         subcontName: subName,
                         termin: this.formSubcontInv.termin,
                         nominal: Number(this.formSubcontInv.nominal),
-                        status: 'Pending'
+                        status: 'Pending',
+                        attachmentUrl: this.formSubcontInv.attachmentUrl || '',
+                        attachmentName: this.formSubcontInv.attachmentName || ''
                     });
 
                     this.notifications.unshift({
@@ -2490,7 +3254,9 @@
                         singleNamaBarang: brg ? brg.namaBarang : '',
                         singleDrumId: this.newTrans.singleDrumId,
                         singleQty: qty,
-                        keterangan: this.newTrans.keterangan
+                        keterangan: this.newTrans.keterangan,
+                        attachmentUrl: this.newTrans.attachmentUrl || '',
+                        attachmentName: this.newTrans.attachmentName || ''
                     };
                     this.transactions.unshift(txObj);
 
@@ -2519,6 +3285,12 @@
                             });
                         }
                     }
+
+                    this.newTrans.singleQty = '';
+                    this.newTrans.singleDrumId = '';
+                    this.newTrans.keterangan = '';
+                    this.newTrans.attachmentUrl = '';
+                    this.newTrans.attachmentName = '';
 
                     this.persistAll();
                     this.showToast(`Transaksi ${noTx} berhasil disimpan!`);
