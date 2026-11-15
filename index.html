@@ -598,7 +598,6 @@
                         <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
                             <div>
                                 <h4 class="text-xs font-bold text-cyan-400 uppercase">Bagian A • BoQ Utama</h4>
-                                <p class="text-[10px] text-slate-400">Total volume kontrak ke Klien beserta perbandingan akumulasi volume yang sudah dialokasikan ke Subcont.</p>
                             </div>
                             <div class="text-right">
                                 <span class="text-[10px] text-slate-400 block">Subtotal BoQ Klien</span>
@@ -731,7 +730,6 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white">Pengajuan Invoice Subcont</h3>
-                            <p class="text-[11px] text-slate-400">Pilih Project lalu pilih Subcont spesifik yang menagih. Sistem menampilkan nilai BoQ & progress fisik subcont tersebut.</p>
                         </div>
                         <button type="button" @click="openSubcontInvoiceModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg">+ Input Tagihan Subcont</button>
                     </div>
@@ -1422,7 +1420,7 @@
                     <input type="text" x-model="formProject.projectName" required placeholder="DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1.5">Pilih Tim Subcont Pelaksana (Bisa Lebih dari 1 Subcont)</label>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1.5">Pilih Tim Subcont Pelaksana</label>
                     <div class="space-y-1.5 max-h-32 overflow-y-auto p-2.5 rounded-lg bg-slate-950 border border-slate-800">
                         <template x-for="s in subconts" :key="s.id">
                             <label class="flex items-center gap-2.5 text-xs text-slate-200 cursor-pointer hover:text-amber-300">
@@ -1999,7 +1997,7 @@
                         'prj-khs': 'Project • Master KHS Multi-Versi & Klien',
                         'prj-subcont': 'Project • Master Subcont & Rate Card',
                         'prj-list': 'Project • Daftar Project (Multi-Subcont) & Progress Keuangan',
-                        'prj-boq': 'Project • BoQ Utama Klien & Alokasi Multi-Subcont',
+                        'prj-boq': 'Project • BoQ Utama Klien & Alokasi Subcont',
                         'prj-subcont-inv': 'Project • Pengajuan Tagihan per Subcont',
                         'waspang-daily': 'Waspang • Input Volume Harian per Subcont',
                         'wh-barang': 'Warehouse • Master Barang',
@@ -2117,7 +2115,7 @@
 
                 // ==================== PROJECT & MULTI-SUBCONT MANAGEMENT ====================
                 openNewProjectModal() {
-                    this.modalTitle = 'Input Project Baru (Multi-Subcont)';
+                    this.modalTitle = 'Input Project Baru';
                     this.formProject = {
                         clientId: this.clients[0]?.id || '',
                         region: 'PALEMBANG',
