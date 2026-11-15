@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACM-ERP | Integrated Project, Warehouse & Accounting System</title>
+    <title>ACM-ERP | Integrated Multi-Subcont Project, Warehouse & Accounting System</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -25,8 +25,6 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.454.0"></script>
-    <!-- jsPDF for BAST & Attachment Merging -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
     <!-- Google Fonts -->
@@ -66,7 +64,7 @@
                     <i data-lucide="network" class="w-6 h-6"></i>
                 </div>
                 <h1 class="text-xl font-bold tracking-tight text-white">ACM ENTERPRISE ERP</h1>
-                <p class="text-xs text-slate-400 mt-1">PT Acero Cetha Metalindo • Integrated FTTH Operations</p>
+                <p class="text-xs text-slate-400 mt-1">PT Acero Cetha Metalindo • Multi-Subcont FTTH Operations</p>
             </div>
 
             <form @submit.prevent="login" class="space-y-4">
@@ -79,15 +77,15 @@
                     <input type="password" x-model="loginForm.password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 transition">
                 </div>
                 
-                <!-- Quick Division Demo Selector (Memudahkan Testing Akses Per Divisi) -->
+                <!-- Quick Division Demo Selector -->
                 <div class="pt-1">
                     <label class="block text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1.5">Mode Akses / Simulasi Login Divisi</label>
                     <select x-model="loginForm.demoRole" @change="applyDemoPreset()" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg px-3 py-2 text-xs text-cyan-300 focus:outline-none">
                         <option value="Super Admin">Super Admin (Akses Semua Menu Utama)</option>
-                        <option value="Project">Divisi Project (KHS, BoQ, Subcont, Input Project & Tagihan)</option>
+                        <option value="Project">Divisi Project (KHS, Multi-Subcont BoQ, Project & Tagihan)</option>
                         <option value="Warehouse">Divisi Warehouse (Gudang, Stok, Pelacakan Drum & BAST)</option>
                         <option value="Accounting">Divisi Accounting (Notifikasi, Invoice Klien & Subcont, Cash & Bank)</option>
-                        <option value="Waspang">Divisi Waspang (Input Volume Harian & Progress Lapangan)</option>
+                        <option value="Waspang">Divisi Waspang (Input Volume Harian per Subcont)</option>
                     </select>
                 </div>
 
@@ -98,7 +96,7 @@
             </form>
 
             <div class="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
-                <span>Divisi YOFC • V3.0 Full Integrated</span>
+                <span>Divisi YOFC • V3.5 Multi-Subcont</span>
                 <span>by: Rudi</span>
             </div>
         </div>
@@ -107,7 +105,7 @@
     <!-- ==================== 2. MAIN INTEGRATED WORKSPACE ==================== -->
     <div x-show="isLoggedIn" class="h-screen flex flex-col md:flex-row overflow-hidden print:hidden" x-cloak>
         
-        <!-- SIDEBAR NAVIGATION (STRICT DIVISION ACCESS CONTROL) -->
+        <!-- SIDEBAR NAVIGATION -->
         <aside class="w-full md:w-64 bg-[#0c1222] border-r border-slate-800 flex flex-col justify-between shrink-0 md:h-screen overflow-y-auto">
             <div>
                 <!-- Brand -->
@@ -139,13 +137,13 @@
                                     <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-subcont')" :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont & Harga
+                                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont & Rate Card
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-list')" :class="currentTab === 'prj-list' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Progress Keuangan
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-boq')" :class="currentTab === 'prj-boq' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & BoQ Subcont
+                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & Multi-Subcont
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Pengajuan Invoice Subcont
@@ -167,7 +165,7 @@
                         </div>
                     </template>
 
-                    <!-- ==================== MENU UTAMA 2: WAREHOUSE (EXISTING MODULES) ==================== -->
+                    <!-- ==================== MENU UTAMA 2: WAREHOUSE ==================== -->
                     <template x-if="canAccessModule('warehouse')">
                         <div class="pt-3">
                             <div class="flex items-center justify-between px-3 mb-1.5">
@@ -197,7 +195,7 @@
                         </div>
                     </template>
 
-                    <!-- ==================== MENU UTAMA 3: ACCOUNTING LENGKAP ==================== -->
+                    <!-- ==================== MENU UTAMA 3: ACCOUNTING ==================== -->
                     <template x-if="canAccessModule('accounting')">
                         <div class="pt-3">
                             <div class="flex items-center justify-between px-3 mb-1.5">
@@ -247,7 +245,6 @@
                     <h2 class="text-sm font-bold text-white tracking-wide" x-text="getTabTitle()"></h2>
                 </div>
                 <div class="flex items-center gap-3">
-                    <!-- Notification Bell Quick Trigger (Khusus Accounting & Super Admin) -->
                     <template x-if="canAccessModule('accounting')">
                         <button type="button" @click="switchTab('acc-notif')" class="relative p-2 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-cyan-400 transition">
                             <i data-lucide="bell" class="w-4 h-4"></i>
@@ -277,7 +274,7 @@
                                 <i data-lucide="briefcase" class="w-4 h-4 text-cyan-400"></i>
                             </div>
                             <div class="mt-2 text-lg font-bold text-white font-mono" x-text="formatRupiah(totalProjectContractValue())"></div>
-                            <div class="mt-1 text-[10px] text-cyan-400" x-text="masterProject.length + ' Project Terdaftar'"></div>
+                            <div class="mt-1 text-[10px] text-cyan-400" x-text="masterProject.length + ' Project Multi-Subcont'"></div>
                         </div>
                         <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4">
                             <div class="flex items-center justify-between text-slate-400 text-[10px] font-semibold uppercase">
@@ -305,17 +302,17 @@
                         </div>
                     </div>
 
-                    <!-- Alur Integrasi Antar Divisi Visual -->
+                    <!-- Alur Integrasi Multi-Subcont Antar Divisi -->
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Status Integrasi Real-Time Antar Divisi</h3>
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont & Integrasi Real-Time Antar Divisi</h3>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-cyan-500/20">
-                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. Tim Project</span>
-                                <p class="text-slate-300 mt-1">Input Project & BoQ Mandiri dari KHS Klien → <strong class="text-white">Otomatis kirim notif nominal ke Accounting</strong>.</p>
+                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. Tim Project (Multi-Subcont)</span>
+                                <p class="text-slate-300 mt-1">1 Project mendukung <strong class="text-white">banyak Subcont pelaksana</strong> dengan item & volume kerja masing-masing. Otomatis kirim notif ke Accounting.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-amber-500/20">
-                                <span class="text-[10px] font-bold text-amber-400 uppercase">2. Tim Waspang</span>
-                                <p class="text-slate-300 mt-1">Input volume harian lapangan → <strong class="text-white">Otomatis kalkulasi % progress fisik & subcont</strong>.</p>
+                                <span class="text-[10px] font-bold text-amber-400 uppercase">2. Tim Waspang (Per Subcont)</span>
+                                <p class="text-slate-300 mt-1">Input volume harian memilih <strong class="text-white">Project → Subcont → Item Pekerjaan</strong>. Progress fisik per subcont & project terhitung otomatis.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-indigo-500/20">
                                 <span class="text-[10px] font-bold text-indigo-400 uppercase">3. Tim Warehouse</span>
@@ -323,13 +320,13 @@
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-emerald-500/20">
                                 <span class="text-[10px] font-bold text-emerald-400 uppercase">4. Tim Accounting</span>
-                                <p class="text-slate-300 mt-1">Proses tagihan Subcont & Invoice Klien → <strong class="text-white">Status lunas tampil live di menu Project</strong>.</p>
+                                <p class="text-slate-300 mt-1">Validasi invoice masing-masing Subcont terhadap BoQ & progress fisiknya, serta kelola Rekap Cash & Bank Klien.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 1: MASTER KHS PER KLIEN (RULES 6, 14, 16) ==================== -->
+                <!-- ==================== MENU PROJECT 1: MASTER KHS PER KLIEN ==================== -->
                 <div x-show="currentTab === 'prj-khs'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
@@ -382,12 +379,12 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 2: MASTER SUBCONT & RATE CARD (RULE 5) ==================== -->
+                <!-- ==================== MENU PROJECT 2: MASTER SUBCONT & RATE CARD ==================== -->
                 <div x-show="currentTab === 'prj-subcont'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Manajemen Tim Subcont & Harga Item Berbeda per Subcont</h3>
-                            <p class="text-[11px] text-slate-400">Setiap tim subkontraktor memiliki daftar harga satuan jasa/item tersendiri untuk pembuatan BoQ Subcont.</p>
+                            <h3 class="text-sm font-bold text-white">Manajemen Tim Subcont & Rate Card Item Berbeda per Subcont</h3>
+                            <p class="text-[11px] text-slate-400">Setiap tim subkontraktor memiliki daftar harga satuan item pekerjaan tersendiri.</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <select x-model="selectedSubcontId" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-300 font-semibold">
@@ -426,12 +423,12 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 3: DATA PROJECT & PROGRESS KEUANGAN (RULES 8, 10) ==================== -->
+                <!-- ==================== MENU PROJECT 3: DATA PROJECT & MULTI-SUBCONT PROGRESS ==================== -->
                 <div x-show="currentTab === 'prj-list'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Daftar Project & Live Progress Keuangan</h3>
-                            <p class="text-[11px] text-slate-400">Input project otomatis mengirim notifikasi beserta nominal ke Accounting. Status keuangan terupdate real-time.</p>
+                            <h3 class="text-sm font-bold text-white">Daftar Project (Multi-Subcont) & Live Progress Keuangan</h3>
+                            <p class="text-[11px] text-slate-400">Setiap project dapat dikerjakan oleh lebih dari 1 Subcont pelaksana dengan porsi item & volume berbeda.</p>
                         </div>
                         <button type="button" @click="openNewProjectModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg shadow-cyan-600/20 flex items-center gap-1.5">
                             <i data-lucide="plus" class="w-4 h-4"></i> Input Project Baru
@@ -443,32 +440,54 @@
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
                                     <th class="p-3">Kode Project / No PO</th>
-                                    <th class="p-3">Klien & Area</th>
-                                    <th class="p-3">Nama Project</th>
-                                    <th class="p-3">Subcont Pelaksana</th>
-                                    <th class="p-3 text-right">Nilai BoQ Awal</th>
-                                    <th class="p-3 text-right">Nilai BoQ Akhir</th>
-                                    <th class="p-3 text-center">Progress</th>
+                                    <th class="p-3">Klien & Nama Project</th>
+                                    <th class="p-3">Tim Subcont Pelaksana & Progress</th>
+                                    <th class="p-3 text-right">BoQ Klien (Awal / Akhir)</th>
+                                    <th class="p-3 text-right">Total BoQ Subcont</th>
+                                    <th class="p-3 text-center">Progress Total</th>
                                     <th class="p-3">Progress Keuangan</th>
+                                    <th class="p-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-800/60 text-xs">
                                 <template x-for="prj in masterProject" :key="prj.kodeProject">
-                                    <tr class="hover:bg-slate-800/30">
+                                    <tr class="hover:bg-slate-800/30 align-top">
                                         <td class="p-3">
                                             <div class="font-mono font-bold text-cyan-400" x-text="prj.kodeProject"></div>
                                             <div class="text-[10px] text-slate-400 font-mono" x-text="'PO: ' + (prj.noPO || '-')"></div>
+                                            <span class="inline-block mt-1 px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-slate-300" x-text="prj.region"></span>
+                                        </td>
+                                        <td class="p-3 whitespace-normal max-w-[240px]">
+                                            <div class="text-[10px] font-bold text-indigo-400" x-text="getClientName(prj.clientId)"></div>
+                                            <div class="font-medium text-white mt-0.5" x-text="prj.projectName"></div>
                                         </td>
                                         <td class="p-3">
-                                            <div class="font-semibold text-white" x-text="getClientName(prj.clientId)"></div>
-                                            <div class="text-[10px] text-slate-400" x-text="prj.region"></div>
+                                            <div class="space-y-1.5">
+                                                <template x-for="sid in (prj.subcontIds || [])" :key="sid">
+                                                    <div class="flex items-center justify-between gap-2 bg-slate-950/90 border border-slate-800 px-2.5 py-1 rounded-lg">
+                                                        <div>
+                                                            <div class="text-[11px] font-semibold text-amber-300" x-text="getSubcontName(sid)"></div>
+                                                            <div class="text-[9px] text-slate-400 font-mono" x-text="'BoQ: ' + formatRupiah(getSubcontProjectBoqTotal(prj.kodeProject, sid, 'awal'))"></div>
+                                                        </div>
+                                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono"
+                                                              x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
+                                                    </div>
+                                                </template>
+                                                <button type="button" @click="openManageProjectSubconts(prj)" class="text-[10px] text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 pt-0.5">
+                                                    <i data-lucide="user-plus" class="w-3 h-3"></i> + Kelola Subcont Project
+                                                </button>
+                                            </div>
                                         </td>
-                                        <td class="p-3 font-medium text-white" x-text="prj.projectName"></td>
-                                        <td class="p-3 text-amber-300" x-text="getSubcontName(prj.subcontId)"></td>
-                                        <td class="p-3 text-right font-mono text-slate-300" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal'))"></td>
-                                        <td class="p-3 text-right font-mono font-bold text-emerald-400" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir'))"></td>
+                                        <td class="p-3 text-right font-mono">
+                                            <div class="text-slate-300 text-[11px]" x-text="'Awal: ' + formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal'))"></div>
+                                            <div class="font-bold text-emerald-400 mt-0.5" x-text="'Akhir: ' + formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir'))"></div>
+                                        </td>
+                                        <td class="p-3 text-right font-mono">
+                                            <div class="text-amber-300 text-[11px]" x-text="'Awal: ' + formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'awal'))"></div>
+                                            <div class="font-bold text-amber-400 mt-0.5" x-text="'Akhir: ' + formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'akhir'))"></div>
+                                        </td>
                                         <td class="p-3 text-center">
-                                            <div class="w-28 mx-auto">
+                                            <div class="w-24 mx-auto">
                                                 <div class="flex justify-between text-[10px] mb-1">
                                                     <span class="text-slate-400">Fisik</span>
                                                     <span class="font-bold text-cyan-400" x-text="getProjectPhysicalProgress(prj.kodeProject) + '%'"></span>
@@ -493,6 +512,11 @@
                                                 </div>
                                             </div>
                                         </td>
+                                        <td class="p-3 text-right">
+                                            <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold">
+                                                Atur BoQ →
+                                            </button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -500,42 +524,65 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 4: BoQ PROJECT (AWAL/AKHIR) & BoQ SUBCONT (RULES 5, 7, 14, 17) ==================== -->
+                <!-- ==================== MENU PROJECT 4: BoQ PROJECT & ALOKASI MULTI-SUBCONT ==================== -->
                 <div x-show="currentTab === 'prj-boq'" class="space-y-5" x-cloak>
+                    <!-- Control Bar -->
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex flex-wrap items-center gap-3">
                             <div>
                                 <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Project</label>
-                                <select x-model="selectedBoqProject" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold min-w-[240px]">
+                                <select x-model="selectedBoqProject" @change="selectedBoqSubcontFilter = 'ALL'" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold min-w-[260px]">
                                     <template x-for="p in masterProject" :key="p.kodeProject">
                                         <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
                                     </template>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Tipe BoQ</label>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Tipe Nilai BoQ</label>
                                 <div class="inline-flex rounded-lg bg-slate-950 p-1 border border-slate-800">
-                                    <button type="button" @click="boqMode = 'awal'" :class="boqMode === 'awal' ? 'bg-cyan-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded text-xs font-medium transition">BoQ Nilai Awal (Plan)</button>
-                                    <button type="button" @click="boqMode = 'akhir'" :class="boqMode === 'akhir' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded text-xs font-medium transition">BoQ Nilai Akhir (Actual/Opname)</button>
+                                    <button type="button" @click="boqMode = 'awal'" :class="boqMode === 'awal' ? 'bg-cyan-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded text-xs font-medium transition">Nilai Awal (Plan)</button>
+                                    <button type="button" @click="boqMode = 'akhir'" :class="boqMode === 'akhir' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded text-xs font-medium transition">Nilai Akhir (Opname/Waspang)</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <button type="button" @click="openAddBoqFromKhsModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Buat / Tambah Item BoQ dari KHS Klien
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> + Item BoQ Klien (KHS)
+                            </button>
+                            <button type="button" @click="openAddSubcontBoqModal()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="user-check" class="w-4 h-4"></i> + Alokasi Item & Volume ke Subcont
                             </button>
                         </div>
                     </div>
 
-                    <!-- Tabel Rincian BoQ Utama (Designator, Nama Pekerjaan, Harga Satuan Material, Harga Satuan Jasa) -->
+                    <!-- Summary Perbandingan Nilai Klien vs Multi-Subcont (Gross Margin Preview) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-[#0c1222] border border-emerald-500/20 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-emerald-400 uppercase" x-text="'1. Total BoQ Klien (' + (boqMode === 'awal' ? 'Awal' : 'Akhir') + ')'"></span>
+                            <div class="text-lg font-bold font-mono text-white mt-1" x-text="formatRupiah(getProjectBoqTotal(selectedBoqProject, boqMode))"></div>
+                            <span class="text-[10px] text-slate-400">Pendapatan kontrak dari Klien (Free-Issue Mat = Rp 0)</span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-amber-500/20 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-amber-400 uppercase" x-text="'2. Total Biaya Seluruh Subcont (' + (boqMode === 'awal' ? 'Awal' : 'Akhir') + ')'"></span>
+                            <div class="text-lg font-bold font-mono text-amber-300 mt-1" x-text="formatRupiah(getAllSubcontsProjectBoqTotal(selectedBoqProject, boqMode))"></div>
+                            <span class="text-[10px] text-slate-400" x-text="'Terbagi ke ' + (getProjectByCode(selectedBoqProject)?.subcontIds?.length || 0) + ' Tim Subcont Pelaksana'"></span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-cyan-500/20 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-cyan-400 uppercase">3. Estimasi Selisih / Gross Margin</span>
+                            <div class="text-lg font-bold font-mono text-cyan-300 mt-1" x-text="formatRupiah(getProjectBoqTotal(selectedBoqProject, boqMode) - getAllSubcontsProjectBoqTotal(selectedBoqProject, boqMode))"></div>
+                            <span class="text-[10px] text-slate-400">Nilai Kontrak Klien dikurangi Total SPK Subcont</span>
+                        </div>
+                    </div>
+
+                    <!-- BAGIAN A: BOQ UTAMA KLIEN -->
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
-                        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                        <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
                             <div>
-                                <h4 class="text-xs font-bold text-white uppercase" x-text="'Rincian BoQ Utama Klien (' + (boqMode === 'awal' ? 'Nilai Awal' : 'Nilai Akhir') + ')'"></h4>
-                                <p class="text-[10px] text-slate-400">Item material yang disediakan klien otomatis bernilai Rp 0 dan tidak dihitung dalam pengeluaran project.</p>
+                                <h4 class="text-xs font-bold text-cyan-400 uppercase">Bagian A • BoQ Utama Klien (Kontrak Induk)</h4>
+                                <p class="text-[10px] text-slate-400">Total volume kontrak ke Klien beserta perbandingan akumulasi volume yang sudah dialokasikan ke Subcont.</p>
                             </div>
                             <div class="text-right">
-                                <span class="text-[10px] text-slate-400 block">Total Nilai BoQ Klien</span>
+                                <span class="text-[10px] text-slate-400 block">Subtotal BoQ Klien</span>
                                 <span class="text-sm font-bold font-mono text-emerald-400" x-text="formatRupiah(getProjectBoqTotal(selectedBoqProject, boqMode))"></span>
                             </div>
                         </div>
@@ -545,13 +592,12 @@
                                     <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
                                         <th class="p-3">Designator</th>
                                         <th class="p-3">Nama Pekerjaan</th>
-                                        <th class="p-3 text-center">Vol Awal</th>
-                                        <th class="p-3 text-center">Vol Akhir / Waspang</th>
-                                        <th class="p-3 text-right">Harga Satuan Material</th>
-                                        <th class="p-3 text-right">Harga Satuan Jasa</th>
-                                        <th class="p-3 text-right">Total Klien</th>
-                                        <th class="p-3 text-right">Harga Satuan Subcont</th>
-                                        <th class="p-3 text-right">Total BoQ Subcont</th>
+                                        <th class="p-3 text-center">Vol Klien (Awal)</th>
+                                        <th class="p-3 text-center">Dialokasikan ke Subcont</th>
+                                        <th class="p-3 text-center">Vol Klien (Akhir)</th>
+                                        <th class="p-3 text-right">Harga Sat. Material</th>
+                                        <th class="p-3 text-right">Harga Sat. Jasa</th>
+                                        <th class="p-3 text-right">Total Nilai Klien</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-800/60 text-xs">
@@ -560,29 +606,114 @@
                                             <td class="p-3 font-mono font-semibold text-cyan-400" x-text="line.designator"></td>
                                             <td class="p-3 text-white">
                                                 <div x-text="line.namaPekerjaan"></div>
-                                                <span x-show="line.isClientMaterial" class="text-[9px] text-amber-400 font-semibold">[Material Klien - Rp 0 / Non-Expense]</span>
+                                                <span x-show="line.isClientMaterial" class="text-[9px] text-amber-400 font-semibold">[Material Klien - Rp 0 / Free-Issue]</span>
                                             </td>
                                             <td class="p-3 text-center font-mono text-slate-300" x-text="line.volAwal"></td>
-                                            <td class="p-3 text-center font-mono font-bold text-amber-300" x-text="line.volAkhir"></td>
+                                            <td class="p-3 text-center font-mono">
+                                                <span class="px-2 py-0.5 rounded text-[10px]"
+                                                      :class="getAllocatedSubcontVolumeForDesignator(selectedBoqProject, line.designator) > line.volAwal ? 'bg-rose-500/20 text-rose-300' : 'bg-indigo-500/10 text-indigo-300'"
+                                                      x-text="getAllocatedSubcontVolumeForDesignator(selectedBoqProject, line.designator) + ' / ' + line.volAwal"></span>
+                                            </td>
+                                            <td class="p-3 text-center font-mono font-bold text-emerald-300" x-text="line.volAkhir"></td>
                                             <td class="p-3 text-right font-mono" :class="line.isClientMaterial ? 'text-slate-500 line-through' : 'text-slate-200'" x-text="line.isClientMaterial ? 'Rp 0' : formatRupiah(line.hargaMaterial)"></td>
                                             <td class="p-3 text-right font-mono text-slate-200" x-text="formatRupiah(line.hargaJasa)"></td>
                                             <td class="p-3 text-right font-mono font-bold text-emerald-400" x-text="formatRupiah(calcBoqLineClientTotal(line, boqMode))"></td>
-                                            <td class="p-3 text-right font-mono text-amber-300" x-text="formatRupiah(line.hargaSubcont)"></td>
-                                            <td class="p-3 text-right font-mono font-bold text-amber-400" x-text="formatRupiah(calcBoqLineSubcontTotal(line, boqMode))"></td>
                                         </tr>
                                     </template>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <!-- BAGIAN B: RINCIAN BoQ / SPK PER MASING-MASING SUBCONT PELAKSANA -->
+                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/40">
+                            <div>
+                                <h4 class="text-xs font-bold text-amber-400 uppercase">Bagian B • Rincian Item & Volume per Subcont Pelaksana (Multi-Subcont)</h4>
+                                <p class="text-[10px] text-slate-400">Setiap subcont memiliki item pekerjaan, volume target, volume realisasi lapangan, dan harga satuan berbeda.</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-slate-400">Filter Subcont:</span>
+                                <select x-model="selectedBoqSubcontFilter" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-amber-300 font-semibold">
+                                    <option value="ALL">Semua Subcont di Project Ini</option>
+                                    <template x-for="sid in (getProjectByCode(selectedBoqProject)?.subcontIds || [])" :key="sid">
+                                        <option :value="sid" x-text="getSubcontName(sid)"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Ringkasan Kartu per Subcont dalam Project Ini -->
+                        <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 border-b border-slate-800 bg-slate-950/50">
+                            <template x-for="sid in (getProjectByCode(selectedBoqProject)?.subcontIds || [])" :key="sid">
+                                <div @click="selectedBoqSubcontFilter = (selectedBoqSubcontFilter === sid ? 'ALL' : sid)"
+                                     class="p-3 rounded-xl border cursor-pointer transition"
+                                     :class="selectedBoqSubcontFilter === sid ? 'bg-amber-500/10 border-amber-500/50' : 'bg-[#0c1222] border-slate-800 hover:border-slate-700'">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-amber-300" x-text="getSubcontName(sid)"></span>
+                                        <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300" x-text="'Progress: ' + getSubcontPhysicalProgress(selectedBoqProject, sid) + '%'"></span>
+                                    </div>
+                                    <div class="mt-2 flex items-center justify-between text-[11px] font-mono">
+                                        <span class="text-slate-400 font-sans" x-text="getSubcontBoqLines(selectedBoqProject, sid).length + ' Item Kerja'"></span>
+                                        <span class="font-bold text-white" x-text="formatRupiah(getSubcontProjectBoqTotal(selectedBoqProject, sid, boqMode))"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                        <th class="p-3">Tim Subcont Pelaksana</th>
+                                        <th class="p-3">Designator</th>
+                                        <th class="p-3">Item Pekerjaan Subcont</th>
+                                        <th class="p-3 text-center">Vol Target (Awal)</th>
+                                        <th class="p-3 text-center">Vol Realisasi (Akhir)</th>
+                                        <th class="p-3 text-center">Progress Item</th>
+                                        <th class="p-3 text-right">Harga Satuan Subcont</th>
+                                        <th class="p-3 text-right">Total Nilai Subcont</th>
+                                        <th class="p-3 text-center">Hapus</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60 text-xs">
+                                    <template x-for="sline in getFilteredSubcontBoqLines()" :key="sline.id">
+                                        <tr class="hover:bg-slate-800/30">
+                                            <td class="p-3 font-semibold text-amber-300" x-text="getSubcontName(sline.subcontId)"></td>
+                                            <td class="p-3 font-mono text-indigo-300 font-semibold" x-text="sline.designator"></td>
+                                            <td class="p-3 text-white" x-text="sline.namaPekerjaan"></td>
+                                            <td class="p-3 text-center font-mono text-slate-300" x-text="sline.volAwal + ' ' + (sline.satuan || '')"></td>
+                                            <td class="p-3 text-center font-mono font-bold text-amber-300" x-text="sline.volAkhir + ' ' + (sline.satuan || '')"></td>
+                                            <td class="p-3 text-center font-mono">
+                                                <span class="px-2 py-0.5 rounded text-[10px] bg-cyan-500/10 text-cyan-300"
+                                                      x-text="(sline.volAwal > 0 ? Math.min(100, Math.round((sline.volAkhir / sline.volAwal) * 100)) : 0) + '%'"></span>
+                                            </td>
+                                            <td class="p-3 text-right font-mono text-slate-200" x-text="formatRupiah(sline.hargaSubcont)"></td>
+                                            <td class="p-3 text-right font-mono font-bold text-amber-400" x-text="formatRupiah((boqMode === 'awal' ? sline.volAwal : sline.volAkhir) * sline.hargaSubcont)"></td>
+                                            <td class="p-3 text-center">
+                                                <button type="button" @click="removeSubcontBoqLine(sline.id)" class="text-slate-500 hover:text-rose-400 p-1" title="Hapus Item Subcont">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="getFilteredSubcontBoqLines().length === 0">
+                                        <td colspan="9" class="p-6 text-center text-slate-500 text-xs">
+                                            Belum ada alokasi item pekerjaan untuk subcont ini. Klik tombol <strong class="text-amber-400">+ Alokasi Item & Volume ke Subcont</strong> di atas.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 5: PENGAJUAN INVOICE SUBCONT (RULE 9) ==================== -->
+                <!-- ==================== MENU PROJECT 5: PENGAJUAN INVOICE SUBCONT ==================== -->
                 <div x-show="currentTab === 'prj-subcont-inv'" class="space-y-4" x-cloak>
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Pengajuan Invoice / Tagihan dari Subcont</h3>
-                            <p class="text-[11px] text-slate-400">Setiap pengajuan tagihan subcont otomatis memicu notifikasi ke Divisi Accounting untuk diproses.</p>
+                            <h3 class="text-sm font-bold text-white">Pengajuan Invoice / Tagihan per Subcont Pelaksana</h3>
+                            <p class="text-[11px] text-slate-400">Pilih Project lalu pilih Subcont spesifik yang menagih. Sistem menampilkan nilai BoQ & progress fisik subcont tersebut.</p>
                         </div>
                         <button type="button" @click="openSubcontInvoiceModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg">+ Input Tagihan Subcont</button>
                     </div>
@@ -594,7 +725,7 @@
                                     <th class="p-3">No Tagihan Subcont</th>
                                     <th class="p-3">Tanggal</th>
                                     <th class="p-3">Project</th>
-                                    <th class="p-3">Subcont</th>
+                                    <th class="p-3">Subcont Penagih</th>
                                     <th class="p-3">Termin / Progress</th>
                                     <th class="p-3 text-right">Nominal Tagihan</th>
                                     <th class="p-3 text-center">Status Proses Keuangan</th>
@@ -606,7 +737,7 @@
                                         <td class="p-3 font-mono font-bold text-cyan-400" x-text="inv.noInvoice"></td>
                                         <td class="p-3 text-slate-300" x-text="inv.tanggal"></td>
                                         <td class="p-3 text-white font-medium" x-text="inv.projectName"></td>
-                                        <td class="p-3 text-amber-300" x-text="inv.subcontName"></td>
+                                        <td class="p-3 font-semibold text-amber-300" x-text="inv.subcontName"></td>
                                         <td class="p-3 text-slate-300" x-text="inv.termin"></td>
                                         <td class="p-3 text-right font-mono font-bold text-white" x-text="formatRupiah(inv.nominal)"></td>
                                         <td class="p-3 text-center">
@@ -621,20 +752,20 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU WASPANG: INPUT VOLUME HARIAN (RULE 13) ==================== -->
+                <!-- ==================== MENU WASPANG: INPUT VOLUME HARIAN PER SUBCONT ==================== -->
                 <div x-show="currentTab === 'waspang-daily'" class="space-y-5" x-cloak>
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-sm font-bold text-white mb-1">Input Volume Harian Lapangan (Waspang)</h3>
-                        <p class="text-[11px] text-slate-400 mb-4">Volume yang diinputkan langsung memperbarui BoQ Akhir & persentase progress pekerjaan Subcont secara real-time.</p>
+                        <h3 class="text-sm font-bold text-white mb-1">Input Volume Harian Lapangan (Waspang per Subcont)</h3>
+                        <p class="text-[11px] text-slate-400 mb-4">Pilih Project, lalu pilih Subcont Pelaksana yang mengerjakan item tersebut. Realisasi otomatis memperbarui BoQ Subcont & BoQ Utama Klien.</p>
                         
-                        <form @submit.prevent="submitWaspangDaily()" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+                        <form @submit.prevent="submitWaspangDaily()" class="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
                             <div>
                                 <label class="block text-[10px] text-slate-400 uppercase mb-1">Tanggal</label>
                                 <input type="date" x-model="waspangForm.tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Project</label>
-                                <select x-model="waspangForm.kodeProject" @change="waspangForm.boqLineId = ''" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
+                                <select x-model="waspangForm.kodeProject" @change="waspangForm.subcontId = ''; waspangForm.subcontBoqLineId = ''" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                                     <option value="">-- Pilih Project --</option>
                                     <template x-for="p in masterProject" :key="p.kodeProject">
                                         <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
@@ -642,20 +773,29 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Item Pekerjaan (Designator)</label>
-                                <select x-model="waspangForm.boqLineId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
-                                    <option value="">-- Pilih Item BoQ --</option>
-                                    <template x-for="line in getProjectBoqLines(waspangForm.kodeProject)" :key="line.id">
-                                        <option :value="line.id" x-text="line.designator + ' - ' + line.namaPekerjaan + ' (Target: ' + line.volAwal + ')'"></option>
+                                <label class="block text-[10px] text-amber-400 uppercase mb-1">2. Pilih Tim Subcont</label>
+                                <select x-model="waspangForm.subcontId" @change="waspangForm.subcontBoqLineId = ''" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                                    <option value="">-- Pilih Subcont --</option>
+                                    <template x-for="sid in (getProjectByCode(waspangForm.kodeProject)?.subcontIds || [])" :key="sid">
+                                        <option :value="sid" x-text="getSubcontName(sid)"></option>
                                     </template>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Volume Harian Selesai</label>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">3. Item Pekerjaan Subcont</label>
+                                <select x-model="waspangForm.subcontBoqLineId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                    <option value="">-- Pilih Item Kerja --</option>
+                                    <template x-for="sline in getSubcontBoqLines(waspangForm.kodeProject, waspangForm.subcontId)" :key="sline.id">
+                                        <option :value="sline.id" x-text="sline.designator + ' - ' + sline.namaPekerjaan + ' (' + sline.volAkhir + '/' + sline.volAwal + ')'"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">4. Volume Harian</label>
                                 <input type="number" step="any" min="0.01" x-model="waspangForm.volume" required placeholder="Contoh: 250" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                             </div>
                             <div>
-                                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg text-xs transition">Simpan & Update Progress</button>
+                                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg text-xs transition">Simpan Progress</button>
                             </div>
                         </form>
                     </div>
@@ -667,9 +807,10 @@
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
                                     <th class="p-3">Tanggal</th>
                                     <th class="p-3">Project</th>
+                                    <th class="p-3">Subcont Pelaksana</th>
                                     <th class="p-3">Designator & Pekerjaan</th>
                                     <th class="p-3 text-right">Volume Harian</th>
-                                    <th class="p-3 text-center">Progress Project Terkini</th>
+                                    <th class="p-3 text-center">Progress Subcont</th>
                                     <th class="p-3">Input Oleh</th>
                                 </tr>
                             </thead>
@@ -678,9 +819,10 @@
                                     <tr class="hover:bg-slate-800/30">
                                         <td class="p-3 text-slate-300" x-text="log.tanggal"></td>
                                         <td class="p-3 font-semibold text-white" x-text="log.projectName"></td>
+                                        <td class="p-3 font-semibold text-amber-300" x-text="log.subcontName || '-'"></td>
                                         <td class="p-3 text-cyan-400" x-text="log.designator + ' - ' + log.namaPekerjaan"></td>
                                         <td class="p-3 text-right font-mono font-bold text-amber-400" x-text="'+' + log.volume"></td>
-                                        <td class="p-3 text-center font-bold text-emerald-400" x-text="getProjectPhysicalProgress(log.kodeProject) + '%'"></td>
+                                        <td class="p-3 text-center font-bold text-emerald-400" x-text="(log.subcontId ? getSubcontPhysicalProgress(log.kodeProject, log.subcontId) : getProjectPhysicalProgress(log.kodeProject)) + '%'"></td>
                                         <td class="p-3 text-slate-400" x-text="log.waspangName"></td>
                                     </tr>
                                 </template>
@@ -689,9 +831,8 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU WAREHOUSE (SEMUA FITUR EKSISTING TERINTEGRASI - RULE 4) ==================== -->
+                <!-- ==================== MENU WAREHOUSE ==================== -->
                 <div x-show="currentTab.startsWith('wh-')" class="space-y-4" x-cloak>
-                    <!-- Sub-navigation bar Warehouse -->
                     <div class="flex flex-wrap items-center gap-2 bg-[#0c1222] p-2.5 rounded-xl border border-slate-800">
                         <button type="button" @click="switchTab('wh-barang')" :class="currentTab === 'wh-barang' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Master Barang</button>
                         <button type="button" @click="switchTab('wh-gudang')" :class="currentTab === 'wh-gudang' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-medium">Master Gudang</button>
@@ -779,7 +920,7 @@
                                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Tipe Transaksi</label>
                                     <select x-model="newTrans.tipeTransaksi" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                                         <option value="Masuk">Masuk</option>
-                                        <option value="Keluar">Keluar (Ke Project)</option>
+                                        <option value="Keluar">Keluar (Ke Project / Subcont)</option>
                                         <option value="Transfer">Transfer Gudang</option>
                                         <option value="Return">Return (Sisa Project)</option>
                                     </select>
@@ -811,15 +952,15 @@
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Drum ID (Otomatis/Manual)</label>
-                                    <input type="text" x-model="newTrans.singleDrumId" placeholder="Contoh: NPM01-ADSS024YOFC-D01" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-indigo-300 font-mono">
+                                    <input type="text" x-model="newTrans.singleDrumId" placeholder="Contoh: PLB01-ADSS024YOFC-D01" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-indigo-300 font-mono">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Qty</label>
                                     <input type="number" step="any" min="0.01" x-model="newTrans.singleQty" required placeholder="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Keterangan / No Referensi</label>
-                                    <input type="text" x-model="newTrans.keterangan" required placeholder="SJ / DO Klien" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Keterangan / Penerima Subcont</label>
+                                    <input type="text" x-model="newTrans.keterangan" required placeholder="SJ / DO Klien / Subcont Penerima" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                                 </div>
                             </div>
                             <div class="flex justify-end">
@@ -926,12 +1067,12 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU ACCOUNTING 1: NOTIFIKASI OTOMATIS (RULES 8, 9) ==================== -->
+                <!-- ==================== MENU ACCOUNTING 1: NOTIFIKASI OTOMATIS ==================== -->
                 <div x-show="currentTab === 'acc-notif'" class="space-y-4" x-cloak>
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white">Notifikasi Real-Time dari Divisi Project</h3>
-                            <p class="text-[11px] text-slate-400">Otomatis muncul saat Tim Project menginputkan Project Baru (beserta nominalnya) atau Tagihan Subcont.</p>
+                            <p class="text-[11px] text-slate-400">Otomatis muncul saat Tim Project menginputkan Project Baru atau Tagihan dari masing-masing Subcont.</p>
                         </div>
                         <button type="button" @click="markAllNotificationsRead()" class="bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 px-3 py-1.5 rounded-lg">Tandai Semua Dibaca</button>
                     </div>
@@ -966,7 +1107,7 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU ACCOUNTING 2: INVOICE KLIEN & REKAP CB (RULE 15 - TEMPLATE REKAP_CB_EMR_YOFC_2026) ==================== -->
+                <!-- ==================== MENU ACCOUNTING 2: INVOICE KLIEN & REKAP CB ==================== -->
                 <div x-show="currentTab === 'acc-client-inv'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
@@ -1032,11 +1173,11 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU ACCOUNTING 3: PEMBAYARAN TAGIHAN SUBCONT (RULE 9 & 10) ==================== -->
+                <!-- ==================== MENU ACCOUNTING 3: PEMBAYARAN TAGIHAN SUBCONT ==================== -->
                 <div x-show="currentTab === 'acc-subcont-pay'" class="space-y-4" x-cloak>
                     <div>
                         <h3 class="text-sm font-bold text-white">Proses Verifikasi & Pembayaran Tagihan Subcont</h3>
-                        <p class="text-[11px] text-slate-400">Saat status diubah menjadi Verified / Paid, Tim Project langsung melihat update progress keuangan pada proyek terkait.</p>
+                        <p class="text-[11px] text-slate-400">Menampilkan perbandingan tagihan terhadap total BoQ & progress fisik subcont terkait pada project tersebut.</p>
                     </div>
 
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
@@ -1045,7 +1186,8 @@
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
                                     <th class="p-3">No Tagihan</th>
                                     <th class="p-3">Project</th>
-                                    <th class="p-3">Subcont</th>
+                                    <th class="p-3">Subcont Penagih</th>
+                                    <th class="p-3">Referensi BoQ & Fisik</th>
                                     <th class="p-3">Termin</th>
                                     <th class="p-3 text-right">Nominal Tagihan</th>
                                     <th class="p-3 text-center">Status</th>
@@ -1057,7 +1199,11 @@
                                     <tr class="hover:bg-slate-800/30">
                                         <td class="p-3 font-mono font-bold text-cyan-400" x-text="inv.noInvoice"></td>
                                         <td class="p-3 text-white font-medium" x-text="inv.projectName"></td>
-                                        <td class="p-3 text-amber-300" x-text="inv.subcontName"></td>
+                                        <td class="p-3 font-semibold text-amber-300" x-text="inv.subcontName"></td>
+                                        <td class="p-3 text-[11px] font-mono">
+                                            <span class="text-slate-400" x-text="'BoQ: ' + formatRupiah(getSubcontProjectBoqTotal(inv.kodeProject, inv.subcontId, 'awal'))"></span>
+                                            <span class="block text-cyan-400" x-text="'Fisik: ' + getSubcontPhysicalProgress(inv.kodeProject, inv.subcontId) + '%'"></span>
+                                        </td>
                                         <td class="p-3 text-slate-300" x-text="inv.termin"></td>
                                         <td class="p-3 text-right font-mono font-bold text-white" x-text="formatRupiah(inv.nominal)"></td>
                                         <td class="p-3 text-center">
@@ -1076,7 +1222,7 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU ACCOUNTING 4: REKAP BULANAN & EXECUTIVE SUMMARY ==================== -->
+                <!-- ==================== MENU ACCOUNTING 4: REKAP BULANAN ==================== -->
                 <div x-show="currentTab === 'acc-rekap-bulanan'" class="space-y-4" x-cloak>
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
                         <h3 class="text-sm font-bold text-white mb-1">Executive Summary & Rekapitulasi Cash Bank 2026</h3>
@@ -1200,8 +1346,8 @@
                 </div>
             </form>
 
-            <!-- Modal: Input Project Baru (Otomatis Kirim Notifikasi & Nominal ke Accounting - Rule 8) -->
-            <form x-show="activeModal === 'new-project'" @submit.prevent="saveNewProject()" class="space-y-3">
+            <!-- Modal: Input Project Baru (Multi-Subcont Checkbox) -->
+            <form x-show="activeModal === 'new-project'" @submit.prevent="saveNewProject()" class="space-y-3 max-h-[80vh] overflow-y-auto pr-1">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Klien</label>
@@ -1220,10 +1366,8 @@
                         <input type="text" x-model="formProject.noPO" required placeholder="POS25-26011535" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                     </div>
                     <div>
-                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Tim Subcont Pelaksana</label>
-                        <select x-model="formProject.subcontId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
-                            <template x-for="s in subconts" :key="s.id"><option :value="s.id" x-text="s.name"></option></template>
-                        </select>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Estimasi Nominal Kontrak Awal (Rp)</label>
+                        <input type="number" x-model.number="formProject.nominalAwal" required placeholder="52513600" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold">
                     </div>
                 </div>
                 <div>
@@ -1231,11 +1375,18 @@
                     <input type="text" x-model="formProject.projectName" required placeholder="DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Estimasi Nominal Kontrak Awal (Rp)</label>
-                    <input type="number" x-model.number="formProject.nominalAwal" required placeholder="52513600" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold">
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1.5">Pilih Tim Subcont Pelaksana (Bisa Lebih dari 1 Subcont)</label>
+                    <div class="space-y-1.5 max-h-32 overflow-y-auto p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                        <template x-for="s in subconts" :key="s.id">
+                            <label class="flex items-center gap-2.5 text-xs text-slate-200 cursor-pointer hover:text-amber-300">
+                                <input type="checkbox" :value="s.id" x-model="formProject.subcontIds" class="rounded bg-slate-900 border-slate-700 text-amber-500">
+                                <span x-text="s.name + ' (' + s.area + ')'"></span>
+                            </label>
+                        </template>
+                    </div>
                 </div>
                 <div class="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-300">
-                    💡 Menyimpan project ini akan otomatis memunculkan notifikasi ke <strong>Divisi Accounting</strong> beserta nama project & nominalnya.
+                    💡 Setelah project dibuat, alokasikan item & volume pekerjaan berbeda untuk tiap Subcont di menu <strong>BoQ Project & Multi-Subcont</strong>.
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
@@ -1243,7 +1394,27 @@
                 </div>
             </form>
 
-            <!-- Modal: Tambah Item BoQ Mandiri dari KHS Klien (Rule 17) -->
+            <!-- Modal: Kelola Daftar Subcont pada Project Existing -->
+            <form x-show="activeModal === 'manage-prj-subconts'" @submit.prevent="saveManagedProjectSubconts()" class="space-y-3">
+                <p class="text-xs text-slate-300">Centang tim subcont yang ikut mengerjakan project <strong class="text-cyan-400" x-text="manageSubcontProject?.projectName"></strong>:</p>
+                <div class="space-y-2 max-h-48 overflow-y-auto p-3 rounded-xl bg-slate-950 border border-slate-800">
+                    <template x-for="s in subconts" :key="s.id">
+                        <label class="flex items-center justify-between text-xs text-slate-200 cursor-pointer p-1.5 rounded hover:bg-slate-900">
+                            <span class="flex items-center gap-2.5">
+                                <input type="checkbox" :value="s.id" x-model="managedSubcontIds" class="rounded bg-slate-900 border-slate-700 text-amber-500">
+                                <span class="font-semibold" x-text="s.name"></span>
+                            </span>
+                            <span class="text-[10px] text-slate-400" x-text="s.area"></span>
+                        </label>
+                    </template>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg text-xs">Update Tim Subcont</button>
+                </div>
+            </form>
+
+            <!-- Modal: Tambah Item BoQ Klien dari KHS -->
             <form x-show="activeModal === 'boq-from-khs'" @submit.prevent="saveBoqFromKhs()" class="space-y-3">
                 <div>
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Item dari Master KHS Klien</label>
@@ -1256,35 +1427,96 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Volume BoQ Awal</label>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Volume Kontrak Awal (Klien)</label>
                         <input type="number" step="any" min="0.01" x-model.number="formBoqAdd.volAwal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                     </div>
                     <div>
-                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Volume BoQ Akhir (Opsional)</label>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Volume Akhir / Opname (Opsional)</label>
                         <input type="number" step="any" min="0" x-model.number="formBoqAdd.volAkhir" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg text-xs">Tambahkan ke BoQ Project</button>
+                    <button type="submit" class="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg text-xs">Tambahkan ke BoQ Klien</button>
                 </div>
             </form>
 
-            <!-- Modal: Input Tagihan Subcont (Rule 9) -->
+            <!-- Modal: Alokasi Item & Volume Pekerjaan ke Subcont Tertentu -->
+            <form x-show="activeModal === 'subcont-boq-add'" @submit.prevent="saveSubcontBoqLine()" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">1. Pilih Subcont Pelaksana di Project Ini</label>
+                    <select x-model="formSubcontBoq.subcontId" @change="autoFillSubcontRateOnModal()" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                        <option value="">-- Pilih Tim Subcont --</option>
+                        <template x-for="sid in (getProjectByCode(selectedBoqProject)?.subcontIds || [])" :key="sid">
+                            <option :value="sid" x-text="getSubcontName(sid)"></option>
+                        </template>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">2. Pilih Designator / Item Pekerjaan</label>
+                    <select x-model="formSubcontBoq.khsItemId" @change="autoFillSubcontRateOnModal()" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <option value="">-- Pilih Designator Pekerjaan --</option>
+                        <template x-for="k in khsItems" :key="k.id">
+                            <option :value="k.id" x-text="k.designator + ' - ' + k.namaPekerjaan + ' (' + k.satuan + ')'"></option>
+                        </template>
+                    </select>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Vol Target (Awal)</label>
+                        <input type="number" step="any" min="0.01" x-model.number="formSubcontBoq.volAwal" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Vol Realisasi (Akhir)</label>
+                        <input type="number" step="any" min="0" x-model.number="formSubcontBoq.volAkhir" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Harga Satuan Subcont</label>
+                        <input type="number" step="any" min="0" x-model.number="formSubcontBoq.hargaSubcont" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-amber-300 font-mono font-bold">
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-400">* Harga satuan otomatis diambil dari Rate Card Subcont jika sudah terdaftar, atau dapat disesuaikan manual.</p>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg text-xs">Simpan Alokasi Subcont</button>
+                </div>
+            </form>
+
+            <!-- Modal: Input Tagihan Subcont (Multi-Subcont Aware) -->
             <form x-show="activeModal === 'subcont-inv'" @submit.prevent="saveSubcontInvoice()" class="space-y-3">
                 <div>
-                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Project</label>
-                    <select x-model="formSubcontInv.kodeProject" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
+                    <select x-model="formSubcontInv.kodeProject" @change="formSubcontInv.subcontId = (getProjectByCode(formSubcontInv.kodeProject)?.subcontIds?.[0] || '')" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                         <option value="">-- Pilih Project --</option>
                         <template x-for="p in masterProject" :key="p.kodeProject">
                             <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
                         </template>
                     </select>
                 </div>
+                <div>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">2. Pilih Subcont Penagih</label>
+                    <select x-model="formSubcontInv.subcontId" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                        <option value="">-- Pilih Tim Subcont --</option>
+                        <template x-for="sid in (getProjectByCode(formSubcontInv.kodeProject)?.subcontIds || [])" :key="sid">
+                            <option :value="sid" x-text="getSubcontName(sid)"></option>
+                        </template>
+                    </select>
+                </div>
+                <!-- Info Referensi BoQ & Progress Fisik Subcont -->
+                <div x-show="formSubcontInv.kodeProject && formSubcontInv.subcontId" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between text-[11px] font-mono">
+                    <div>
+                        <span class="text-slate-400 font-sans block text-[10px]">Total SPK / BoQ Subcont Ini:</span>
+                        <strong class="text-amber-300" x-text="formatRupiah(getSubcontProjectBoqTotal(formSubcontInv.kodeProject, formSubcontInv.subcontId, 'awal'))"></strong>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-slate-400 font-sans block text-[10px]">Progress Fisik Lapangan:</span>
+                        <strong class="text-cyan-400" x-text="getSubcontPhysicalProgress(formSubcontInv.kodeProject, formSubcontInv.subcontId) + '%'"></strong>
+                    </div>
+                </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">No Invoice Subcont</label>
-                        <input type="text" x-model="formSubcontInv.noInvoice" required placeholder="INV-SUB/2026/001" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                        <input type="text" x-model="formSubcontInv.noInvoice" required placeholder="INV-SUB/2026/002" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                     </div>
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Termin / Keterangan Progress</label>
@@ -1301,7 +1533,7 @@
                 </div>
             </form>
 
-            <!-- Modal: Input Invoice Klien (Sesuai Format REKAP_CB_EMR_YOFC_2026 - Rule 15) -->
+            <!-- Modal: Input Invoice Klien -->
             <form x-show="activeModal === 'client-inv'" @submit.prevent="saveClientInvoice()" class="space-y-3 max-h-[75vh] overflow-y-auto pr-1">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -1384,6 +1616,78 @@
                     <button type="submit" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg text-xs">Simpan Invoice Klien</button>
                 </div>
             </form>
+
+            <!-- Modal: Tambah Master Barang Warehouse -->
+            <form x-show="activeModal === 'wh-barang'" @submit.prevent="saveWhBarang()" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Kategori</label>
+                        <input type="text" x-model="formWhBarang.kategori" required placeholder="Cable / Aksesoris / Tiang" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Jenis</label>
+                        <input type="text" x-model="formWhBarang.jenis" required placeholder="ADSS / ODP / Closure" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Kode Barang (SKU)</label>
+                        <input type="text" x-model="formWhBarang.kodeBarang" required placeholder="ODP-16C-YOFC" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Satuan</label>
+                        <input type="text" x-model="formWhBarang.sat" required placeholder="Unit / Meter / Pcs" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Nama Barang</label>
+                    <input type="text" x-model="formWhBarang.namaBarang" required placeholder="ODP Solid 16 Core YOFC" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                </div>
+                <div class="flex items-center gap-2 py-1">
+                    <input type="checkbox" id="chkWhClientMat" x-model="formWhBarang.isClientSupplied" class="rounded bg-slate-950 border-slate-700 text-indigo-500">
+                    <label for="chkWhClientMat" class="text-xs text-amber-300">Material Free-Issue Klien (Rp 0 / Non-Expense)</label>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg text-xs">Simpan Barang</button>
+                </div>
+            </form>
+
+            <!-- Modal: Tambah Master Gudang Warehouse -->
+            <form x-show="activeModal === 'wh-gudang'" @submit.prevent="saveWhGudang()" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Region</label>
+                        <input type="text" x-model="formWhGudang.region" required placeholder="PEKANBARU" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Kode Gudang</label>
+                        <input type="text" x-model="formWhGudang.kodeGudang" required placeholder="PKU-01" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Nama Gudang</label>
+                    <input type="text" x-model="formWhGudang.namaGudang" required placeholder="Gudang Regional Pekanbaru" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Tipe Kepemilikan</label>
+                        <select x-model="formWhGudang.tipeKepemilikan" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                            <option value="Milik Sendiri">Milik Sendiri</option>
+                            <option value="Sewa">Sewa</option>
+                            <option value="Gudang Klien">Gudang Klien</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Kota / Lokasi</label>
+                        <input type="text" x-model="formWhGudang.lokasi" required placeholder="Pekanbaru" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg text-xs">Simpan Gudang</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1441,6 +1745,32 @@
         } catch (e) { console.warn('Supabase fallback to local storage'); }
 
         function acmErpApp() {
+            const defaultProjects = [
+                {
+                    kodeProject: 'PLB-2026-001',
+                    clientId: 'CLI-YOFC',
+                    region: 'PALEMBANG',
+                    noPO: 'POS25-26011535',
+                    projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG',
+                    subcontIds: ['SUB-01', 'SUB-02'],
+                    nominalAwal: 52513600
+                }
+            ];
+
+            // Migrasi otomatis data lama bila masih memakai subcontId tunggal
+            let loadedProjects = JSON.parse(localStorage.getItem('acm_projects_v2') || 'null');
+            if (!loadedProjects) {
+                const legacy = JSON.parse(localStorage.getItem('acm_projects') || 'null');
+                if (legacy && Array.isArray(legacy)) {
+                    loadedProjects = legacy.map(p => ({
+                        ...p,
+                        subcontIds: p.subcontIds || (p.subcontId ? [p.subcontId] : ['SUB-01'])
+                    }));
+                } else {
+                    loadedProjects = defaultProjects;
+                }
+            }
+
             return {
                 supabaseReady: !!sbClient,
                 isLoggedIn: localStorage.getItem('acm_erp_logged_in') === 'true',
@@ -1456,11 +1786,12 @@
                 selectedKhsClient: 'CLI-YOFC',
                 selectedSubcontId: 'SUB-01',
                 selectedBoqProject: 'PLB-2026-001',
+                selectedBoqSubcontFilter: 'ALL',
                 boqMode: 'awal',
                 activeModal: '',
                 modalTitle: '',
 
-                // Data Master Klien & KHS (Rules 6, 14, 16)
+                // Data Master Klien & KHS
                 clients: JSON.parse(localStorage.getItem('acm_clients') || 'null') || [
                     { id: 'CLI-YOFC', code: 'YOFC', name: 'PT YOFC Fiber Indonesia' },
                     { id: 'CLI-TLK', code: 'TELKOM', name: 'PT Telkom Akses' }
@@ -1472,41 +1803,37 @@
                     { id: 'KHS-4', clientId: 'CLI-TLK', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core Telkom', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 8500, hargaJasa: 5000 }
                 ],
 
-                // Data Subcont & Harga Berbeda per Subcont (Rule 5)
+                // Data Subcont & Rate Card
                 subconts: JSON.parse(localStorage.getItem('acm_subconts') || 'null') || [
                     { id: 'SUB-01', name: 'CV Sriwijaya Fiberindo', area: 'PALEMBANG' },
-                    { id: 'SUB-02', name: 'PT Andalas Optik Mandiri', area: 'PADANG' }
+                    { id: 'SUB-02', name: 'PT Andalas Optik Mandiri', area: 'SUMATERA' }
                 ],
                 subcontRates: JSON.parse(localStorage.getItem('acm_subcontRates') || 'null') || [
                     { id: 'SR-1', subcontId: 'SUB-01', khsItemId: 'KHS-1', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core', satuan: 'Meter', hargaSubcont: 2800 },
-                    { id: 'SR-2', subcontId: 'SUB-01', khsItemId: 'KHS-2', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7m', satuan: 'Batang', hargaSubcont: 165000 },
-                    { id: 'SR-3', subcontId: 'SUB-02', khsItemId: 'KHS-1', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core', satuan: 'Meter', hargaSubcont: 3100 }
+                    { id: 'SR-2', subcontId: 'SUB-01', khsItemId: 'KHS-3', designator: 'ODP-SOLID-16', namaPekerjaan: 'Pemasangan & Terminasi ODP 16 Core', satuan: 'Unit', hargaSubcont: 185000 },
+                    { id: 'SR-3', subcontId: 'SUB-02', khsItemId: 'KHS-2', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', hargaSubcont: 980000 },
+                    { id: 'SR-4', subcontId: 'SUB-02', khsItemId: 'KHS-1', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core', satuan: 'Meter', hargaSubcont: 3000 }
                 ],
 
-                // Data Project & BoQ (Rules 7, 8, 10, 17)
-                masterProject: JSON.parse(localStorage.getItem('acm_projects') || 'null') || [
-                    {
-                        kodeProject: 'PLB-2026-001',
-                        clientId: 'CLI-YOFC',
-                        region: 'PALEMBANG',
-                        noPO: 'POS25-26011535',
-                        projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG',
-                        subcontId: 'SUB-01',
-                        nominalAwal: 52513600
-                    }
+                // Data Project (Multi-Subcont), BoQ Klien, dan BoQ Alokasi per Subcont
+                masterProject: loadedProjects,
+                projectBoqLines: JSON.parse(localStorage.getItem('acm_boq_lines_v2') || 'null') || [
+                    { id: 'BL-1', kodeProject: 'PLB-2026-001', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, volAwal: 4500, volAkhir: 3150, hargaMaterial: 0, hargaJasa: 4500 },
+                    { id: 'BL-2', kodeProject: 'PLB-2026-001', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', isClientMaterial: false, volAwal: 23, volAkhir: 18, hargaMaterial: 1150000, hargaJasa: 250000 }
                 ],
-                projectBoqLines: JSON.parse(localStorage.getItem('acm_boq_lines') || 'null') || [
-                    { id: 'BL-1', kodeProject: 'PLB-2026-001', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Material Klien)', isClientMaterial: true, volAwal: 4500, volAkhir: 3150, hargaMaterial: 0, hargaJasa: 4500, hargaSubcont: 2800 },
-                    { id: 'BL-2', kodeProject: 'PLB-2026-001', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', isClientMaterial: false, volAwal: 23, volAkhir: 18, hargaMaterial: 1150000, hargaJasa: 250000, hargaSubcont: 165000 }
+                subcontBoqLines: JSON.parse(localStorage.getItem('acm_subcont_boq_lines_v2') || 'null') || [
+                    { id: 'SBL-1', kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Utara)', satuan: 'Meter', volAwal: 3000, volAkhir: 2250, hargaSubcont: 2800 },
+                    { id: 'SBL-2', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Selatan)', satuan: 'Meter', volAwal: 1500, volAkhir: 900, hargaSubcont: 3000 },
+                    { id: 'SBL-3', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7m', satuan: 'Batang', volAwal: 23, volAkhir: 18, hargaSubcont: 980000 }
                 ],
 
-                // Data Waspang Harian (Rule 13)
-                waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PLB-2026-001', boqLineId: '', volume: '' },
-                waspangLogs: JSON.parse(localStorage.getItem('acm_waspang_logs') || 'null') || [
-                    { id: 1, tanggal: '2026-11-12', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core', volume: 1500, waspangName: 'Waspang Palembang' }
+                // Data Waspang Harian
+                waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', subcontBoqLineId: '', volume: '' },
+                waspangLogs: JSON.parse(localStorage.getItem('acm_waspang_logs_v2') || 'null') || [
+                    { id: 1, tanggal: '2026-11-12', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Utara)', volume: 1500, waspangName: 'Waspang Palembang' }
                 ],
 
-                // Data Warehouse (Rule 4 & Rule 14)
+                // Data Warehouse
                 masterBarang: JSON.parse(localStorage.getItem('acm_wh_barang') || 'null') || [
                     { kategori: 'Cable', jenis: 'ADSS', kodeBarang: 'ADSS-024-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC (Free-Issue Klien)', isClientSupplied: true, sat: 'Meter' },
                     { kategori: 'Tiang', jenis: 'Besi 7m', kodeBarang: 'TNG-7M-140', namaBarang: 'Tiang Besi 7 Meter 140kg', isClientSupplied: false, sat: 'Batang' }
@@ -1527,13 +1854,13 @@
                 newTrans: { tanggal: new Date().toISOString().split('T')[0], tipeTransaksi: 'Masuk', gudangAsal: '', kodeProject: '', singleKodeBarang: '', singleDrumId: '', singleQty: '', keterangan: '' },
                 activeBast: {},
 
-                // Data Accounting & Notifikasi (Rules 8, 9, 10, 15)
+                // Data Accounting & Notifikasi
                 notifications: JSON.parse(localStorage.getItem('acm_notifications') || 'null') || [
-                    { id: 1, type: 'NEW_PROJECT', title: 'Project Baru: DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', nominal: 52513600, detail: 'No PO: POS25-26011535 | Area: PALEMBANG', timestamp: 'Hari ini, 09:15', isRead: false },
-                    { id: 2, type: 'SUBCONT_INV', title: 'Tagihan Subcont: CV Sriwijaya Fiberindo', nominal: 11790000, detail: 'Project PLB-2026-001 | Termin 1 (50%)', timestamp: 'Hari ini, 11:30', isRead: false }
+                    { id: 1, type: 'NEW_PROJECT', title: 'Project Baru: DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', nominal: 52513600, detail: 'No PO: POS25-26011535 | Area: PALEMBANG | 2 Subcont', timestamp: 'Hari ini, 09:15', isRead: false },
+                    { id: 2, type: 'SUBCONT_INV', title: 'Tagihan Subcont: CV Sriwijaya Fiberindo', nominal: 4200000, detail: 'Project PLB-2026-001 | Termin 1 (50% Segmen Utara)', timestamp: 'Hari ini, 11:30', isRead: false }
                 ],
-                subcontInvoices: JSON.parse(localStorage.getItem('acm_subcont_inv') || 'null') || [
-                    { id: 1, noInvoice: 'INV-SUB/PLB/2026/001', tanggal: '2026-11-13', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontName: 'CV Sriwijaya Fiberindo', termin: 'Termin 1 (50% Fisik)', nominal: 11790000, status: 'Pending' }
+                subcontInvoices: JSON.parse(localStorage.getItem('acm_subcont_inv_v2') || 'null') || [
+                    { id: 1, noInvoice: 'INV-SUB/PLB/2026/001', tanggal: '2026-11-13', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', termin: 'Termin 1 (50% Fisik)', nominal: 4200000, status: 'Pending' }
                 ],
                 clientInvoices: JSON.parse(localStorage.getItem('acm_client_inv') || 'null') || [
                     { id: 1, area: 'PALEMBANG', noPO: 'POS25-26011535', lokasiPekerjaan: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', termInv: 'INV I (40%)', noInvoice: '074/ACM-INV-YOFC/III/2026', tglInvoice: '2026-03-02', noFakturPajak: '4012600069041490', nilaiDpp: 21005440, pph175: 367595, ppn11: 2310598, nettTerima: 22948443, tglCb: '2026-03-27', statusPembayaran: 'LUNAS' },
@@ -1545,10 +1872,15 @@
                 formKhs: { designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 },
                 formSubcont: { name: '', area: '' },
                 formSubcontRate: { khsItemId: '', hargaSubcont: 0 },
-                formProject: { clientId: 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontId: 'SUB-01', projectName: '', nominalAwal: 0 },
+                formProject: { clientId: 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: ['SUB-01'], projectName: '', nominalAwal: 0 },
+                manageSubcontProject: null,
+                managedSubcontIds: [],
                 formBoqAdd: { khsItemId: '', volAwal: 0, volAkhir: 0 },
-                formSubcontInv: { kodeProject: '', noInvoice: '', termin: '', nominal: 0 },
+                formSubcontBoq: { subcontId: '', khsItemId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 },
+                formSubcontInv: { kodeProject: '', subcontId: '', noInvoice: '', termin: '', nominal: 0 },
                 formClientInv: { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: '', noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' },
+                formWhBarang: { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' },
+                formWhGudang: { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' },
 
                 init() {
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
@@ -1559,21 +1891,22 @@
                     localStorage.setItem('acm_khsItems', JSON.stringify(this.khsItems));
                     localStorage.setItem('acm_subconts', JSON.stringify(this.subconts));
                     localStorage.setItem('acm_subcontRates', JSON.stringify(this.subcontRates));
-                    localStorage.setItem('acm_projects', JSON.stringify(this.masterProject));
-                    localStorage.setItem('acm_boq_lines', JSON.stringify(this.projectBoqLines));
-                    localStorage.setItem('acm_waspang_logs', JSON.stringify(this.waspangLogs));
+                    localStorage.setItem('acm_projects_v2', JSON.stringify(this.masterProject));
+                    localStorage.setItem('acm_boq_lines_v2', JSON.stringify(this.projectBoqLines));
+                    localStorage.setItem('acm_subcont_boq_lines_v2', JSON.stringify(this.subcontBoqLines));
+                    localStorage.setItem('acm_waspang_logs_v2', JSON.stringify(this.waspangLogs));
                     localStorage.setItem('acm_wh_barang', JSON.stringify(this.masterBarang));
                     localStorage.setItem('acm_wh_gudang', JSON.stringify(this.masterGudang));
                     localStorage.setItem('acm_wh_drums', JSON.stringify(this.drumLedger));
                     localStorage.setItem('acm_wh_usage', JSON.stringify(this.materialUsage));
                     localStorage.setItem('acm_wh_tx', JSON.stringify(this.transactions));
                     localStorage.setItem('acm_notifications', JSON.stringify(this.notifications));
-                    localStorage.setItem('acm_subcont_inv', JSON.stringify(this.subcontInvoices));
+                    localStorage.setItem('acm_subcont_inv_v2', JSON.stringify(this.subcontInvoices));
                     localStorage.setItem('acm_client_inv', JSON.stringify(this.clientInvoices));
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                 },
 
-                // ==================== ROLE-BASED DIVISION ACCESS (RULES 11, 12) ====================
+                // ==================== ROLE-BASED ACCESS ====================
                 applyDemoPreset() {
                     const roleMap = {
                         'Super Admin': 'rudi@acerocetha.co.id',
@@ -1618,13 +1951,13 @@
 
                 getTabTitle() {
                     const map = {
-                        'dashboard': 'Dashboard Terintegrasi ACM-ERP',
+                        'dashboard': 'Dashboard Terintegrasi ACM-ERP (Multi-Subcont)',
                         'prj-khs': 'Project • Master KHS & Harga per Klien',
-                        'prj-subcont': 'Project • Master Subcont & Harga Item',
-                        'prj-list': 'Project • Daftar Project & Live Progress Keuangan',
-                        'prj-boq': 'Project • BoQ Awal/Akhir & BoQ Subcont',
-                        'prj-subcont-inv': 'Project • Pengajuan Tagihan Subcont',
-                        'waspang-daily': 'Waspang • Input Volume Harian & Progress',
+                        'prj-subcont': 'Project • Master Subcont & Rate Card',
+                        'prj-list': 'Project • Daftar Project (Multi-Subcont) & Progress Keuangan',
+                        'prj-boq': 'Project • BoQ Utama Klien & Alokasi Multi-Subcont',
+                        'prj-subcont-inv': 'Project • Pengajuan Tagihan per Subcont',
+                        'waspang-daily': 'Waspang • Input Volume Harian per Subcont',
                         'wh-barang': 'Warehouse • Master Barang',
                         'wh-gudang': 'Warehouse • Master Gudang',
                         'wh-input': 'Warehouse • Input Transaksi',
@@ -1654,6 +1987,7 @@
                 // ==================== KHS & CLIENT HELPERS ====================
                 getClientName(id) { return this.clients.find(c => c.id === id)?.name || id; },
                 getSubcontName(id) { return this.subconts.find(s => s.id === id)?.name || id; },
+                getProjectByCode(code) { return this.masterProject.find(p => p.kodeProject === code); },
                 getFilteredKhsItems() { return this.khsItems.filter(k => k.clientId === this.selectedKhsClient); },
                 getFilteredSubcontRates() { return this.subcontRates.filter(r => r.subcontId === this.selectedSubcontId); },
 
@@ -1700,106 +2034,237 @@
                     this.persistAll(); this.activeModal = ''; this.showToast('Harga item Subcont diperbarui');
                 },
 
-                // ==================== PROJECT & AUTO-NOTIFICATION TO ACCOUNTING (RULE 8) ====================
+                // ==================== PROJECT & MULTI-SUBCONT MANAGEMENT ====================
                 openNewProjectModal() {
-                    this.modalTitle = 'Input Project Baru';
-                    this.formProject = { clientId: this.clients[0]?.id || '', region: 'PALEMBANG', noPO: '', subcontId: this.subconts[0]?.id || '', projectName: '', nominalAwal: 0 };
+                    this.modalTitle = 'Input Project Baru (Multi-Subcont)';
+                    this.formProject = {
+                        clientId: this.clients[0]?.id || '',
+                        region: 'PALEMBANG',
+                        noPO: '',
+                        subcontIds: this.subconts[0] ? [this.subconts[0].id] : [],
+                        projectName: '',
+                        nominalAwal: 0
+                    };
                     this.activeModal = 'new-project';
                 },
                 saveNewProject() {
+                    if (!this.formProject.subcontIds || this.formProject.subcontIds.length === 0) {
+                        this.showToast('Pilih minimal 1 Tim Subcont Pelaksana!');
+                        return;
+                    }
                     const regCode = (this.formProject.region || 'PRJ').substring(0, 3).toUpperCase();
                     const kode = `${regCode}-2026-${String(this.masterProject.length + 1).padStart(3, '0')}`;
-                    const newPrj = { kodeProject: kode, ...this.formProject };
+                    const newPrj = {
+                        kodeProject: kode,
+                        clientId: this.formProject.clientId,
+                        region: this.formProject.region,
+                        noPO: this.formProject.noPO,
+                        subcontIds: [...this.formProject.subcontIds],
+                        projectName: this.formProject.projectName,
+                        nominalAwal: Number(this.formProject.nominalAwal) || 0
+                    };
                     this.masterProject.push(newPrj);
 
-                    // RULE 8: Otomatis muncul notifikasi di bagian Accounting beserta nama project & nominalnya
                     this.notifications.unshift({
                         id: Date.now(),
                         type: 'NEW_PROJECT',
                         title: `Project Baru: ${newPrj.projectName} (${kode})`,
                         nominal: Number(newPrj.nominalAwal) || 0,
-                        detail: `No PO: ${newPrj.noPO} | Klien: ${this.getClientName(newPrj.clientId)} | Area: ${newPrj.region}`,
+                        detail: `No PO: ${newPrj.noPO} | Klien: ${this.getClientName(newPrj.clientId)} | ${newPrj.subcontIds.length} Subcont`,
                         timestamp: 'Baru saja',
                         isRead: false
                     });
 
+                    this.selectedBoqProject = kode;
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Project ${kode} disimpan & Notifikasi Nominal dikirim ke Divisi Accounting!`);
+                    this.showToast(`Project ${kode} dengan ${newPrj.subcontIds.length} Subcont disimpan & Notif dikirim ke Accounting!`);
                 },
 
-                // ==================== BoQ PROJECT & BoQ SUBCONT (RULES 5, 7, 14, 17) ====================
-                getProjectBoqLines(kodeProject) { return this.projectBoqLines.filter(l => l.kodeProject === kodeProject); },
+                openManageProjectSubconts(prj) {
+                    this.manageSubcontProject = prj;
+                    this.managedSubcontIds = [...(prj.subcontIds || [])];
+                    this.modalTitle = 'Kelola Tim Subcont Pelaksana';
+                    this.activeModal = 'manage-prj-subconts';
+                },
+                saveManagedProjectSubconts() {
+                    if (!this.manageSubcontProject) return;
+                    if (this.managedSubcontIds.length === 0) {
+                        this.showToast('Minimal harus ada 1 Subcont pelaksana pada project!');
+                        return;
+                    }
+                    this.manageSubcontProject.subcontIds = [...this.managedSubcontIds];
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Daftar Tim Subcont pada project berhasil diperbarui!');
+                },
+
+                // ==================== BoQ KLIEN & ALOKASI MULTI-SUBCONT ====================
+                getProjectBoqLines(kodeProject) {
+                    return this.projectBoqLines.filter(l => l.kodeProject === kodeProject);
+                },
+                getSubcontBoqLines(kodeProject, subcontId = 'ALL') {
+                    return this.subcontBoqLines.filter(l => l.kodeProject === kodeProject && (subcontId === 'ALL' || l.subcontId === subcontId));
+                },
+                getFilteredSubcontBoqLines() {
+                    return this.getSubcontBoqLines(this.selectedBoqProject, this.selectedBoqSubcontFilter);
+                },
+                getAllocatedSubcontVolumeForDesignator(kodeProject, designator) {
+                    return this.subcontBoqLines
+                        .filter(l => l.kodeProject === kodeProject && l.designator === designator)
+                        .reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
+                },
                 calcBoqLineClientTotal(line, mode) {
                     const vol = mode === 'awal' ? Number(line.volAwal) : Number(line.volAkhir);
-                    const mat = line.isClientMaterial ? 0 : Number(line.hargaMaterial); // Rule 14: Material klien = Rp 0
+                    const mat = line.isClientMaterial ? 0 : Number(line.hargaMaterial);
                     return vol * (mat + Number(line.hargaJasa));
-                },
-                calcBoqLineSubcontTotal(line, mode) {
-                    const vol = mode === 'awal' ? Number(line.volAwal) : Number(line.volAkhir);
-                    return vol * Number(line.hargaSubcont || 0);
                 },
                 getProjectBoqTotal(kodeProject, mode) {
                     const lines = this.getProjectBoqLines(kodeProject);
                     if (lines.length === 0 && mode === 'awal') {
-                        return this.masterProject.find(p => p.kodeProject === kodeProject)?.nominalAwal || 0;
+                        return this.getProjectByCode(kodeProject)?.nominalAwal || 0;
                     }
                     return lines.reduce((sum, l) => sum + this.calcBoqLineClientTotal(l, mode), 0);
                 },
+                getSubcontProjectBoqTotal(kodeProject, subcontId, mode) {
+                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
+                    return lines.reduce((sum, l) => {
+                        const vol = mode === 'awal' ? Number(l.volAwal) : Number(l.volAkhir);
+                        return sum + (vol * Number(l.hargaSubcont || 0));
+                    }, 0);
+                },
+                getAllSubcontsProjectBoqTotal(kodeProject, mode) {
+                    return this.getSubcontBoqLines(kodeProject, 'ALL').reduce((sum, l) => {
+                        const vol = mode === 'awal' ? Number(l.volAwal) : Number(l.volAkhir);
+                        return sum + (vol * Number(l.hargaSubcont || 0));
+                    }, 0);
+                },
 
                 openAddBoqFromKhsModal() {
-                    this.modalTitle = 'Buat / Tambah Item BoQ dari KHS Klien';
+                    this.modalTitle = 'Tambah Item BoQ Utama Klien (KHS)';
                     this.formBoqAdd = { khsItemId: '', volAwal: 0, volAkhir: 0 };
                     this.activeModal = 'boq-from-khs';
                 },
                 saveBoqFromKhs() {
                     const khs = this.khsItems.find(k => k.id === this.formBoqAdd.khsItemId);
-                    const prj = this.masterProject.find(p => p.kodeProject === this.selectedBoqProject);
-                    if (!khs || !prj) return;
-
-                    // Ambil harga subcont sesuai subcont pelaksana project ini
-                    const subRate = this.subcontRates.find(r => r.subcontId === prj.subcontId && r.designator === khs.designator);
-
+                    if (!khs) return;
                     this.projectBoqLines.push({
                         id: 'BL-' + Date.now(),
                         kodeProject: this.selectedBoqProject,
                         designator: khs.designator,
                         namaPekerjaan: khs.namaPekerjaan,
+                        satuan: khs.satuan,
                         isClientMaterial: khs.isClientMaterial,
                         volAwal: Number(this.formBoqAdd.volAwal),
-                        volAkhir: Number(this.formBoqAdd.volAkhir || this.formBoqAdd.volAwal),
+                        volAkhir: Number(this.formBoqAdd.volAkhir || 0),
                         hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
-                        hargaJasa: Number(khs.hargaJasa),
-                        hargaSubcont: subRate ? Number(subRate.hargaSubcont) : 0
+                        hargaJasa: Number(khs.hargaJasa)
                     });
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Item BoQ berhasil ditambahkan dari KHS Klien');
+                    this.showToast('Item BoQ Utama Klien berhasil ditambahkan');
                 },
 
-                // ==================== WASPANG DAILY VOLUME -> AUTO PROGRESS SUBCONT (RULE 13) ====================
+                openAddSubcontBoqModal() {
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    const defaultSub = (this.selectedBoqSubcontFilter !== 'ALL' ? this.selectedBoqSubcontFilter : prj?.subcontIds?.[0]) || '';
+                    this.modalTitle = 'Alokasi Item & Volume Pekerjaan ke Subcont';
+                    this.formSubcontBoq = { subcontId: defaultSub, khsItemId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 };
+                    this.activeModal = 'subcont-boq-add';
+                },
+                autoFillSubcontRateOnModal() {
+                    if (!this.formSubcontBoq.subcontId || !this.formSubcontBoq.khsItemId) return;
+                    const khs = this.khsItems.find(k => k.id === this.formSubcontBoq.khsItemId);
+                    if (!khs) return;
+                    const rate = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === khs.designator);
+                    if (rate) {
+                        this.formSubcontBoq.hargaSubcont = Number(rate.hargaSubcont);
+                    }
+                },
+                saveSubcontBoqLine() {
+                    const khs = this.khsItems.find(k => k.id === this.formSubcontBoq.khsItemId);
+                    if (!khs || !this.formSubcontBoq.subcontId) return;
+
+                    this.subcontBoqLines.push({
+                        id: 'SBL-' + Date.now(),
+                        kodeProject: this.selectedBoqProject,
+                        subcontId: this.formSubcontBoq.subcontId,
+                        designator: khs.designator,
+                        namaPekerjaan: khs.namaPekerjaan,
+                        satuan: khs.satuan,
+                        volAwal: Number(this.formSubcontBoq.volAwal),
+                        volAkhir: Number(this.formSubcontBoq.volAkhir || 0),
+                        hargaSubcont: Number(this.formSubcontBoq.hargaSubcont)
+                    });
+
+                    // Pastikan BoQ Utama Klien juga memiliki designator ini jika belum ada
+                    const existsInMain = this.projectBoqLines.some(l => l.kodeProject === this.selectedBoqProject && l.designator === khs.designator);
+                    if (!existsInMain) {
+                        this.projectBoqLines.push({
+                            id: 'BL-' + (Date.now() + 1),
+                            kodeProject: this.selectedBoqProject,
+                            designator: khs.designator,
+                            namaPekerjaan: khs.namaPekerjaan,
+                            satuan: khs.satuan,
+                            isClientMaterial: khs.isClientMaterial,
+                            volAwal: Number(this.formSubcontBoq.volAwal),
+                            volAkhir: Number(this.formSubcontBoq.volAkhir || 0),
+                            hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
+                            hargaJasa: Number(khs.hargaJasa)
+                        });
+                    }
+
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast(`Item ${khs.designator} berhasil dialokasikan ke ${this.getSubcontName(this.formSubcontBoq.subcontId)}!`);
+                },
+                removeSubcontBoqLine(id) {
+                    this.subcontBoqLines = this.subcontBoqLines.filter(l => l.id !== id);
+                    this.persistAll();
+                    this.showToast('Item alokasi subcont dihapus');
+                },
+
+                // ==================== WASPANG DAILY VOLUME PER SUBCONT ====================
                 submitWaspangDaily() {
-                    const line = this.projectBoqLines.find(l => l.id === this.waspangForm.boqLineId);
-                    const prj = this.masterProject.find(p => p.kodeProject === this.waspangForm.kodeProject);
-                    if (!line || !prj) return;
+                    const sline = this.subcontBoqLines.find(l => l.id === this.waspangForm.subcontBoqLineId);
+                    const prj = this.getProjectByCode(this.waspangForm.kodeProject);
+                    if (!sline || !prj) return;
 
                     const volAdd = Number(this.waspangForm.volume) || 0;
-                    line.volAkhir = (Number(line.volAkhir) || 0) + volAdd;
+                    sline.volAkhir = (Number(sline.volAkhir) || 0) + volAdd;
 
+                    // Sinkronkan juga ke BoQ Utama Klien untuk designator yang sama
+                    const mainLine = this.projectBoqLines.find(l => l.kodeProject === prj.kodeProject && l.designator === sline.designator);
+                    if (mainLine) {
+                        mainLine.volAkhir = (Number(mainLine.volAkhir) || 0) + volAdd;
+                    }
+
+                    const subName = this.getSubcontName(sline.subcontId);
                     this.waspangLogs.unshift({
                         id: Date.now(),
                         tanggal: this.waspangForm.tanggal,
                         kodeProject: prj.kodeProject,
                         projectName: prj.projectName,
-                        designator: line.designator,
-                        namaPekerjaan: line.namaPekerjaan,
+                        subcontId: sline.subcontId,
+                        subcontName: subName,
+                        designator: sline.designator,
+                        namaPekerjaan: sline.namaPekerjaan,
                         volume: volAdd,
                         waspangName: this.currentUser
                     });
 
                     this.waspangForm.volume = '';
                     this.persistAll();
-                    this.showToast(`Volume harian +${volAdd} tersimpan! Progress fisik & Subcont otomatis terupdate.`);
+                    this.showToast(`Volume +${volAdd} tersimpan untuk ${subName}! Progress Subcont & Project otomatis terupdate.`);
+                },
+
+                getSubcontPhysicalProgress(kodeProject, subcontId) {
+                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
+                    if (lines.length === 0) return 0;
+                    const totalPlan = lines.reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
+                    const totalAct = lines.reduce((s, l) => s + (Number(l.volAkhir) || 0), 0);
+                    if (totalPlan <= 0) return 0;
+                    return Math.min(100, Math.round((totalAct / totalPlan) * 100));
                 },
 
                 getProjectPhysicalProgress(kodeProject) {
@@ -1811,16 +2276,23 @@
                     return Math.min(100, Math.round((totalAct / totalPlan) * 100));
                 },
 
-                // ==================== SUBCONT INVOICE & ACCOUNTING PROGRESS (RULES 9, 10) ====================
+                // ==================== SUBCONT INVOICE & ACCOUNTING PROGRESS ====================
                 openSubcontInvoiceModal() {
-                    this.modalTitle = 'Ajukan Invoice / Tagihan Subcont';
-                    this.formSubcontInv = { kodeProject: this.masterProject[0]?.kodeProject || '', noInvoice: '', termin: '', nominal: 0 };
+                    const firstPrj = this.masterProject[0];
+                    this.modalTitle = 'Ajukan Invoice / Tagihan per Subcont';
+                    this.formSubcontInv = {
+                        kodeProject: firstPrj?.kodeProject || '',
+                        subcontId: firstPrj?.subcontIds?.[0] || '',
+                        noInvoice: '',
+                        termin: '',
+                        nominal: 0
+                    };
                     this.activeModal = 'subcont-inv';
                 },
                 saveSubcontInvoice() {
-                    const prj = this.masterProject.find(p => p.kodeProject === this.formSubcontInv.kodeProject);
-                    if (!prj) return;
-                    const subName = this.getSubcontName(prj.subcontId);
+                    const prj = this.getProjectByCode(this.formSubcontInv.kodeProject);
+                    if (!prj || !this.formSubcontInv.subcontId) return;
+                    const subName = this.getSubcontName(this.formSubcontInv.subcontId);
 
                     this.subcontInvoices.unshift({
                         id: Date.now(),
@@ -1828,13 +2300,13 @@
                         tanggal: new Date().toISOString().split('T')[0],
                         kodeProject: prj.kodeProject,
                         projectName: prj.projectName,
+                        subcontId: this.formSubcontInv.subcontId,
                         subcontName: subName,
                         termin: this.formSubcontInv.termin,
                         nominal: Number(this.formSubcontInv.nominal),
                         status: 'Pending'
                     });
 
-                    // RULE 9: Notifikasi otomatis ke Accounting saat project input invoice subcont
                     this.notifications.unshift({
                         id: Date.now() + 1,
                         type: 'SUBCONT_INV',
@@ -1847,16 +2319,15 @@
 
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Tagihan Subcont diajukan & Notifikasi otomatis muncul di Divisi Accounting!');
+                    this.showToast(`Tagihan ${subName} diajukan & Notifikasi otomatis dikirim ke Divisi Accounting!`);
                 },
 
                 processSubcontInvoice(inv, newStatus) {
                     inv.status = newStatus;
                     this.persistAll();
-                    this.showToast(`Status tagihan ${inv.noInvoice} diubah menjadi ${newStatus}. Tim Project dapat melihat update ini.`);
+                    this.showToast(`Status tagihan ${inv.noInvoice} (${inv.subcontName}) diubah menjadi ${newStatus}.`);
                 },
 
-                // Live Finance Tracking on Project Tab (Rule 10)
                 getProjectClientPaid(noPO) {
                     return this.clientInvoices.filter(i => i.noPO === noPO && i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0);
                 },
@@ -1871,7 +2342,7 @@
                     return 'Proses Penagihan / Berjalan';
                 },
 
-                // ==================== ACCOUNTING: INVOICE KLIEN (TEMPLATE REKAP_CB_EMR_YOFC_2026 - RULE 15) ====================
+                // ==================== ACCOUNTING: INVOICE KLIEN ====================
                 openClientInvoiceModal() {
                     this.modalTitle = 'Input Invoice Klien (Format Rekap CB YOFC 2026)';
                     this.formClientInv = { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: new Date().toISOString().split('T')[0], noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' };
@@ -1906,7 +2377,30 @@
                     this.showToast(`Invoice ${inv.noInvoice} LUNAS! Progress keuangan project otomatis terupdate.`);
                 },
 
-                // ==================== WAREHOUSE METHODS (RULE 4) ====================
+                // ==================== WAREHOUSE METHODS ====================
+                openWhMasterModal(type) {
+                    if (type === 'barang') {
+                        this.modalTitle = 'Tambah Master Barang Baru';
+                        this.formWhBarang = { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' };
+                        this.activeModal = 'wh-barang';
+                    } else if (type === 'gudang') {
+                        this.modalTitle = 'Tambah Master Gudang Regional';
+                        this.formWhGudang = { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' };
+                        this.activeModal = 'wh-gudang';
+                    }
+                },
+                saveWhBarang() {
+                    this.masterBarang.push({ ...this.formWhBarang, kodeBarang: this.formWhBarang.kodeBarang.toUpperCase() });
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Master Barang baru berhasil ditambahkan!');
+                },
+                saveWhGudang() {
+                    this.masterGudang.push({ ...this.formWhGudang, region: this.formWhGudang.region.toUpperCase(), kodeGudang: this.formWhGudang.kodeGudang.toUpperCase() });
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Master Gudang baru berhasil ditambahkan!');
+                },
                 openInputTransaction() { this.switchTab('wh-input'); },
                 submitWhTransaction() {
                     const brg = this.masterBarang.find(b => b.kodeBarang === this.newTrans.singleKodeBarang);
