@@ -2064,7 +2064,7 @@
             <!-- MODAL KHUSUS: PREVIEW & EXPORT PDF SPK SUBCONT -->
             <div x-show="activeModal === 'spk-preview'" class="flex-1 flex flex-col overflow-hidden space-y-4">
                 <!-- Kontrol & Konfigurasi Nomor SPK Sebelum Export PDF -->
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800 shrink-0">
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800 shrink-0">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Subcont Penerima</label>
                         <select x-model="spkDraft.subcontId" @change="refreshSpkDraftData()" class="w-full bg-[#0c1222] border border-amber-500/40 rounded-lg px-2.5 py-1.5 text-xs text-amber-300 font-semibold">
@@ -2226,6 +2226,10 @@
                         <input type="date" x-model="rekonPdfDraft.tanggal" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
                     </div>
                     <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">No. SPK Pekerjaan</label>
+                        <input type="text" x-model="rekonPdfDraft.noSpk" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-cyan-300 font-mono">
+                    </div>
+                    <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Perwakilan Waspang / QC</label>
                         <input type="text" x-model="rekonPdfDraft.waspangName" placeholder="Nama Waspang Lapangan" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
                     </div>
@@ -2261,6 +2265,7 @@
                             <p><span class="text-slate-600 inline-block w-28">Area Kerja</span>: <span x-text="rekonPdfDraft.subcontArea"></span></p>
                             <p><span class="text-slate-600 inline-block w-28">Tanggal Rekon</span>: <span x-text="rekonPdfDraft.tanggal"></span></p>
                             <p><span class="text-slate-600 inline-block w-28">Status Dokumen</span>: <strong>Final Opname & Rekon Bersama</strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">No. SPK Pekerjaan</span>: <strong class="font-mono" x-text="rekonPdfDraft.noSpk || '-'"></strong></p>
                         </div>
                     </div>
 
@@ -3268,6 +3273,7 @@
                 <p><span class="inline-block w-24">Area Kerja</span>: <span x-text="rekonPdfDraft.subcontArea"></span></p>
                 <p><span class="inline-block w-24">Tanggal Rekon</span>: <span x-text="rekonPdfDraft.tanggal"></span></p>
                 <p><span class="inline-block w-24">Status Dokumen</span>: <strong>Final Opname & Rekon Bersama</strong></p>
+                <p><span class="inline-block w-24">No. SPK</span>: <strong class="font-mono" x-text="rekonPdfDraft.noSpk || '-'"></strong></p>
             </div>
         </div>
 
@@ -3602,6 +3608,7 @@
                     subcontName: '',
                     subcontArea: '',
                     noBaRekon: '',
+                    noSpk: '',
                     tanggal: new Date().toISOString().split('T')[0],
                     waspangName: '',
                     jasaRows: [],
@@ -4758,6 +4765,7 @@
                         subcontName: sub ? sub.name : 'Subcont Pelaksana',
                         subcontArea: sub ? sub.area : '-',
                         noBaRekon: `BA-REKON/ACM/${prj.kodeProject}/${targetSubcontId}/${year}`,
+                        noSpk: `SPK/ACM/${prj.kodeProject}/${targetSubcontId}/${year}`,
                         tanggal: new Date().toISOString().split('T')[0],
                         waspangName: '',
                         jasaRows: computed.jasaRows,
@@ -4778,6 +4786,7 @@
                     this.rekonPdfDraft.subcontName = sub ? sub.name : 'Subcont Pelaksana';
                     this.rekonPdfDraft.subcontArea = sub ? sub.area : '-';
                     this.rekonPdfDraft.noBaRekon = `BA-REKON/ACM/${this.rekonPdfDraft.kodeProject}/${this.rekonPdfDraft.subcontId}/${year}`;
+                    this.rekonPdfDraft.noSpk = `SPK/ACM/${this.rekonPdfDraft.kodeProject}/${this.rekonPdfDraft.subcontId}/${year}`;
                     this.rekonPdfDraft.jasaRows = computed.jasaRows;
                     this.rekonPdfDraft.materialRows = computed.materialRows;
                     this.rekonPdfDraft.summary = computed.summary;
