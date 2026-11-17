@@ -36,22 +36,38 @@
         ::-webkit-scrollbar-track { background: #060913; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+        /* Print Styles: Eksklusif per Mode (BAST vs SPK) */
         @media print {
-            @page { margin: 0; size: auto; }
-            body { background: white !important; color: black !important; }
-            .print\:hidden, aside, header, nav, .no-print { display: none !important; }
-            #printable-bast {
+            @page { margin: 10mm 12mm; size: A4 portrait; }
+            body { background: white !important; color: black !important; font-size: 11px !important; }
+            .print\:hidden, aside, header, nav, .no-print, .modal-overlay { display: none !important; }
+            
+            body.printing-bast #printable-bast {
                 display: block !important;
                 position: static !important;
                 width: 100% !important;
                 visibility: visible !important;
-                padding: 12mm 15mm !important;
+                padding: 4mm !important;
             }
-            #printable-bast * { visibility: visible !important; }
+            body.printing-bast #printable-spk { display: none !important; }
+
+            body.printing-spk #printable-spk {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                visibility: visible !important;
+                padding: 2mm !important;
+            }
+            body.printing-spk #printable-bast { display: none !important; }
+
+            #printable-bast *, #printable-spk * { visibility: visible !important; }
         }
     </style>
 </head>
-<body class="antialiased selection:bg-cyan-500 selection:text-slate-950" x-data="acmErpApp()">
+<body class="antialiased selection:bg-cyan-500 selection:text-slate-950"
+      :class="printMode === 'spk' ? 'printing-spk' : (printMode === 'bast' ? 'printing-bast' : '')"
+      x-data="acmErpApp()">
 
     <!-- ==================== 1. LOGIN SCREEN (DIVISION ACCESS) ==================== -->
     <div x-show="!isLoggedIn" class="fixed inset-0 z-50 flex items-center justify-center bg-[#060913]/95 backdrop-blur-xl px-4 print:hidden" x-cloak>
@@ -96,7 +112,7 @@
             </form>
 
             <div class="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
-                <span>Divisi YOFC • V4.0 Production Ready</span>
+                <span>Divisi YOFC • V4.1 Production Ready</span>
                 <span>by: Rudi</span>
             </div>
         </div>
@@ -108,7 +124,7 @@
         <!-- MOBILE SIDEBAR BACKDROP -->
         <div x-show="mobileMenuOpen" @click="mobileMenuOpen = false" class="fixed inset-0 z-30 bg-slate-950/80 backdrop-blur-sm md:hidden" x-cloak></div>
 
-        <!-- SIDEBAR NAVIGATION (Responsive Drawer on Mobile, Fixed on Desktop) -->
+        <!-- SIDEBAR NAVIGATION -->
         <aside :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
                class="fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#0c1222] border-r border-slate-800 flex flex-col justify-between shrink-0 h-screen overflow-y-auto transition-transform duration-200 ease-in-out">
             <div>
@@ -134,7 +150,7 @@
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard Utama
                     </a>
 
-                    <!-- ==================== MENU UTAMA 1: PROJECT LENGKAP ==================== -->
+                    <!-- MENU UTAMA 1: PROJECT LENGKAP -->
                     <template x-if="canAccessModule('project')">
                         <div class="pt-3">
                             <div class="flex items-center justify-between px-3 mb-1.5">
@@ -152,7 +168,7 @@
                                     <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Keuangan
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-boq')" :class="currentTab === 'prj-boq' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & Subcont
+                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & SPK Subcont
                                 </a>
                                 <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Invoice Subcont
@@ -161,7 +177,7 @@
                         </div>
                     </template>
 
-                    <!-- ==================== MENU WASPANG (VOLUME HARIAN) ==================== -->
+                    <!-- MENU WASPANG -->
                     <template x-if="canAccessModule('waspang')">
                         <div class="pt-3">
                             <div class="flex items-center justify-between px-3 mb-1.5">
@@ -174,7 +190,7 @@
                         </div>
                     </template>
 
-                    <!-- ==================== MENU UTAMA 2: WAREHOUSE ==================== -->
+                    <!-- MENU UTAMA 2: WAREHOUSE -->
                     <template x-if="canAccessModule('warehouse')">
                         <div class="pt-3">
                             <div class="flex items-center justify-between px-3 mb-1.5">
@@ -204,7 +220,7 @@
                         </div>
                     </template>
 
-                    <!-- ==================== MENU UTAMA 3: ACCOUNTING ==================== -->
+                    <!-- MENU UTAMA 3: ACCOUNTING -->
                     <template x-if="canAccessModule('accounting')">
                         <div class="pt-3">
                             <div class="flex items-center justify-between px-3 mb-1.5">
@@ -317,19 +333,19 @@
 
                     <!-- Alur Integrasi Multi-Subcont Antar Divisi -->
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-5">
-                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont, Audit Adendum & Validasi Terpadu</h3>
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Arsitektur Multi-Subcont, SPK Resmi & Validasi Terpadu</h3>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-cyan-500/20">
-                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. BoQ & Audit Adendum</span>
-                                <p class="text-slate-300 mt-1">Nilai kontrak project otomatis terhitung dari BoQ Klien, dilengkapi kontrol anti *over-allocation* & log riwayat adendum harga/volume.</p>
+                                <span class="text-[10px] font-bold text-cyan-400 uppercase">1. BoQ & Cetak SPK Subcont</span>
+                                <p class="text-slate-300 mt-1">Alokasi pekerjaan ke multi-subcont dilengkapi fitur <strong>Export PDF SPK Resmi</strong> dengan terbilang otomatis & kolom tanda tangan.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-amber-500/20">
                                 <span class="text-[10px] font-bold text-amber-400 uppercase">2. Tim Waspang & Bukti Foto</span>
                                 <p class="text-slate-300 mt-1">Input volume harian tervalidasi batas target subcont serta mendukung lampiran bukti foto lapangan.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-indigo-500/20">
-                                <span class="text-[10px] font-bold text-indigo-400 uppercase">3. Tim Warehouse & SJ</span>
-                                <p class="text-slate-300 mt-1">Transaksi stok & drum kabel dilengkapi lampiran foto surat jalan serta ekspor laporan CSV/Excel.</p>
+                                <span class="text-[10px] font-bold text-indigo-400 uppercase">3. Tim Warehouse & BAST</span>
+                                <p class="text-slate-300 mt-1">Transaksi stok & drum kabel dilengkapi lampiran foto surat jalan serta cetak BAST resmi.</p>
                             </div>
                             <div class="p-3.5 rounded-lg bg-slate-950 border border-emerald-500/20">
                                 <span class="text-[10px] font-bold text-emerald-400 uppercase">4. Tim Accounting</span>
@@ -469,7 +485,7 @@
                         </div>
                     </div>
 
-                    <!-- MOBILE CARD VIEW (block md:hidden) -->
+                    <!-- MOBILE CARD VIEW -->
                     <div class="block md:hidden space-y-3">
                         <template x-for="prj in masterProject" :key="'mob-prj-' + prj.kodeProject">
                             <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 space-y-3">
@@ -508,7 +524,10 @@
                                     <template x-for="sid in (prj.subcontIds || [])" :key="'mob-sub-' + sid">
                                         <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-[11px]">
                                             <span class="font-semibold text-amber-300" x-text="getSubcontName(sid)"></span>
-                                            <span class="font-mono text-amber-400" x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-mono text-amber-400" x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
+                                                <button type="button" @click="openSpkPreviewModal(prj.kodeProject, sid)" class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 text-[10px] font-semibold">SPK PDF</button>
+                                            </div>
                                         </div>
                                     </template>
                                 </div>
@@ -518,14 +537,14 @@
                                         <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> + Kelola Subcont
                                     </button>
                                     <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="px-3 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
-                                        Atur BoQ →
+                                        Atur BoQ & SPK →
                                     </button>
                                 </div>
                             </div>
                         </template>
                     </div>
 
-                    <!-- DESKTOP TABLE VIEW (hidden md:block) -->
+                    <!-- DESKTOP TABLE VIEW -->
                     <div class="hidden md:block bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
                             <thead>
@@ -563,8 +582,13 @@
                                                             <div class="text-[11px] font-semibold text-amber-300" x-text="getSubcontName(sid)"></div>
                                                             <div class="text-[9px] text-slate-400 font-mono" x-text="'BoQ: ' + formatRupiah(getSubcontProjectBoqTotal(prj.kodeProject, sid, 'awal'))"></div>
                                                         </div>
-                                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono"
-                                                              x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono"
+                                                                  x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
+                                                            <button type="button" @click="openSpkPreviewModal(prj.kodeProject, sid)" title="Export PDF SPK Subcont" class="px-2 py-0.5 rounded bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                                <i data-lucide="file-text" class="w-3 h-3"></i> SPK
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </template>
                                                 <button type="button" @click="openManageProjectSubconts(prj)" class="text-[10px] text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 pt-0.5">
@@ -608,7 +632,7 @@
                                         </td>
                                         <td class="p-3 text-right">
                                             <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold">
-                                                Atur BoQ →
+                                                Atur BoQ & SPK →
                                             </button>
                                         </td>
                                     </tr>
@@ -775,9 +799,10 @@
                     <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
                         <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/40">
                             <div>
-                                <h4 class="text-xs font-bold text-amber-400 uppercase">Bagian B • Rincian Item & Volume Subcont</h4>
+                                <h4 class="text-xs font-bold text-amber-400 uppercase">Bagian B • Rincian Item & Volume SPK Subcont</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Pilih kartu Subcont atau klik tombol <strong class="text-rose-300">Export PDF SPK</strong> untuk menerbitkan Surat Perintah Kerja resmi ke vendor.</p>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
                                 <span class="text-[10px] text-slate-400">Filter Subcont:</span>
                                 <select x-model="selectedBoqSubcontFilter" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-amber-300 font-semibold">
                                     <option value="ALL">Semua Subcont di Project Ini</option>
@@ -785,6 +810,12 @@
                                         <option :value="sid" x-text="getSubcontName(sid)"></option>
                                     </template>
                                 </select>
+                                <!-- Tombol Utama Export PDF SPK Subcont -->
+                                <button type="button" @click="triggerSpkExportFromHeader()"
+                                        class="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-lg shadow-rose-600/20 flex items-center gap-1.5 transition">
+                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                                    <span x-text="selectedBoqSubcontFilter === 'ALL' ? 'Export PDF SPK Subcont' : 'Export PDF SPK (' + getSubcontName(selectedBoqSubcontFilter) + ')'"></span>
+                                </button>
                             </div>
                         </div>
 
@@ -792,15 +823,24 @@
                         <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 border-b border-slate-800 bg-slate-950/50">
                             <template x-for="sid in (getProjectByCode(selectedBoqProject)?.subcontIds || [])" :key="sid">
                                 <div @click="selectedBoqSubcontFilter = (selectedBoqSubcontFilter === sid ? 'ALL' : sid)"
-                                     class="p-3 rounded-xl border cursor-pointer transition"
+                                     class="p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between gap-2.5"
                                      :class="selectedBoqSubcontFilter === sid ? 'bg-amber-500/10 border-amber-500/50' : 'bg-[#0c1222] border-slate-800 hover:border-slate-700'">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-amber-300" x-text="getSubcontName(sid)"></span>
-                                        <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300" x-text="'Progress: ' + getSubcontPhysicalProgress(selectedBoqProject, sid) + '%'"></span>
+                                    <div>
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-xs font-bold text-amber-300" x-text="getSubcontName(sid)"></span>
+                                            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300" x-text="'Progress: ' + getSubcontPhysicalProgress(selectedBoqProject, sid) + '%'"></span>
+                                        </div>
+                                        <div class="mt-2 flex items-center justify-between text-[11px] font-mono">
+                                            <span class="text-slate-400 font-sans" x-text="getSubcontBoqLines(selectedBoqProject, sid).length + ' Item Kerja'"></span>
+                                            <span class="font-bold text-white" x-text="formatRupiah(getSubcontProjectBoqTotal(selectedBoqProject, sid, boqMode))"></span>
+                                        </div>
                                     </div>
-                                    <div class="mt-2 flex items-center justify-between text-[11px] font-mono">
-                                        <span class="text-slate-400 font-sans" x-text="getSubcontBoqLines(selectedBoqProject, sid).length + ' Item Kerja'"></span>
-                                        <span class="font-bold text-white" x-text="formatRupiah(getSubcontProjectBoqTotal(selectedBoqProject, sid, boqMode))"></span>
+                                    <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+                                        <span class="text-[10px] text-slate-400" x-text="selectedBoqSubcontFilter === sid ? '✓ Sedang Difilter' : 'Klik kartu untuk filter'"></span>
+                                        <button type="button" @click.stop="openSpkPreviewModal(selectedBoqProject, sid)"
+                                                class="px-2.5 py-1 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 text-[10px] font-semibold inline-flex items-center gap-1.5 transition">
+                                            <i data-lucide="printer" class="w-3 h-3"></i> Cetak / PDF SPK
+                                        </button>
                                     </div>
                                 </div>
                             </template>
@@ -1654,11 +1694,155 @@
     </div>
 
     <!-- ==================== MODALS INTERAKTIF ==================== -->
-    <div x-show="activeModal !== ''" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md px-4 print:hidden" x-cloak>
-        <div class="w-full max-w-lg bg-[#0c1222] border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+    <div x-show="activeModal !== ''" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md px-4 print:hidden" x-cloak>
+        <div class="w-full bg-[#0c1222] border border-slate-800 rounded-2xl p-6 shadow-2xl transition-all"
+             :class="activeModal === 'spk-preview' ? 'max-w-4xl max-h-[92vh] flex flex-col' : 'max-w-lg'">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4 shrink-0">
                 <h3 class="text-sm font-bold text-white" x-text="modalTitle"></h3>
                 <button type="button" @click="activeModal = ''" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+
+            <!-- MODAL KHUSUS: PREVIEW & EXPORT PDF SPK SUBCONT -->
+            <div x-show="activeModal === 'spk-preview'" class="flex-1 flex flex-col overflow-hidden space-y-4">
+                <!-- Kontrol & Konfigurasi Nomor SPK Sebelum Export PDF -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800 shrink-0">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Subcont Penerima</label>
+                        <select x-model="spkDraft.subcontId" @change="refreshSpkDraftData()" class="w-full bg-[#0c1222] border border-amber-500/40 rounded-lg px-2.5 py-1.5 text-xs text-amber-300 font-semibold">
+                            <template x-for="sid in (getProjectByCode(spkDraft.kodeProject)?.subcontIds || [])" :key="'spk-sel-' + sid">
+                                <option :value="sid" x-text="getSubcontName(sid)"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Nomor SPK Resmi</label>
+                        <input type="text" x-model="spkDraft.noSpk" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Tanggal Terbit SPK</label>
+                        <input type="date" x-model="spkDraft.tanggal" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Target Selesai (SLA)</label>
+                        <input type="text" x-model="spkDraft.durasiKerja" placeholder="30 Hari Kalender" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                </div>
+
+                <!-- Pratinjau Lembar Dokumen SPK (Kertas Putih A4) -->
+                <div class="flex-1 overflow-y-auto rounded-xl border border-slate-700 bg-white text-slate-900 p-6 sm:p-8 shadow-inner">
+                    <!-- Kop Surat Perusahaan -->
+                    <div class="flex items-start justify-between border-b-2 border-slate-900 pb-3 mb-4">
+                        <div>
+                            <h2 class="text-base font-extrabold tracking-tight text-slate-900 uppercase">PT ACERO CETHA METALINDO</h2>
+                            <p class="text-[11px] text-slate-600">Telecommunication Infrastructure, FTTH Rollout & Engineering Services</p>
+                            <p class="text-[10px] text-slate-500">Divisi Operasional & Project Management • Sumatera Region</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-2.5 py-1 border-2 border-slate-900 font-bold text-xs uppercase tracking-wider">SURAT PERINTAH KERJA (SPK)</span>
+                            <div class="font-mono text-[11px] font-bold mt-1" x-text="'No: ' + spkDraft.noSpk"></div>
+                        </div>
+                    </div>
+
+                    <!-- Identitas Pemberi Tugas & Penerima SPK -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[11px] mb-4 bg-slate-50 p-3 rounded border border-slate-300">
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-800 uppercase underline mb-1">I. Referensi Project & Pemberi Kerja</div>
+                            <p><span class="text-slate-600 inline-block w-28">Kode Project</span>: <strong class="font-mono" x-text="spkDraft.kodeProject"></strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">Nama Project</span>: <strong x-text="spkDraft.projectName"></strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">No. PO Klien</span>: <span class="font-mono" x-text="spkDraft.noPO || '-'"></span></p>
+                            <p><span class="text-slate-600 inline-block w-28">Area / Region</span>: <span x-text="spkDraft.region"></span></p>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-800 uppercase underline mb-1">II. Pelaksana Pekerjaan (Subcont)</div>
+                            <p><span class="text-slate-600 inline-block w-28">Nama Subcont</span>: <strong x-text="spkDraft.subcontName"></strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">Area Kerja</span>: <span x-text="spkDraft.subcontArea"></span></p>
+                            <p><span class="text-slate-600 inline-block w-28">Tanggal SPK</span>: <span x-text="spkDraft.tanggal"></span></p>
+                            <p><span class="text-slate-600 inline-block w-28">Jangka Waktu</span>: <span x-text="spkDraft.durasiKerja"></span></p>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-700 mb-3 leading-relaxed">
+                        Berdasarkan kebutuhan pelaksanaan konstruksi jaringan fiber optik pada proyek tersebut di atas, <strong>PT Acero Cetha Metalindo</strong> (Pihak Pertama) memberikan perintah kerja kepada <strong x-text="spkDraft.subcontName"></strong> (Pihak Kedua) untuk melaksanakan ruang lingkup pekerjaan sebagai berikut:
+                    </p>
+
+                    <!-- Tabel Rincian Item SPK -->
+                    <table class="w-full border-collapse border border-slate-800 text-[11px] mb-3">
+                        <thead>
+                            <tr class="bg-slate-200 text-slate-900">
+                                <th class="border border-slate-800 p-1.5 text-center w-8">No</th>
+                                <th class="border border-slate-800 p-1.5 text-left">Designator</th>
+                                <th class="border border-slate-800 p-1.5 text-left">Uraian Pekerjaan</th>
+                                <th class="border border-slate-800 p-1.5 text-center">Satuan</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Vol Target</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Harga Satuan</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Jumlah Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(item, idx) in spkDraft.items" :key="'prev-spk-' + item.id">
+                                <tr>
+                                    <td class="border border-slate-800 p-1.5 text-center" x-text="idx + 1"></td>
+                                    <td class="border border-slate-800 p-1.5 font-mono font-semibold" x-text="item.designator"></td>
+                                    <td class="border border-slate-800 p-1.5" x-text="item.namaPekerjaan"></td>
+                                    <td class="border border-slate-800 p-1.5 text-center" x-text="item.satuan"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="Number(item.volAwal).toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="formatRupiah(item.hargaSubcont)"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono font-semibold" x-text="formatRupiah(item.volAwal * item.hargaSubcont)"></td>
+                                </tr>
+                            </template>
+                            <tr x-show="spkDraft.items.length === 0">
+                                <td colspan="7" class="border border-slate-800 p-4 text-center text-slate-500 italic">Belum ada item alokasi pekerjaan untuk subcont ini.</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-slate-100 font-bold">
+                                <td colspan="6" class="border border-slate-800 p-2 text-right uppercase">Total Nilai SPK (Excl. PPN)</td>
+                                <td class="border border-slate-800 p-2 text-right font-mono text-xs" x-text="formatRupiah(spkDraft.totalNilai)"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="text-[11px] bg-slate-100 border border-slate-400 p-2 rounded mb-4">
+                        <strong>Terbilang:</strong> <em class="capitalize" x-text="terbilangRupiah(spkDraft.totalNilai)"></em>
+                    </div>
+
+                    <!-- Syarat Ketentuan & Tanda Tangan -->
+                    <div class="text-[10px] text-slate-700 space-y-1 mb-6">
+                        <div class="font-bold text-slate-900">Ketentuan Pelaksanaan:</div>
+                        <p>1. Pihak Kedua wajib mematuhi standar K3 (Keselamatan dan Kesehatan Kerja) serta spesifikasi teknis instalasi dari PT Acero Cetha Metalindo & Klien.</p>
+                        <p>2. Penagihan invoice subcont dilakukan berdasarkan Berita Acara Pemeriksaan Pekerjaan (BAP) / Opname volume aktual lapangan yang disetujui Waspang.</p>
+                        <p>3. Material yang disuplai oleh Pihak Pertama / Klien wajib dipertanggungjawabkan penggunaannya sesuai BAST Gudang.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 text-center text-[11px] pt-2">
+                        <div>
+                            <p class="font-semibold">Pihak Pertama,</p>
+                            <p class="font-bold">PT ACERO CETHA METALINDO</p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline" x-text="currentUser || 'Project Manager'"></p>
+                            <p class="text-[10px] text-slate-600">Project Manager / Operasional</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Pihak Kedua (Menyetujui),</p>
+                            <p class="font-bold uppercase" x-text="spkDraft.subcontName"></p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline">( ........................................ )</p>
+                            <p class="text-[10px] text-slate-600">Direktur / Koordinator Lapangan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Modal SPK -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800 shrink-0">
+                    <span class="text-[11px] text-slate-400">💡 Pilih tujuan <strong>"Save as PDF / Simpan sebagai PDF"</strong> pada dialog cetak browser.</span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs">Tutup</button>
+                        <button type="button" @click="executePrintSpk()" :disabled="spkDraft.items.length === 0"
+                                class="px-5 py-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 disabled:opacity-40 text-white font-semibold rounded-lg text-xs flex items-center gap-2 shadow-lg shadow-rose-600/20">
+                            <i data-lucide="file-down" class="w-4 h-4"></i> Cetak / Export PDF SPK Sekarang
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal: Preview Lampiran Bukti Foto / Dokumen -->
@@ -1802,7 +1986,7 @@
                 </div>
             </form>
 
-            <!-- Modal: Input Project Baru (Nominal Awal Tetap 0 Auto-Calculated & Subcont Opsional) -->
+            <!-- Modal: Input Project Baru -->
             <form x-show="activeModal === 'new-project'" @submit.prevent="saveNewProject()" class="space-y-3 max-h-[80vh] overflow-y-auto pr-1">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -1842,7 +2026,7 @@
                     </div>
                 </div>
                 <div class="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-300">
-                    💡 Nominal kontrak awal otomatis dimulai dari <strong>Rp 0</strong> dan akan terupdate secara otomatis saat Anda menambahkan/mengubah item di menu <strong>BoQ Project & Subcont</strong>. Tim Subcont juga dapat diatur kapan saja di menu <strong>Daftar Project</strong>.
+                    💡 Nominal kontrak awal otomatis dimulai dari <strong>Rp 0</strong> dan akan terupdate secara otomatis saat Anda menambahkan/mengubah item di menu <strong>BoQ Project & SPK Subcont</strong>.
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
@@ -1927,7 +2111,7 @@
                 </div>
             </form>
 
-            <!-- Modal: Alokasi Item & Volume Pekerjaan ke Subcont Tertentu (Dengan Preventive Validation) -->
+            <!-- Modal: Alokasi Item & Volume Pekerjaan ke Subcont Tertentu -->
             <form x-show="activeModal === 'subcont-boq-add'" @submit.prevent="saveSubcontBoqLine()" class="space-y-3">
                 <div>
                     <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">1. Pilih Subcont Pelaksana di Project Ini</label>
@@ -1948,7 +2132,6 @@
                     </select>
                 </div>
 
-                <!-- Indikator Kuota Volume Kontrak Klien -->
                 <template x-if="getSelectedClientBoqLineForAllocation()">
                     <div class="p-2.5 rounded-lg bg-slate-950 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
                         <div>
@@ -1984,7 +2167,7 @@
                 </div>
             </form>
 
-            <!-- Modal: Input Tagihan Subcont (Dengan Lampiran BAP / Kwitansi) -->
+            <!-- Modal: Input Tagihan Subcont -->
             <form x-show="activeModal === 'subcont-inv'" @submit.prevent="saveSubcontInvoice()" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1">
                 <div>
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
@@ -2204,8 +2387,8 @@
         <div class="text-xs font-medium" x-text="toast.message"></div>
     </div>
 
-    <!-- PRINTABLE BAST -->
-    <div id="printable-bast" class="hidden print:block p-8 bg-white text-black">
+    <!-- ==================== PRINTABLE AREA 1: BAST WAREHOUSE ==================== -->
+    <div id="printable-bast" class="hidden bg-white text-black">
         <div class="text-center border-b-2 border-black pb-3 mb-4">
             <h1 class="text-lg font-bold uppercase">BERITA ACARA SERAH TERIMA (BAST)</h1>
             <p class="text-xs">PT ACERO CETHA METALINDO</p>
@@ -2242,6 +2425,106 @@
         </table>
     </div>
 
+    <!-- ==================== PRINTABLE AREA 2: SPK SUBCONT (EXPORT PDF) ==================== -->
+    <div id="printable-spk" class="hidden bg-white text-black">
+        <!-- Kop Surat PT Acero Cetha Metalindo -->
+        <div class="flex items-start justify-between border-b-2 border-black pb-3 mb-4">
+            <div>
+                <h1 class="text-base font-extrabold uppercase tracking-tight">PT ACERO CETHA METALINDO</h1>
+                <p class="text-[11px] text-gray-700">Telecommunication Infrastructure, FTTH Rollout & Engineering Services</p>
+                <p class="text-[10px] text-gray-600">Divisi Operasional & Project Management • Sumatera Region</p>
+            </div>
+            <div class="text-right">
+                <div class="inline-block px-2.5 py-1 border-2 border-black font-bold text-xs uppercase tracking-wider">SURAT PERINTAH KERJA (SPK)</div>
+                <div class="font-mono text-[11px] font-bold mt-1" x-text="'No: ' + spkDraft.noSpk"></div>
+            </div>
+        </div>
+
+        <!-- Informasi Project & Subcont -->
+        <div class="grid grid-cols-2 gap-4 text-[11px] mb-4 p-3 border border-black bg-gray-50">
+            <div class="space-y-1">
+                <div class="font-bold uppercase underline mb-1">I. Referensi Project & Pemberi Kerja</div>
+                <p><span class="inline-block w-24">Kode Project</span>: <strong class="font-mono" x-text="spkDraft.kodeProject"></strong></p>
+                <p><span class="inline-block w-24">Nama Project</span>: <strong x-text="spkDraft.projectName"></strong></p>
+                <p><span class="inline-block w-24">No. PO Klien</span>: <span class="font-mono" x-text="spkDraft.noPO || '-'"></span></p>
+                <p><span class="inline-block w-24">Area / Region</span>: <span x-text="spkDraft.region"></span></p>
+            </div>
+            <div class="space-y-1">
+                <div class="font-bold uppercase underline mb-1">II. Pelaksana Pekerjaan (Subcont)</div>
+                <p><span class="inline-block w-24">Nama Subcont</span>: <strong x-text="spkDraft.subcontName"></strong></p>
+                <p><span class="inline-block w-24">Area Kerja</span>: <span x-text="spkDraft.subcontArea"></span></p>
+                <p><span class="inline-block w-24">Tanggal SPK</span>: <span x-text="spkDraft.tanggal"></span></p>
+                <p><span class="inline-block w-24">Jangka Waktu</span>: <span x-text="spkDraft.durasiKerja"></span></p>
+            </div>
+        </div>
+
+        <p class="text-[11px] mb-3 leading-relaxed">
+            Berdasarkan kebutuhan pelaksanaan konstruksi jaringan fiber optik pada proyek tersebut di atas, <strong>PT Acero Cetha Metalindo</strong> (Pihak Pertama) memberikan perintah kerja kepada <strong x-text="spkDraft.subcontName"></strong> (Pihak Kedua) untuk melaksanakan ruang lingkup pekerjaan sebagai berikut:
+        </p>
+
+        <!-- Tabel Rincian Item Pekerjaan SPK -->
+        <table class="w-full border-collapse border border-black text-[11px] mb-3">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-black p-1.5 text-center w-8">No</th>
+                    <th class="border border-black p-1.5 text-left">Designator</th>
+                    <th class="border border-black p-1.5 text-left">Uraian Pekerjaan</th>
+                    <th class="border border-black p-1.5 text-center">Satuan</th>
+                    <th class="border border-black p-1.5 text-right">Vol Target</th>
+                    <th class="border border-black p-1.5 text-right">Harga Satuan</th>
+                    <th class="border border-black p-1.5 text-right">Jumlah Harga</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(item, idx) in spkDraft.items" :key="'print-spk-' + item.id">
+                    <tr>
+                        <td class="border border-black p-1.5 text-center" x-text="idx + 1"></td>
+                        <td class="border border-black p-1.5 font-mono font-semibold" x-text="item.designator"></td>
+                        <td class="border border-black p-1.5" x-text="item.namaPekerjaan"></td>
+                        <td class="border border-black p-1.5 text-center" x-text="item.satuan"></td>
+                        <td class="border border-black p-1.5 text-right font-mono" x-text="Number(item.volAwal).toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1.5 text-right font-mono" x-text="formatRupiah(item.hargaSubcont)"></td>
+                        <td class="border border-black p-1.5 text-right font-mono font-semibold" x-text="formatRupiah(item.volAwal * item.hargaSubcont)"></td>
+                    </tr>
+                </template>
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray-100 font-bold">
+                    <td colspan="6" class="border border-black p-2 text-right uppercase">Total Nilai SPK (Excl. PPN)</td>
+                    <td class="border border-black p-2 text-right font-mono text-xs" x-text="formatRupiah(spkDraft.totalNilai)"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="text-[11px] border border-black p-2 bg-gray-50 mb-4">
+            <strong>Terbilang:</strong> <em class="capitalize" x-text="terbilangRupiah(spkDraft.totalNilai)"></em>
+        </div>
+
+        <div class="text-[10px] space-y-1 mb-6">
+            <div class="font-bold">Ketentuan Pelaksanaan:</div>
+            <p>1. Pihak Kedua wajib mematuhi standar K3 (Keselamatan dan Kesehatan Kerja) serta spesifikasi teknis instalasi dari PT Acero Cetha Metalindo & Klien.</p>
+            <p>2. Penagihan invoice subcont dilakukan berdasarkan Berita Acara Pemeriksaan Pekerjaan (BAP) / Opname volume aktual lapangan yang disetujui Waspang.</p>
+            <p>3. Material yang disuplai oleh Pihak Pertama / Klien wajib dipertanggungjawabkan penggunaannya sesuai BAST Gudang.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8 text-center text-[11px] pt-2">
+            <div>
+                <p class="font-semibold">Pihak Pertama,</p>
+                <p class="font-bold">PT ACERO CETHA METALINDO</p>
+                <div class="h-16"></div>
+                <p class="font-bold underline" x-text="currentUser || 'Project Manager'"></p>
+                <p class="text-[10px]">Project Manager / Operasional</p>
+            </div>
+            <div>
+                <p class="font-semibold">Pihak Kedua (Menyetujui),</p>
+                <p class="font-bold uppercase" x-text="spkDraft.subcontName"></p>
+                <div class="h-16"></div>
+                <p class="font-bold underline">( ........................................ )</p>
+                <p class="text-[10px]">Direktur / Koordinator Lapangan</p>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== APPLICATION LOGIC ==================== -->
     <script>
         const SUPABASE_URL = 'SUPABASE_URL';
@@ -2276,6 +2559,7 @@
                 currentTab: 'dashboard',
                 mobileMenuOpen: false,
                 isLoading: false,
+                printMode: '', // 'bast' | 'spk'
                 toast: { show: false, message: '', type: 'info' },
 
                 loginForm: { email: 'rudi@acerocetha.co.id', password: '••••••••', demoRole: 'Super Admin' },
@@ -2290,6 +2574,22 @@
                 activeModal: '',
                 modalTitle: '',
                 previewAttachment: { url: '', name: '' },
+
+                // State Draft Dokumen SPK Subcont
+                spkDraft: {
+                    kodeProject: '',
+                    projectName: '',
+                    noPO: '',
+                    region: '',
+                    subcontId: '',
+                    subcontName: '',
+                    subcontArea: '',
+                    noSpk: '',
+                    tanggal: new Date().toISOString().split('T')[0],
+                    durasiKerja: '30 Hari Kalender',
+                    items: [],
+                    totalNilai: 0
+                },
 
                 // Data Master Klien & Versi KHS
                 clients: JSON.parse(localStorage.getItem('acm_clients') || 'null') || [
@@ -2392,6 +2692,9 @@
                 formWhGudang: { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' },
 
                 init() {
+                    window.addEventListener('afterprint', () => {
+                        this.printMode = '';
+                    });
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                 },
 
@@ -2420,6 +2723,97 @@
                         this.showToast('Peringatan kapasitas penyimpanan lokal penuh, gunakan link URL untuk file berukuran besar.', 'error');
                     }
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                },
+
+                // ==================== EXPORT / CETAK PDF SPK SUBCONT ====================
+                triggerSpkExportFromHeader() {
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    if (!prj || !prj.subcontIds || prj.subcontIds.length === 0) {
+                        this.showToast('Project ini belum memiliki Tim Subcont pelaksana.', 'error');
+                        return;
+                    }
+                    const targetSubcontId = (this.selectedBoqSubcontFilter !== 'ALL')
+                        ? this.selectedBoqSubcontFilter
+                        : prj.subcontIds[0];
+                    this.openSpkPreviewModal(this.selectedBoqProject, targetSubcontId);
+                },
+
+                openSpkPreviewModal(kodeProject, subcontId) {
+                    const prj = this.getProjectByCode(kodeProject);
+                    if (!prj) return;
+                    const targetSubId = subcontId || (prj.subcontIds && prj.subcontIds[0]) || '';
+                    if (!targetSubId) {
+                        this.showToast('Tidak ada Tim Subcont terpilih untuk SPK.', 'error');
+                        return;
+                    }
+
+                    const subObj = this.subconts.find(s => s.id === targetSubId);
+                    const lines = this.getSubcontBoqLines(kodeProject, targetSubId);
+                    const total = lines.reduce((sum, l) => sum + ((Number(l.volAwal) || 0) * (Number(l.hargaSubcont) || 0)), 0);
+                    const clientCode = this.clients.find(c => c.id === prj.clientId)?.code || 'ACM';
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const seq = String(targetSubId).replace(/\D/g, '') || '01';
+
+                    this.spkDraft = {
+                        kodeProject: prj.kodeProject,
+                        projectName: prj.projectName,
+                        noPO: prj.noPO || '-',
+                        region: prj.region || '-',
+                        subcontId: targetSubId,
+                        subcontName: subObj ? subObj.name : targetSubId,
+                        subcontArea: subObj ? subObj.area : '-',
+                        noSpk: `SPK/ACM-${clientCode}/${prj.kodeProject}/${seq}/${mm}-${yyyy}`,
+                        tanggal: today.toISOString().split('T')[0],
+                        durasiKerja: '30 Hari Kalender',
+                        items: lines,
+                        totalNilai: total
+                    };
+
+                    this.modalTitle = 'Pratinjau & Export PDF SPK Subcont';
+                    this.activeModal = 'spk-preview';
+                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                },
+
+                refreshSpkDraftData() {
+                    this.openSpkPreviewModal(this.spkDraft.kodeProject, this.spkDraft.subcontId);
+                },
+
+                executePrintSpk() {
+                    if (!this.spkDraft.items || this.spkDraft.items.length === 0) {
+                        this.showToast('Tidak dapat mencetak SPK kosong. Alokasikan item pekerjaan ke Subcont terlebih dahulu.', 'error');
+                        return;
+                    }
+                    this.printMode = 'spk';
+                    const origTitle = document.title;
+                    document.title = `${this.spkDraft.noSpk.replace(/\//g, '_')} - ${this.spkDraft.subcontName}`;
+                    setTimeout(() => {
+                        window.print();
+                        setTimeout(() => {
+                            document.title = origTitle;
+                            this.printMode = '';
+                        }, 500);
+                    }, 200);
+                },
+
+                terbilangRupiah(angka) {
+                    const num = Math.floor(Math.abs(Number(angka) || 0));
+                    if (num === 0) return 'Nol Rupiah';
+                    const satuan = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+                    const baca = (n) => {
+                        if (n < 12) return satuan[n];
+                        if (n < 20) return baca(n - 10) + ' Belas';
+                        if (n < 100) return baca(Math.floor(n / 10)) + ' Puluh ' + baca(n % 10);
+                        if (n < 200) return 'Seratus ' + baca(n - 100);
+                        if (n < 1000) return baca(Math.floor(n / 100)) + ' Ratus ' + baca(n % 100);
+                        if (n < 2000) return 'Seribu ' + baca(n - 1000);
+                        if (n < 1000000) return baca(Math.floor(n / 1000)) + ' Ribu ' + baca(n % 1000);
+                        if (n < 1000000000) return baca(Math.floor(n / 1000000)) + ' Juta ' + baca(n % 1000000);
+                        if (n < 1000000000000) return baca(Math.floor(n / 1000000000)) + ' Miliar ' + baca(n % 1000000000);
+                        return baca(Math.floor(n / 1000000000000)) + ' Triliun ' + baca(n % 1000000000000);
+                    };
+                    return baca(num).replace(/\s+/g, ' ').trim() + ' Rupiah';
                 },
 
                 // ==================== ROLE-BASED ACCESS & NAVIGATION ====================
@@ -2472,7 +2866,7 @@
                         'prj-khs': 'Project • Master KHS • Klien',
                         'prj-subcont': 'Project • Master Subcont',
                         'prj-list': 'Project • Daftar Project • Subcont • Progress Keuangan',
-                        'prj-boq': 'Project • BoQ Utama • Alokasi Subcont & Adendum',
+                        'prj-boq': 'Project • BoQ Utama • SPK Subcont & Adendum',
                         'prj-subcont-inv': 'Project • Tagihan Subcont',
                         'waspang-daily': 'Waspang • Input Volume Harian Subcont',
                         'wh-barang': 'Warehouse • Master Barang',
@@ -2639,7 +3033,7 @@
                 },
 
                 exportSubcontInvoicesCSV() {
-                    const headers = ['No Tagihan', 'Tanggal', 'Kode Project', 'Nama Project', 'Subcont Penagih', 'Termin', 'Nominal Tagihan', 'Status'];
+                    const headers = ['No Tagihan', 'Tanggal', 'Kode Project', 'Nama Project', 'Subcont Penagih', 'Termin', 'Nominal', 'Status'];
                     const rows = this.subcontInvoices.map(inv => [
                         inv.noInvoice,
                         inv.tanggal,
@@ -2654,70 +3048,174 @@
                 },
 
                 exportWarehouseTxCSV() {
-                    const headers = ['No Transaksi', 'Tanggal', 'Tipe', 'Gudang Asal', 'Kode Project', 'Kode Barang', 'Nama Barang', 'Drum ID', 'Qty', 'Keterangan'];
+                    const headers = ['No Transaksi', 'Tanggal', 'Tipe', 'Gudang Asal', 'Project / Tujuan', 'Kode Barang', 'Nama Barang', 'Drum ID', 'Qty', 'Keterangan'];
                     const rows = this.transactions.map(tx => [
                         tx.noTransaksi,
                         tx.tanggal,
                         tx.tipeTransaksi,
                         tx.gudangAsal,
-                        tx.kodeProject,
+                        tx.kodeProject || tx.gudangTujuan || '-',
                         tx.singleKodeBarang,
                         tx.singleNamaBarang,
-                        tx.singleDrumId,
+                        tx.singleDrumId || '-',
                         tx.singleQty,
                         tx.keterangan
                     ]);
-                    this.downloadCSV(`ACM_Transaksi_Warehouse_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                    this.downloadCSV(`ACM_Transaksi_Gudang_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
                 },
 
-                // ==================== KHS & CLIENT HELPERS ====================
+                // ==================== HELPER GETTERS ====================
                 getClientName(id) { return this.clients.find(c => c.id === id)?.name || id; },
                 getSubcontName(id) { return this.subconts.find(s => s.id === id)?.name || id; },
                 getProjectByCode(code) { return this.masterProject.find(p => p.kodeProject === code); },
-                
-                onClientFilterChange() {
-                    const vers = this.getFilteredKhsVersions();
-                    if (vers.length > 0) {
-                        const def = vers.find(v => v.isDefault) || vers[0];
-                        this.selectedKhsVersionId = def.id;
-                    }
+                getKhsVersionNameById(vid) { return this.khsVersions.find(v => v.id === vid)?.versionName || 'KHS Standar'; },
+                getActiveKhsVersionName() {
+                    const cName = this.getClientName(this.selectedKhsClient);
+                    const vName = this.getKhsVersionNameById(this.selectedKhsVersionId);
+                    return `${cName} — ${vName}`;
                 },
+
                 getFilteredKhsVersions() {
                     return this.khsVersions.filter(v => v.clientId === this.selectedKhsClient);
                 },
-                getActiveKhsVersionName() {
-                    return this.khsVersions.find(v => v.id === this.selectedKhsVersionId)?.versionName || this.selectedKhsVersionId;
+
+                onClientFilterChange() {
+                    const versions = this.getFilteredKhsVersions();
+                    if (versions.length > 0) {
+                        const def = versions.find(v => v.isDefault) || versions[0];
+                        this.selectedKhsVersionId = def.id;
+                    } else {
+                        this.selectedKhsVersionId = '';
+                    }
                 },
-                getKhsVersionNameById(id) {
-                    return this.khsVersions.find(v => v.id === id)?.versionName || id;
-                },
+
                 getFilteredKhsItems() {
                     return this.khsItems.filter(k => k.clientId === this.selectedKhsClient && k.khsVersionId === this.selectedKhsVersionId);
                 },
+
                 getFilteredSubcontRates() { return this.subcontRates.filter(r => r.subcontId === this.selectedSubcontId); },
 
+                // BoQ Klien Getters
+                getProjectBoqLines(kodeProject) { return this.projectBoqLines.filter(l => l.kodeProject === kodeProject); },
+                calcBoqLineClientTotal(line, mode) {
+                    const vol = mode === 'awal' ? (Number(line.volAwal) || 0) : (Number(line.volAkhir) || 0);
+                    const matPrice = line.isClientMaterial ? 0 : (Number(line.hargaMaterial) || 0);
+                    return vol * (matPrice + (Number(line.hargaJasa) || 0));
+                },
+                getProjectBoqTotal(kodeProject, mode) {
+                    const lines = this.getProjectBoqLines(kodeProject);
+                    if (lines.length === 0) {
+                        const prj = this.getProjectByCode(kodeProject);
+                        return Number(prj?.nominalAwal) || 0;
+                    }
+                    return lines.reduce((sum, l) => sum + this.calcBoqLineClientTotal(l, mode), 0);
+                },
+
+                // BoQ Multi-Subcont Getters
+                getSubcontBoqLines(kodeProject, subcontId = 'ALL') {
+                    return this.subcontBoqLines.filter(s => s.kodeProject === kodeProject && (subcontId === 'ALL' || s.subcontId === subcontId));
+                },
+                getFilteredSubcontBoqLines() {
+                    return this.getSubcontBoqLines(this.selectedBoqProject, this.selectedBoqSubcontFilter);
+                },
+                getSubcontProjectBoqTotal(kodeProject, subcontId, mode) {
+                    return this.getSubcontBoqLines(kodeProject, subcontId).reduce((sum, s) => {
+                        const vol = mode === 'awal' ? (Number(s.volAwal) || 0) : (Number(s.volAkhir) || 0);
+                        return sum + (vol * (Number(s.hargaSubcont) || 0));
+                    }, 0);
+                },
+                getAllSubcontsProjectBoqTotal(kodeProject, mode) {
+                    return this.getSubcontBoqLines(kodeProject, 'ALL').reduce((sum, s) => {
+                        const vol = mode === 'awal' ? (Number(s.volAwal) || 0) : (Number(s.volAkhir) || 0);
+                        return sum + (vol * (Number(s.hargaSubcont) || 0));
+                    }, 0);
+                },
+                getAllocatedSubcontVolumeForDesignator(kodeProject, designator) {
+                    return this.subcontBoqLines
+                        .filter(s => s.kodeProject === kodeProject && s.designator === designator)
+                        .reduce((sum, s) => sum + (Number(s.volAwal) || 0), 0);
+                },
+                getRemainingClientBoqVolume(kodeProject, designator) {
+                    const clientLine = this.projectBoqLines.find(l => l.kodeProject === kodeProject && l.designator === designator);
+                    if (!clientLine) return 0;
+                    const allocated = this.getAllocatedSubcontVolumeForDesignator(kodeProject, designator);
+                    return Math.max(0, (Number(clientLine.volAwal) || 0) - allocated);
+                },
+                getSelectedClientBoqLineForAllocation() {
+                    return this.projectBoqLines.find(l => l.id === this.formSubcontBoq.boqLineId) || null;
+                },
+                getSelectedWaspangBoqLine() {
+                    return this.subcontBoqLines.find(s => s.id === this.waspangForm.subcontBoqLineId) || null;
+                },
+                getProjectAdendumLogs(kodeProject) {
+                    return this.boqAdendumLogs.filter(r => r.kodeProject === kodeProject);
+                },
+
+                // Progress Fisik Total & Per Subcont
+                getProjectPhysicalProgress(kodeProject) {
+                    const lines = this.getProjectBoqLines(kodeProject);
+                    if (lines.length === 0) return 0;
+                    let totalAwal = 0, totalAkhir = 0;
+                    lines.forEach(l => { totalAwal += Number(l.volAwal) || 0; totalAkhir += Number(l.volAkhir) || 0; });
+                    return totalAwal > 0 ? Math.min(100, Math.round((totalAkhir / totalAwal) * 100)) : 0;
+                },
+                getSubcontPhysicalProgress(kodeProject, subcontId) {
+                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
+                    if (lines.length === 0) return 0;
+                    let totalAwal = 0, totalAkhir = 0;
+                    lines.forEach(s => { totalAwal += Number(s.volAwal) || 0; totalAkhir += Number(s.volAkhir) || 0; });
+                    return totalAwal > 0 ? Math.min(100, Math.round((totalAkhir / totalAwal) * 100)) : 0;
+                },
+
+                getProjectClientPaid(noPO) {
+                    return this.clientInvoices.filter(i => i.noPO === noPO && i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0);
+                },
+                getProjectSubcontPaid(kodeProject) {
+                    return this.subcontInvoices.filter(i => i.kodeProject === kodeProject && i.status === 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0);
+                },
+                getProjectFinanceStatusText(prj) {
+                    const paid = this.getProjectClientPaid(prj.noPO);
+                    if (paid > 0) return 'Cair Sebagian / Lunas';
+                    const invExists = this.clientInvoices.some(i => i.noPO === prj.noPO);
+                    return invExists ? 'Sudah Ditagih (Outstanding)' : 'Belum Ditagihkan';
+                },
+
+                totalProjectContractValue() { return this.masterProject.reduce((s, p) => s + this.getProjectBoqTotal(p.kodeProject, 'awal'), 0); },
+                totalClientCashIn() { return this.clientInvoices.filter(i => i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0); },
+                totalSubcontPending() { return this.subcontInvoices.filter(i => i.status !== 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0); },
+                unreadNotificationsCount() { return this.notifications.filter(n => !n.isRead).length; },
+
+                // ==================== PROJECT & KHS ACTIONS ====================
                 openClientModal() { this.modalTitle = 'Tambah Klien Baru'; this.formClient = { name: '', code: '' }; this.activeModal = 'client'; },
                 saveClient() {
-                    this.clients.push({ id: 'CLI-' + Date.now(), name: this.formClient.name, code: this.formClient.code.toUpperCase() });
-                    this.persistAll(); this.activeModal = ''; this.showToast('Klien baru berhasil ditambahkan');
+                    const id = 'CLI-' + this.formClient.code.toUpperCase();
+                    const vId = 'VERS-' + Date.now();
+                    this.clients.push({ id, code: this.formClient.code.toUpperCase(), name: this.formClient.name });
+                    this.khsVersions.push({ id: vId, clientId: id, versionName: 'KHS 2026 (Default)', isDefault: true });
+                    this.selectedKhsClient = id;
+                    this.selectedKhsVersionId = vId;
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Klien baru & versi KHS awal berhasil ditambahkan.');
                 },
 
                 openKhsVersionModal() {
-                    this.modalTitle = 'Buat Versi KHS Baru (Misal KHS 2026 / KHS 2027)';
-                    this.formKhsVersion = { clientId: this.selectedKhsClient, versionName: 'KHS ' + new Date().getFullYear(), isDefault: false };
+                    this.modalTitle = 'Buat Versi KHS Baru (Multi-Tahun / Adendum)';
+                    this.formKhsVersion = { clientId: this.selectedKhsClient, versionName: '', isDefault: true };
                     this.activeModal = 'khs-version';
                 },
                 saveKhsVersion() {
-                    const newId = 'VERS-' + Date.now();
                     if (this.formKhsVersion.isDefault) {
-                        this.khsVersions.filter(v => v.clientId === this.formKhsVersion.clientId).forEach(v => v.isDefault = false);
+                        this.khsVersions.forEach(v => { if (v.clientId === this.formKhsVersion.clientId) v.isDefault = false; });
                     }
+                    const newId = 'VERS-' + Date.now();
                     this.khsVersions.push({
                         id: newId,
                         clientId: this.formKhsVersion.clientId,
                         versionName: this.formKhsVersion.versionName,
                         isDefault: this.formKhsVersion.isDefault
                     });
+                    this.selectedKhsClient = this.formKhsVersion.clientId;
                     this.selectedKhsVersionId = newId;
                     this.persistAll();
                     this.activeModal = '';
@@ -2726,29 +3224,46 @@
 
                 openKhsItemModal() {
                     this.modalTitle = 'Tambah Item KHS Klien';
-                    this.formKhs = { khsVersionId: this.selectedKhsVersionId, designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 };
+                    this.formKhs = {
+                        khsVersionId: this.selectedKhsVersionId || (this.getFilteredKhsVersions()[0]?.id || ''),
+                        designator: '',
+                        namaPekerjaan: '',
+                        satuan: 'Meter',
+                        isClientMaterial: false,
+                        hargaMaterial: 0,
+                        hargaJasa: 0
+                    };
                     this.activeModal = 'khs';
                 },
                 saveKhsItem() {
-                    const ver = this.khsVersions.find(v => v.id === this.formKhs.khsVersionId);
-                    if (!ver) return;
                     this.khsItems.push({
                         id: 'KHS-' + Date.now(),
-                        clientId: ver.clientId,
-                        khsVersionId: ver.id,
-                        ...this.formKhs,
-                        hargaMaterial: this.formKhs.isClientMaterial ? 0 : Number(this.formKhs.hargaMaterial)
+                        clientId: this.selectedKhsClient,
+                        khsVersionId: this.formKhs.khsVersionId,
+                        designator: this.formKhs.designator.toUpperCase(),
+                        namaPekerjaan: this.formKhs.namaPekerjaan,
+                        satuan: this.formKhs.satuan,
+                        isClientMaterial: this.formKhs.isClientMaterial,
+                        hargaMaterial: this.formKhs.isClientMaterial ? 0 : Number(this.formKhs.hargaMaterial),
+                        hargaJasa: Number(this.formKhs.hargaJasa)
                     });
-                    this.persistAll(); this.activeModal = ''; this.showToast('Item KHS berhasil disimpan');
+                    this.selectedKhsVersionId = this.formKhs.khsVersionId;
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Item KHS berhasil ditambahkan ke versi terpilih.');
                 },
 
                 openSubcontModal() { this.modalTitle = 'Tambah Tim Subcont'; this.formSubcont = { name: '', area: '' }; this.activeModal = 'subcont'; },
                 saveSubcont() {
-                    this.subconts.push({ id: 'SUB-' + Date.now(), ...this.formSubcont });
-                    this.persistAll(); this.activeModal = ''; this.showToast('Tim Subcont berhasil ditambahkan');
+                    const id = 'SUB-' + String(this.subconts.length + 1).padStart(2, '0');
+                    this.subconts.push({ id, name: this.formSubcont.name, area: this.formSubcont.area.toUpperCase() });
+                    this.selectedSubcontId = id;
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Tim Subcont baru berhasil ditambahkan.');
                 },
 
-                openSubcontRateModal() { this.modalTitle = 'Set Harga Item Khusus Subcont'; this.formSubcontRate = { khsItemId: '', hargaSubcont: 0 }; this.activeModal = 'subcont-rate'; },
+                openSubcontRateModal() { this.modalTitle = 'Set Harga Item Subcont'; this.formSubcontRate = { khsItemId: '', hargaSubcont: 0 }; this.activeModal = 'subcont-rate'; },
                 saveSubcontRate() {
                     const khs = this.khsItems.find(k => k.id === this.formSubcontRate.khsItemId);
                     if (!khs) return;
@@ -2761,57 +3276,50 @@
                         satuan: khs.satuan,
                         hargaSubcont: Number(this.formSubcontRate.hargaSubcont)
                     });
-                    this.persistAll(); this.activeModal = ''; this.showToast('Harga item Subcont diperbarui');
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Harga satuan Subcont berhasil disimpan.');
                 },
 
-                // ==================== PROJECT & MULTI-SUBCONT MANAGEMENT ====================
                 openNewProjectModal() {
                     this.modalTitle = 'Input Project Baru';
-                    this.formProject = {
-                        clientId: this.clients[0]?.id || '',
-                        region: 'PALEMBANG',
-                        noPO: '',
-                        subcontIds: [],
-                        projectName: '',
-                        nominalAwal: 0
-                    };
+                    this.formProject = { clientId: this.clients[0]?.id || 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: [], projectName: '', nominalAwal: 0 };
                     this.activeModal = 'new-project';
                 },
                 saveNewProject() {
-                    const regCode = (this.formProject.region || 'PRJ').substring(0, 3).toUpperCase();
-                    const kode = `${regCode}-2026-${String(this.masterProject.length + 1).padStart(3, '0')}`;
-                    const subIds = Array.isArray(this.formProject.subcontIds) ? [...this.formProject.subcontIds] : [];
+                    const code = this.formProject.region.substring(0,3).toUpperCase() + '-2026-' + String(this.masterProject.length + 1).padStart(3, '0');
+                    const subNames = (this.formProject.subcontIds || []).map(sid => this.getSubcontName(sid)).join(', ') || 'Belum ditentukan';
                     const newPrj = {
-                        kodeProject: kode,
+                        kodeProject: code,
                         clientId: this.formProject.clientId,
-                        region: this.formProject.region,
+                        region: this.formProject.region.toUpperCase(),
                         noPO: this.formProject.noPO,
-                        subcontIds: subIds,
+                        subcontIds: [...(this.formProject.subcontIds || [])],
                         projectName: this.formProject.projectName,
                         nominalAwal: 0
                     };
-                    this.masterProject.push(newPrj);
+                    this.masterProject.unshift(newPrj);
+                    this.selectedBoqProject = code;
 
                     this.notifications.unshift({
                         id: Date.now(),
                         type: 'NEW_PROJECT',
-                        title: `Project Baru: ${newPrj.projectName} (${kode})`,
+                        title: `Project Baru: ${newPrj.projectName}`,
                         nominal: 0,
-                        detail: `No PO: ${newPrj.noPO} | Klien: ${this.getClientName(newPrj.clientId)} | ${subIds.length} Subcont`,
+                        detail: `No PO: ${newPrj.noPO} | Subcont: ${subNames} | Siap input BoQ & Penagihan`,
                         timestamp: 'Baru saja',
                         isRead: false
                     });
 
-                    this.selectedBoqProject = kode;
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Project ${kode} berhasil dibuat! Silakan lengkapi BoQ & Tim Subcont.`);
+                    this.showToast(`Project ${code} tersimpan (Nominal awal Rp 0, otomatis update saat isi BoQ)!`);
                 },
 
                 openManageProjectSubconts(prj) {
                     this.manageSubcontProject = prj;
                     this.managedSubcontIds = [...(prj.subcontIds || [])];
-                    this.modalTitle = 'Kelola Tim Subcont Pelaksana';
+                    this.modalTitle = 'Kelola Tim Subcont Pelaksana Project';
                     this.activeModal = 'manage-prj-subconts';
                 },
                 saveManagedProjectSubconts() {
@@ -2819,84 +3327,13 @@
                     this.manageSubcontProject.subcontIds = [...this.managedSubcontIds];
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Daftar Tim Subcont pada project berhasil diperbarui!');
+                    this.showToast(`Daftar tim subcont pada ${this.manageSubcontProject.kodeProject} berhasil diperbarui!`);
                 },
 
-                syncProjectContractSummary(kodeProject) {
-                    const prj = this.getProjectByCode(kodeProject);
-                    if (!prj) return;
-                    const newTotal = this.getProjectBoqTotal(kodeProject, 'awal');
-                    prj.nominalAwal = newTotal;
-
-                    // Update juga nominal pada notifikasi project baru jika masih ada
-                    const notif = this.notifications.find(n => n.type === 'NEW_PROJECT' && n.title.includes(`(${kodeProject})`));
-                    if (notif) {
-                        notif.nominal = newTotal;
-                    }
-                },
-
-                // ==================== BoQ KLIEN, PREVENTIVE VALIDATION & ADENDUM ====================
-                getProjectBoqLines(kodeProject) {
-                    return this.projectBoqLines.filter(l => l.kodeProject === kodeProject);
-                },
-                getSubcontBoqLines(kodeProject, subcontId = 'ALL') {
-                    return this.subcontBoqLines.filter(l => l.kodeProject === kodeProject && (subcontId === 'ALL' || l.subcontId === subcontId));
-                },
-                getFilteredSubcontBoqLines() {
-                    return this.getSubcontBoqLines(this.selectedBoqProject, this.selectedBoqSubcontFilter);
-                },
-                getAllocatedSubcontVolumeForDesignator(kodeProject, designator) {
-                    return this.subcontBoqLines
-                        .filter(l => l.kodeProject === kodeProject && l.designator === designator)
-                        .reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
-                },
-                getRemainingClientBoqVolume(kodeProject, designator) {
-                    const clientLine = this.projectBoqLines.find(l => l.kodeProject === kodeProject && l.designator === designator);
-                    if (!clientLine) return 0;
-                    const allocated = this.getAllocatedSubcontVolumeForDesignator(kodeProject, designator);
-                    return Math.max(0, Number(clientLine.volAwal) - allocated);
-                },
-                calcBoqLineClientTotal(line, mode) {
-                    const vol = mode === 'awal' ? Number(line.volAwal) : Number(line.volAkhir);
-                    const mat = line.isClientMaterial ? 0 : Number(line.hargaMaterial);
-                    return vol * (mat + Number(line.hargaJasa));
-                },
-                getProjectBoqTotal(kodeProject, mode) {
-                    const lines = this.getProjectBoqLines(kodeProject);
-                    return lines.reduce((sum, l) => sum + this.calcBoqLineClientTotal(l, mode), 0);
-                },
-                getSubcontProjectBoqTotal(kodeProject, subcontId, mode) {
-                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
-                    return lines.reduce((sum, l) => {
-                        const vol = mode === 'awal' ? Number(l.volAwal) : Number(l.volAkhir);
-                        return sum + (vol * Number(l.hargaSubcont || 0));
-                    }, 0);
-                },
-                getAllSubcontsProjectBoqTotal(kodeProject, mode) {
-                    return this.getSubcontBoqLines(kodeProject, 'ALL').reduce((sum, l) => {
-                        const vol = mode === 'awal' ? Number(l.volAwal) : Number(l.volAkhir);
-                        return sum + (vol * Number(l.hargaSubcont || 0));
-                    }, 0);
-                },
-                getProjectAdendumLogs(kodeProject) {
-                    return this.boqAdendumLogs.filter(r => r.kodeProject === kodeProject);
-                },
-
-                openAddBoqFromKhsModal() {
-                    this.modalTitle = 'Tambah Item BoQ Utama Klien (KHS)';
-                    this.formBoqAdd = { khsItemId: '', volAwal: 0, volAkhir: 0 };
-                    this.activeModal = 'boq-from-khs';
-                },
+                openAddBoqFromKhsModal() { this.modalTitle = 'Tambah Item ke BoQ Utama Klien'; this.formBoqAdd = { khsItemId: '', volAwal: 0, volAkhir: 0 }; this.activeModal = 'boq-from-khs'; },
                 saveBoqFromKhs() {
                     const khs = this.khsItems.find(k => k.id === this.formBoqAdd.khsItemId);
                     if (!khs) return;
-
-                    const existing = this.projectBoqLines.find(l => l.kodeProject === this.selectedBoqProject && l.designator === khs.designator);
-                    if (existing) {
-                        this.showToast(`Designator ${khs.designator} sudah ada di BoQ Klien. Gunakan tombol "Revisi / Adendum" untuk mengubah volume/harga.`, 'error');
-                        return;
-                    }
-
                     this.projectBoqLines.push({
                         id: 'BL-' + Date.now(),
                         kodeProject: this.selectedBoqProject,
@@ -2905,17 +3342,17 @@
                         satuan: khs.satuan,
                         isClientMaterial: khs.isClientMaterial,
                         volAwal: Number(this.formBoqAdd.volAwal),
-                        volAkhir: Number(this.formBoqAdd.volAkhir || 0),
+                        volAkhir: Number(this.formBoqAdd.volAkhir) || 0,
                         hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
                         hargaJasa: Number(khs.hargaJasa)
                     });
-                    this.syncProjectContractSummary(this.selectedBoqProject);
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    if (prj) prj.nominalAwal = this.getProjectBoqTotal(this.selectedBoqProject, 'awal');
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Item BoQ Utama Klien ditambahkan & Nilai Kontrak Awal otomatis terupdate!');
+                    this.showToast('Item BoQ Klien berhasil ditambahkan & nilai kontrak project terupdate.');
                 },
 
-                // Modal & Simpan Revisi / Adendum Kontrak
                 openBoqAdendumModal(line) {
                     this.modalTitle = 'Revisi / Adendum Item BoQ Klien';
                     this.formBoqAdendum = {
@@ -2934,83 +3371,70 @@
                     const line = this.projectBoqLines.find(l => l.id === this.formBoqAdendum.lineId);
                     if (!line) return;
 
-                    const allocatedVol = this.getAllocatedSubcontVolumeForDesignator(line.kodeProject, line.designator);
-                    if (Number(this.formBoqAdendum.volAwal) < allocatedVol) {
-                        this.showToast(`Gagal! Volume kontrak klien (${this.formBoqAdendum.volAwal}) tidak boleh lebih kecil dari volume yang sudah dialokasikan ke Subcont (${allocatedVol}).`, 'error');
-                        return;
-                    }
+                    const oldVol = Number(line.volAwal);
+                    const oldMat = Number(line.hargaMaterial);
+                    const oldJasa = Number(line.hargaJasa);
 
-                    const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                    const newVol = Number(this.formBoqAdendum.volAwal);
+                    const newMat = line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial);
+                    const newJasa = Number(this.formBoqAdendum.hargaJasa);
+
+                    line.volAwal = newVol;
+                    line.hargaMaterial = newMat;
+                    line.hargaJasa = newJasa;
+
+                    const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
                     this.boqAdendumLogs.unshift({
                         id: 'REV-' + Date.now(),
                         kodeProject: line.kodeProject,
+                        designator: line.designator,
                         timestamp: nowStr,
                         user: this.currentUser,
-                        designator: line.designator,
-                        oldVolAwal: line.volAwal,
-                        newVolAwal: Number(this.formBoqAdendum.volAwal),
-                        oldHargaMaterial: line.hargaMaterial,
-                        newHargaMaterial: line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial),
-                        oldHargaJasa: line.hargaJasa,
-                        newHargaJasa: Number(this.formBoqAdendum.hargaJasa),
+                        oldVolAwal: oldVol,
+                        newVolAwal: newVol,
+                        oldHargaMaterial: oldMat,
+                        newHargaMaterial: newMat,
+                        oldHargaJasa: oldJasa,
+                        newHargaJasa: newJasa,
                         alasan: this.formBoqAdendum.alasan
                     });
 
-                    line.volAwal = Number(this.formBoqAdendum.volAwal);
-                    line.hargaMaterial = line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial);
-                    line.hargaJasa = Number(this.formBoqAdendum.hargaJasa);
+                    const prj = this.getProjectByCode(line.kodeProject);
+                    if (prj) prj.nominalAwal = this.getProjectBoqTotal(line.kodeProject, 'awal');
 
-                    this.syncProjectContractSummary(line.kodeProject);
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Adendum ${line.designator} disimpan & tercatat di Log Audit!`);
+                    this.showToast(`Adendum ${line.designator} berhasil disimpan & tercatat di Log Audit Trail.`);
                 },
 
                 openAddSubcontBoqModal() {
                     const prj = this.getProjectByCode(this.selectedBoqProject);
-                    if (!prj?.subcontIds || prj.subcontIds.length === 0) {
-                        this.showToast('Project ini belum memiliki Tim Subcont. Tambahkan subcont terlebih dahulu di menu Daftar Project.', 'error');
-                        return;
-                    }
-                    if (this.getProjectBoqLines(this.selectedBoqProject).length === 0) {
-                        this.showToast('BoQ Utama Klien masih kosong. Input item BoQ Klien terlebih dahulu sebelum mengalokasikan ke Subcont.', 'error');
-                        return;
-                    }
-                    const defaultSub = (this.selectedBoqSubcontFilter !== 'ALL' ? this.selectedBoqSubcontFilter : prj.subcontIds[0]) || '';
-                    this.modalTitle = 'Alokasi Item & Volume Pekerjaan ke Subcont';
+                    const defaultSub = (this.selectedBoqSubcontFilter !== 'ALL') ? this.selectedBoqSubcontFilter : (prj?.subcontIds?.[0] || '');
+                    this.modalTitle = 'Alokasi Item & Volume SPK ke Subcont';
                     this.formSubcontBoq = { subcontId: defaultSub, boqLineId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 };
                     this.activeModal = 'subcont-boq-add';
                 },
-                getSelectedClientBoqLineForAllocation() {
-                    if (!this.formSubcontBoq.boqLineId) return null;
-                    return this.projectBoqLines.find(l => l.id === this.formSubcontBoq.boqLineId) || null;
-                },
                 autoFillSubcontRateOnModal() {
-                    const bl = this.getSelectedClientBoqLineForAllocation();
-                    if (!this.formSubcontBoq.subcontId || !bl) return;
-                    const rate = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === bl.designator);
-                    if (rate) {
-                        this.formSubcontBoq.hargaSubcont = Number(rate.hargaSubcont);
+                    const bl = this.projectBoqLines.find(b => b.id === this.formSubcontBoq.boqLineId);
+                    if (!bl || !this.formSubcontBoq.subcontId) return;
+                    const rateObj = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === bl.designator);
+                    if (rateObj) {
+                        this.formSubcontBoq.hargaSubcont = Number(rateObj.hargaSubcont);
+                    }
+                    const rem = this.getRemainingClientBoqVolume(this.selectedBoqProject, bl.designator);
+                    if (rem > 0 && (!this.formSubcontBoq.volAwal || this.formSubcontBoq.volAwal > rem)) {
+                        this.formSubcontBoq.volAwal = rem;
                     }
                 },
                 saveSubcontBoqLine() {
-                    const bl = this.getSelectedClientBoqLineForAllocation();
-                    if (!bl || !this.formSubcontBoq.subcontId) {
-                        this.showToast('Pilih Tim Subcont dan Item BoQ Klien terlebih dahulu!', 'error');
-                        return;
-                    }
+                    const bl = this.projectBoqLines.find(b => b.id === this.formSubcontBoq.boqLineId);
+                    if (!bl || !this.formSubcontBoq.subcontId) return;
 
-                    const remainingQuota = this.getRemainingClientBoqVolume(this.selectedBoqProject, bl.designator);
                     const reqVol = Number(this.formSubcontBoq.volAwal) || 0;
+                    const remainingQuota = this.getRemainingClientBoqVolume(this.selectedBoqProject, bl.designator);
 
-                    // PREVENTIVE VALIDATION: Blokir jika melebihi sisa kuota BoQ Klien
                     if (reqVol > remainingQuota) {
-                        this.showToast(`DITOLAK (Over-Allocation): Volume alokasi (${reqVol}) melebihi sisa kuota kontrak Klien (${remainingQuota} ${bl.satuan || ''}) untuk ${bl.designator}!`, 'error');
-                        return;
-                    }
-
-                    if (Number(this.formSubcontBoq.volAkhir || 0) > reqVol) {
-                        this.showToast(`DITOLAK: Volume realisasi awal (${this.formSubcontBoq.volAkhir}) tidak boleh melebihi volume target (${reqVol})!`, 'error');
+                        this.showToast(`Gagal! Volume alokasi (${reqVol}) melebihi sisa kuota kontrak Klien (${remainingQuota} ${bl.satuan || ''}).`, 'error');
                         return;
                     }
 
@@ -3020,176 +3444,227 @@
                         subcontId: this.formSubcontBoq.subcontId,
                         designator: bl.designator,
                         namaPekerjaan: bl.namaPekerjaan,
-                        satuan: bl.satuan,
+                        satuan: bl.satuan || 'Unit',
                         volAwal: reqVol,
-                        volAkhir: Number(this.formSubcontBoq.volAkhir || 0),
+                        volAkhir: Number(this.formSubcontBoq.volAkhir) || 0,
                         hargaSubcont: Number(this.formSubcontBoq.hargaSubcont)
                     });
-
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Item ${bl.designator} (${reqVol} ${bl.satuan || ''}) berhasil dialokasikan ke ${this.getSubcontName(this.formSubcontBoq.subcontId)}!`);
+                    this.showToast(`Alokasi pekerjaan untuk ${this.getSubcontName(this.formSubcontBoq.subcontId)} berhasil disimpan!`);
                 },
                 removeSubcontBoqLine(id) {
-                    this.subcontBoqLines = this.subcontBoqLines.filter(l => l.id !== id);
+                    this.subcontBoqLines = this.subcontBoqLines.filter(s => s.id !== id);
                     this.persistAll();
-                    this.showToast('Item alokasi subcont dihapus');
+                    this.showToast('Item pekerjaan Subcont dihapus.');
                 },
 
-                // ==================== WASPANG DAILY VOLUME PER SUBCONT (PREVENTIVE VALIDATION) ====================
-                getSelectedWaspangBoqLine() {
-                    if (!this.waspangForm.subcontBoqLineId) return null;
-                    return this.subcontBoqLines.find(l => l.id === this.waspangForm.subcontBoqLineId) || null;
-                },
-                submitWaspangDaily() {
-                    const sline = this.getSelectedWaspangBoqLine();
-                    const prj = this.getProjectByCode(this.waspangForm.kodeProject);
-                    if (!sline || !prj) return;
-
-                    const volAdd = Number(this.waspangForm.volume) || 0;
-                    const currentAct = Number(sline.volAkhir) || 0;
-                    const targetVol = Number(sline.volAwal) || 0;
-                    const remainingTarget = Math.max(0, targetVol - currentAct);
-
-                    // PREVENTIVE VALIDATION: Blokir jika akumulasi volume harian melebihi target SPK subcont
-                    if (currentAct + volAdd > targetVol) {
-                        this.showToast(`DITOLAK (Melebihi Target SPK): Akumulasi volume (${currentAct + volAdd}) melebihi target awal Subcont (${targetVol} ${sline.satuan || ''}). Sisa maksimal: ${remainingTarget}.`, 'error');
-                        return;
-                    }
-
-                    sline.volAkhir = currentAct + volAdd;
-
-                    // Sinkronkan total volAkhir pada BoQ Utama Klien berdasarkan akumulasi seluruh subcont pada designator tersebut
-                    const mainLine = this.projectBoqLines.find(l => l.kodeProject === prj.kodeProject && l.designator === sline.designator);
-                    if (mainLine) {
-                        const totalSubAct = this.subcontBoqLines
-                            .filter(l => l.kodeProject === prj.kodeProject && l.designator === sline.designator)
-                            .reduce((sum, l) => sum + (Number(l.volAkhir) || 0), 0);
-                        mainLine.volAkhir = totalSubAct;
-                    }
-
-                    const subName = this.getSubcontName(sline.subcontId);
-                    this.waspangLogs.unshift({
-                        id: Date.now(),
-                        tanggal: this.waspangForm.tanggal,
-                        kodeProject: prj.kodeProject,
-                        projectName: prj.projectName,
-                        subcontId: sline.subcontId,
-                        subcontName: subName,
-                        designator: sline.designator,
-                        namaPekerjaan: sline.namaPekerjaan,
-                        volume: volAdd,
-                        waspangName: this.currentUser,
-                        attachmentUrl: this.waspangForm.attachmentUrl || '',
-                        attachmentName: this.waspangForm.attachmentName || ''
-                    });
-
-                    this.waspangForm.volume = '';
-                    this.waspangForm.attachmentUrl = '';
-                    this.waspangForm.attachmentName = '';
-                    this.persistAll();
-                    this.showToast(`Volume +${volAdd} tersimpan untuk ${subName}! Nilai Akhir Project & Progress otomatis diperbarui.`);
-                },
-
-                getSubcontPhysicalProgress(kodeProject, subcontId) {
-                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
-                    if (lines.length === 0) return 0;
-                    const totalPlan = lines.reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
-                    const totalAct = lines.reduce((s, l) => s + (Number(l.volAkhir) || 0), 0);
-                    if (totalPlan <= 0) return 0;
-                    return Math.min(100, Math.round((totalAct / totalPlan) * 100));
-                },
-
-                getProjectPhysicalProgress(kodeProject) {
-                    const lines = this.getProjectBoqLines(kodeProject);
-                    if (lines.length === 0) return 0;
-                    const totalPlan = lines.reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
-                    const totalAct = lines.reduce((s, l) => s + (Number(l.volAkhir) || 0), 0);
-                    if (totalPlan <= 0) return 0;
-                    return Math.min(100, Math.round((totalAct / totalPlan) * 100));
-                },
-
-                // ==================== SUBCONT INVOICE & ACCOUNTING PROGRESS ====================
                 openSubcontInvoiceModal() {
-                    const firstPrj = this.masterProject[0];
-                    this.modalTitle = 'Ajukan Invoice / Tagihan per Subcont';
-                    this.formSubcontInv = {
-                        kodeProject: firstPrj?.kodeProject || '',
-                        subcontId: firstPrj?.subcontIds?.[0] || '',
-                        noInvoice: '',
-                        termin: '',
-                        nominal: 0,
-                        attachmentUrl: '',
-                        attachmentName: ''
-                    };
+                    const defaultPrj = this.masterProject[0]?.kodeProject || '';
+                    const defaultSub = this.masterProject[0]?.subcontIds?.[0] || '';
+                    this.modalTitle = 'Ajukan Invoice Tagihan Subcont';
+                    this.formSubcontInv = { kodeProject: defaultPrj, subcontId: defaultSub, noInvoice: '', termin: 'Termin 1 (50%)', nominal: 0, attachmentUrl: '', attachmentName: '' };
                     this.activeModal = 'subcont-inv';
                 },
                 saveSubcontInvoice() {
                     const prj = this.getProjectByCode(this.formSubcontInv.kodeProject);
-                    if (!prj || !this.formSubcontInv.subcontId) return;
                     const subName = this.getSubcontName(this.formSubcontInv.subcontId);
-
-                    this.subcontInvoices.unshift({
+                    const invObj = {
                         id: Date.now(),
                         noInvoice: this.formSubcontInv.noInvoice,
                         tanggal: new Date().toISOString().split('T')[0],
-                        kodeProject: prj.kodeProject,
-                        projectName: prj.projectName,
+                        kodeProject: this.formSubcontInv.kodeProject,
+                        projectName: prj?.projectName || this.formSubcontInv.kodeProject,
                         subcontId: this.formSubcontInv.subcontId,
                         subcontName: subName,
                         termin: this.formSubcontInv.termin,
                         nominal: Number(this.formSubcontInv.nominal),
                         status: 'Pending',
                         attachmentUrl: this.formSubcontInv.attachmentUrl || '',
-                        attachmentName: this.formSubcontInv.attachmentName || ''
-                    });
+                        attachmentName: this.formSubcontInv.attachmentName || (this.formSubcontInv.attachmentUrl ? 'Link Dokumen BAP' : '')
+                    };
+                    this.subcontInvoices.unshift(invObj);
 
                     this.notifications.unshift({
                         id: Date.now() + 1,
                         type: 'SUBCONT_INV',
-                        title: `Tagihan Subcont Masuk: ${subName} (${this.formSubcontInv.noInvoice})`,
-                        nominal: Number(this.formSubcontInv.nominal),
-                        detail: `Project: ${prj.projectName} | ${this.formSubcontInv.termin}`,
+                        title: `Tagihan Subcont Masuk: ${subName} (${invObj.noInvoice})`,
+                        nominal: invObj.nominal,
+                        detail: `Project: ${invObj.projectName} | ${invObj.termin}`,
                         timestamp: 'Baru saja',
                         isRead: false
                     });
 
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast(`Tagihan ${subName} diajukan & Notifikasi otomatis dikirim ke Divisi Accounting!`);
+                    this.showToast('Tagihan Subcont diajukan & Notifikasi dikirim ke Accounting!');
                 },
 
-                processSubcontInvoice(inv, newStatus) {
-                    inv.status = newStatus;
+                // ==================== WASPANG DAILY VOLUME (PER SUBCONT + VALIDASI OVER-LIMIT) ====================
+                submitWaspangDaily() {
+                    const sline = this.subcontBoqLines.find(s => s.id === this.waspangForm.subcontBoqLineId);
+                    const prj = this.getProjectByCode(this.waspangForm.kodeProject);
+                    if (!sline || !prj) return;
+
+                    const addVol = Number(this.waspangForm.volume) || 0;
+                    const sisaTargetSubcont = Math.max(0, (Number(sline.volAwal) || 0) - (Number(sline.volAkhir) || 0));
+
+                    if (addVol > sisaTargetSubcont) {
+                        this.showToast(`Gagal! Volume input (${addVol}) melebihi sisa target volume Subcont (${sisaTargetSubcont} ${sline.satuan || ''}).`, 'error');
+                        return;
+                    }
+
+                    sline.volAkhir = (Number(sline.volAkhir) || 0) + addVol;
+
+                    const parentBoqLine = this.projectBoqLines.find(b => b.kodeProject === this.waspangForm.kodeProject && b.designator === sline.designator);
+                    if (parentBoqLine) {
+                        const sumRealisasiSubconts = this.subcontBoqLines
+                            .filter(s => s.kodeProject === this.waspangForm.kodeProject && s.designator === sline.designator)
+                            .reduce((sum, s) => sum + (Number(s.volAkhir) || 0), 0);
+                        parentBoqLine.volAkhir = sumRealisasiSubconts;
+                    }
+
+                    this.waspangLogs.unshift({
+                        id: Date.now(),
+                        tanggal: this.waspangForm.tanggal,
+                        kodeProject: this.waspangForm.kodeProject,
+                        projectName: prj.projectName,
+                        subcontId: this.waspangForm.subcontId,
+                        subcontName: this.getSubcontName(this.waspangForm.subcontId),
+                        designator: sline.designator,
+                        namaPekerjaan: sline.namaPekerjaan,
+                        volume: addVol,
+                        waspangName: this.currentUser,
+                        attachmentUrl: this.waspangForm.attachmentUrl || '',
+                        attachmentName: this.waspangForm.attachmentName || (this.waspangForm.attachmentUrl ? 'Link Dokumentasi Lapangan' : '')
+                    });
+
+                    this.waspangForm.volume = '';
+                    this.waspangForm.attachmentUrl = '';
+                    this.waspangForm.attachmentName = '';
                     this.persistAll();
-                    this.showToast(`Status tagihan ${inv.noInvoice} (${inv.subcontName}) diubah menjadi ${newStatus}.`);
+                    this.showToast(`Progress +${addVol} untuk ${this.getSubcontName(this.waspangForm.subcontId)} berhasil disimpan!`);
                 },
 
-                getProjectClientPaid(noPO) {
-                    return this.clientInvoices.filter(i => i.noPO === noPO && i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0);
+                // ==================== WAREHOUSE ACTIONS ====================
+                openWhMasterModal(type) {
+                    if (type === 'barang') {
+                        this.modalTitle = 'Tambah Master Barang Gudang';
+                        this.formWhBarang = { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' };
+                        this.activeModal = 'wh-barang';
+                    } else if (type === 'gudang') {
+                        this.modalTitle = 'Tambah Master Gudang Regional';
+                        this.formWhGudang = { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' };
+                        this.activeModal = 'wh-gudang';
+                    }
                 },
-                getProjectSubcontPaid(kodeProject) {
-                    return this.subcontInvoices.filter(i => i.kodeProject === kodeProject && i.status === 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0);
+                saveWhBarang() {
+                    const exists = this.masterBarang.some(b => b.kodeBarang.toUpperCase() === this.formWhBarang.kodeBarang.toUpperCase());
+                    if (exists) {
+                        this.showToast('Kode Barang (SKU) sudah terdaftar di Master Barang.', 'error');
+                        return;
+                    }
+                    this.masterBarang.push({
+                        kategori: this.formWhBarang.kategori,
+                        jenis: this.formWhBarang.jenis,
+                        kodeBarang: this.formWhBarang.kodeBarang.toUpperCase(),
+                        namaBarang: this.formWhBarang.namaBarang,
+                        isClientSupplied: this.formWhBarang.isClientSupplied,
+                        sat: this.formWhBarang.sat
+                    });
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Master Barang baru berhasil ditambahkan!');
                 },
-                getProjectFinanceStatusText(prj) {
-                    const clientPaid = this.getProjectClientPaid(prj.noPO);
-                    const subPaid = this.getProjectSubcontPaid(prj.kodeProject);
-                    if (clientPaid > 0 && subPaid > 0) return 'Termin Klien Cair & Subcont Terbayar';
-                    if (clientPaid > 0) return 'Termin Klien Sudah Cair';
-                    return 'Proses Penagihan / Berjalan';
+                saveWhGudang() {
+                    const exists = this.masterGudang.some(g => g.kodeGudang.toUpperCase() === this.formWhGudang.kodeGudang.toUpperCase());
+                    if (exists) {
+                        this.showToast('Kode Gudang sudah terdaftar.', 'error');
+                        return;
+                    }
+                    this.masterGudang.push({
+                        region: this.formWhGudang.region.toUpperCase(),
+                        kodeGudang: this.formWhGudang.kodeGudang.toUpperCase(),
+                        namaGudang: this.formWhGudang.namaGudang,
+                        tipeKepemilikan: this.formWhGudang.tipeKepemilikan,
+                        lokasi: this.formWhGudang.lokasi
+                    });
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Master Gudang baru berhasil ditambahkan!');
                 },
 
-                // ==================== ACCOUNTING: INVOICE KLIEN ====================
+                openInputTransaction() { this.switchTab('wh-input'); },
+                submitWhTransaction() {
+                    const brg = this.masterBarang.find(b => b.kodeBarang === this.newTrans.singleKodeBarang);
+                    const qty = Number(this.newTrans.singleQty) || 0;
+                    const noTx = 'WH-' + Date.now().toString().slice(-6);
+                    const tx = {
+                        noTransaksi: noTx,
+                        tanggal: this.newTrans.tanggal,
+                        tipeTransaksi: this.newTrans.tipeTransaksi,
+                        gudangAsal: this.newTrans.gudangAsal,
+                        kodeProject: this.newTrans.kodeProject,
+                        keterangan: this.newTrans.keterangan,
+                        singleKodeBarang: this.newTrans.singleKodeBarang,
+                        singleNamaBarang: brg?.namaBarang || this.newTrans.singleKodeBarang,
+                        singleDrumId: this.newTrans.singleDrumId,
+                        singleQty: qty,
+                        attachmentUrl: this.newTrans.attachmentUrl || '',
+                        attachmentName: this.newTrans.attachmentName || (this.newTrans.attachmentUrl ? 'Link Surat Jalan' : '')
+                    };
+                    this.transactions.unshift(tx);
+
+                    if (tx.singleDrumId) {
+                        let drum = this.drumLedger.find(d => d.drumId === tx.singleDrumId);
+                        if (tx.tipeTransaksi === 'Masuk') {
+                            if (drum) {
+                                drum.initialLength += qty;
+                                drum.remainingLength += qty;
+                            } else {
+                                this.drumLedger.unshift({ drumId: tx.singleDrumId, kodeBarang: tx.singleKodeBarang, namaBarang: tx.singleNamaBarang, gudang: tx.gudangAsal, initialLength: qty, remainingLength: qty });
+                            }
+                        } else if (tx.tipeTransaksi === 'Keluar' && drum) {
+                            drum.remainingLength = Math.max(0, drum.remainingLength - qty);
+                        }
+                    }
+
+                    if (tx.tipeTransaksi === 'Keluar' && tx.kodeProject) {
+                        this.materialUsage.unshift({ id: Date.now(), tanggal: tx.tanggal, kodeProject: tx.kodeProject, namaBarang: tx.singleNamaBarang, drumId: tx.singleDrumId, qty: qty });
+                    }
+
+                    this.newTrans.singleQty = '';
+                    this.newTrans.singleDrumId = '';
+                    this.newTrans.keterangan = '';
+                    this.newTrans.attachmentUrl = '';
+                    this.newTrans.attachmentName = '';
+                    this.persistAll();
+                    this.showToast(`Transaksi ${noTx} berhasil disimpan!`);
+                    this.switchTab('wh-transaksi');
+                },
+
+                printBAST(tx) {
+                    this.activeBast = tx;
+                    this.printMode = 'bast';
+                    setTimeout(() => {
+                        window.print();
+                        setTimeout(() => { this.printMode = ''; }, 500);
+                    }, 200);
+                },
+
+                // ==================== ACCOUNTING ACTIONS ====================
+                markAllNotificationsRead() { this.notifications.forEach(n => n.isRead = true); this.persistAll(); },
+
                 openClientInvoiceModal() {
-                    this.modalTitle = 'Input Invoice Klien';
+                    this.modalTitle = 'Input Invoice Klien & Kalkulasi Pajak Otomatis';
                     this.formClientInv = { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: new Date().toISOString().split('T')[0], noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' };
                     this.activeModal = 'client-inv';
                 },
                 autoFillLocationFromPO() {
                     const prj = this.masterProject.find(p => p.noPO === this.formClientInv.noPO);
                     if (prj) {
-                        this.formClientInv.lokasiPekerjaan = prj.projectName;
                         this.formClientInv.area = prj.region;
+                        this.formClientInv.lokasiPekerjaan = prj.projectName;
                     }
                 },
                 recalcClientTax() {
@@ -3202,111 +3677,22 @@
                 },
                 saveClientInvoice() {
                     this.recalcClientTax();
-                    this.clientInvoices.push({ id: Date.now(), ...this.formClientInv });
+                    this.clientInvoices.unshift({ id: Date.now(), ...this.formClientInv });
                     this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Invoice Klien berhasil disimpan ke Rekap Cash & Bank!');
+                    this.showToast('Invoice Klien berhasil dicatat ke Rekap Cash & Bank.');
                 },
                 markClientInvoicePaid(inv) {
                     inv.statusPembayaran = 'LUNAS';
                     inv.tglCb = new Date().toISOString().split('T')[0];
                     this.persistAll();
-                    this.showToast(`Invoice ${inv.noInvoice} LUNAS! Progress keuangan project otomatis terupdate.`);
+                    this.showToast(`Invoice ${inv.noInvoice || inv.noPO} ditandai LUNAS (Cair CB)!`);
                 },
-
-                // ==================== WAREHOUSE METHODS ====================
-                openWhMasterModal(type) {
-                    if (type === 'barang') {
-                        this.modalTitle = 'Tambah Master Barang Baru';
-                        this.formWhBarang = { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' };
-                        this.activeModal = 'wh-barang';
-                    } else if (type === 'gudang') {
-                        this.modalTitle = 'Tambah Master Gudang Regional';
-                        this.formWhGudang = { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' };
-                        this.activeModal = 'wh-gudang';
-                    }
-                },
-                saveWhBarang() {
-                    this.masterBarang.push({ ...this.formWhBarang, kodeBarang: this.formWhBarang.kodeBarang.toUpperCase() });
+                processSubcontInvoice(inv, newStatus) {
+                    inv.status = newStatus;
                     this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Master Barang baru berhasil ditambahkan!');
-                },
-                saveWhGudang() {
-                    this.masterGudang.push({ ...this.formWhGudang, region: this.formWhGudang.region.toUpperCase(), kodeGudang: this.formWhGudang.kodeGudang.toUpperCase() });
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Master Gudang baru berhasil ditambahkan!');
-                },
-                openInputTransaction() { this.switchTab('wh-input'); },
-                submitWhTransaction() {
-                    const brg = this.masterBarang.find(b => b.kodeBarang === this.newTrans.singleKodeBarang);
-                    const noTx = `WH-${Date.now().toString().slice(-6)}`;
-                    const qty = Number(this.newTrans.singleQty) || 0;
-
-                    const txObj = {
-                        noTransaksi: noTx,
-                        tanggal: this.newTrans.tanggal,
-                        tipeTransaksi: this.newTrans.tipeTransaksi,
-                        gudangAsal: this.newTrans.gudangAsal,
-                        kodeProject: this.newTrans.kodeProject,
-                        singleKodeBarang: this.newTrans.singleKodeBarang,
-                        singleNamaBarang: brg ? brg.namaBarang : '',
-                        singleDrumId: this.newTrans.singleDrumId,
-                        singleQty: qty,
-                        keterangan: this.newTrans.keterangan,
-                        attachmentUrl: this.newTrans.attachmentUrl || '',
-                        attachmentName: this.newTrans.attachmentName || ''
-                    };
-                    this.transactions.unshift(txObj);
-
-                    if (this.newTrans.tipeTransaksi === 'Keluar' && this.newTrans.kodeProject) {
-                        this.materialUsage.unshift({
-                            id: Date.now(),
-                            tanggal: this.newTrans.tanggal,
-                            kodeProject: this.newTrans.kodeProject,
-                            namaBarang: brg ? brg.namaBarang : '',
-                            drumId: this.newTrans.singleDrumId,
-                            qty: qty
-                        });
-                    }
-                    if (this.newTrans.singleDrumId) {
-                        const drum = this.drumLedger.find(d => d.drumId === this.newTrans.singleDrumId);
-                        if (drum && this.newTrans.tipeTransaksi === 'Keluar') {
-                            drum.remainingLength = Math.max(0, drum.remainingLength - qty);
-                        } else if (!drum && (this.newTrans.tipeTransaksi === 'Masuk' || this.newTrans.tipeTransaksi === 'Return')) {
-                            this.drumLedger.push({
-                                drumId: this.newTrans.singleDrumId,
-                                kodeBarang: this.newTrans.singleKodeBarang,
-                                namaBarang: brg ? brg.namaBarang : '',
-                                gudang: this.newTrans.gudangAsal,
-                                initialLength: qty,
-                                remainingLength: qty
-                            });
-                        }
-                    }
-
-                    this.newTrans.singleQty = '';
-                    this.newTrans.singleDrumId = '';
-                    this.newTrans.keterangan = '';
-                    this.newTrans.attachmentUrl = '';
-                    this.newTrans.attachmentName = '';
-
-                    this.persistAll();
-                    this.showToast(`Transaksi ${noTx} berhasil disimpan!`);
-                    this.switchTab('wh-transaksi');
-                },
-                printBAST(tx) {
-                    this.activeBast = tx;
-                    setTimeout(() => window.print(), 250);
-                },
-
-                // ==================== DASHBOARD AGGREGATES ====================
-                unreadNotificationsCount() { return this.notifications.filter(n => !n.isRead).length; },
-                markAllNotificationsRead() { this.notifications.forEach(n => n.isRead = true); this.persistAll(); },
-                totalProjectContractValue() { return this.masterProject.reduce((s, p) => s + this.getProjectBoqTotal(p.kodeProject, 'awal'), 0); },
-                totalClientCashIn() { return this.clientInvoices.filter(i => i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0); },
-                totalSubcontPending() { return this.subcontInvoices.filter(i => i.status !== 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0); }
+                    this.showToast(`Tagihan Subcont ${inv.noInvoice} diupdate menjadi ${newStatus}.`);
+                }
             };
         }
     </script>
