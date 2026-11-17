@@ -37,7 +37,7 @@
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-        /* Print Styles: Eksklusif per Mode (BAST vs SPK) */
+        /* Print Styles: Eksklusif per Mode (BAST vs SPK vs REKON) */
         @media print {
             @page { margin: 10mm 12mm; size: A4 portrait; }
             body { background: white !important; color: black !important; font-size: 11px !important; }
@@ -50,7 +50,7 @@
                 visibility: visible !important;
                 padding: 4mm !important;
             }
-            body.printing-bast #printable-spk { display: none !important; }
+            body.printing-bast #printable-spk, body.printing-bast #printable-rekon { display: none !important; }
 
             body.printing-spk #printable-spk {
                 display: block !important;
@@ -59,14 +59,23 @@
                 visibility: visible !important;
                 padding: 2mm !important;
             }
-            body.printing-spk #printable-bast { display: none !important; }
+            body.printing-spk #printable-bast, body.printing-spk #printable-rekon { display: none !important; }
 
-            #printable-bast *, #printable-spk * { visibility: visible !important; }
+            body.printing-rekon #printable-rekon {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                visibility: visible !important;
+                padding: 2mm !important;
+            }
+            body.printing-rekon #printable-bast, body.printing-rekon #printable-spk { display: none !important; }
+
+            #printable-bast *, #printable-spk *, #printable-rekon * { visibility: visible !important; }
         }
     </style>
 </head>
 <body class="antialiased selection:bg-cyan-500 selection:text-slate-950"
-      :class="printMode === 'spk' ? 'printing-spk' : (printMode === 'bast' ? 'printing-bast' : '')"
+      :class="printMode === 'spk' ? 'printing-spk' : (printMode === 'bast' ? 'printing-bast' : (printMode === 'rekon' ? 'printing-rekon' : ''))"
       x-data="acmErpApp()">
 
     <!-- ==================== 1. LOGIN SCREEN (DIVISION ACCESS) ==================== -->
@@ -1100,6 +1109,9 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="openRekonPdfPreviewModal()" class="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow-lg shadow-rose-600/20 flex items-center gap-1.5">
+                                <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Export PDF Berita Acara Rekon
+                            </button>
                             <button type="button" @click="exportRekonSubcontCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Hasil Rekon CSV
                             </button>
@@ -2043,7 +2055,7 @@
     <!-- ==================== MODALS INTERAKTIF ==================== -->
     <div x-show="activeModal !== ''" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md px-4 print:hidden" x-cloak>
         <div class="w-full bg-[#0c1222] border border-slate-800 rounded-2xl p-6 shadow-2xl transition-all"
-             :class="activeModal === 'spk-preview' ? 'max-w-4xl max-h-[92vh] flex flex-col' : 'max-w-lg'">
+             :class="(activeModal === 'spk-preview' || activeModal === 'rekon-preview') ? 'max-w-4xl max-h-[92vh] flex flex-col' : 'max-w-lg'">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4 shrink-0">
                 <h3 class="text-sm font-bold text-white" x-text="modalTitle"></h3>
                 <button type="button" @click="activeModal = ''" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -2187,6 +2199,232 @@
                         <button type="button" @click="executePrintSpk()" :disabled="spkDraft.items.length === 0"
                                 class="px-5 py-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 disabled:opacity-40 text-white font-semibold rounded-lg text-xs flex items-center gap-2 shadow-lg shadow-rose-600/20">
                             <i data-lucide="file-down" class="w-4 h-4"></i> Cetak / Export PDF SPK Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- MODAL KHUSUS: PREVIEW & EXPORT PDF BERITA ACARA REKONSILIASI SUBCONT -->
+            <div x-show="activeModal === 'rekon-preview'" class="flex-1 flex flex-col overflow-hidden space-y-4">
+                <!-- Kontrol Konfigurasi BA Rekon Sebelum Export PDF -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-950 p-3.5 rounded-xl border border-slate-800 shrink-0">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Subcont Direkon</label>
+                        <select x-model="rekonPdfDraft.subcontId" @change="refreshRekonPdfDraft()" class="w-full bg-[#0c1222] border border-amber-500/40 rounded-lg px-2.5 py-1.5 text-xs text-amber-300 font-semibold">
+                            <template x-for="sid in (getProjectByCode(rekonPdfDraft.kodeProject)?.subcontIds || [])" :key="'rk-pdf-sel-' + sid">
+                                <option :value="sid" x-text="getSubcontName(sid)"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Nomor Berita Acara Rekon</label>
+                        <input type="text" x-model="rekonPdfDraft.noBaRekon" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Tanggal Rekon Bersama</label>
+                        <input type="date" x-model="rekonPdfDraft.tanggal" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Perwakilan Waspang / QC</label>
+                        <input type="text" x-model="rekonPdfDraft.waspangName" placeholder="Nama Waspang Lapangan" class="w-full bg-[#0c1222] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                </div>
+
+                <!-- Pratinjau Lembar Dokumen Berita Acara Rekonsiliasi (Kertas Putih A4) -->
+                <div class="flex-1 overflow-y-auto rounded-xl border border-slate-700 bg-white text-slate-900 p-6 sm:p-8 shadow-inner">
+                    <!-- Kop Surat -->
+                    <div class="flex items-start justify-between border-b-2 border-slate-900 pb-3 mb-4">
+                        <div>
+                            <h2 class="text-base font-extrabold tracking-tight text-slate-900 uppercase">PT ACERO CETHA METALINDO</h2>
+                            <p class="text-[11px] text-slate-600">Telecommunication Infrastructure, FTTH Rollout & Engineering Services</p>
+                            <p class="text-[10px] text-slate-500">Divisi Operasional, Project Management & Warehouse • Sumatera Region</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-2.5 py-1 border-2 border-slate-900 font-bold text-xs uppercase tracking-wider">BERITA ACARA REKONSILIASI</span>
+                            <div class="font-mono text-[11px] font-bold mt-1" x-text="'No: ' + rekonPdfDraft.noBaRekon"></div>
+                        </div>
+                    </div>
+
+                    <!-- Identitas Para Pihak & Project -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[11px] mb-4 bg-slate-50 p-3 rounded border border-slate-300">
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-800 uppercase underline mb-1">I. Data Project & Pihak Pertama</div>
+                            <p><span class="text-slate-600 inline-block w-28">Kode Project</span>: <strong class="font-mono" x-text="rekonPdfDraft.kodeProject"></strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">Nama Project</span>: <strong x-text="rekonPdfDraft.projectName"></strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">No. PO Klien</span>: <span class="font-mono" x-text="rekonPdfDraft.noPO || '-'"></span></p>
+                            <p><span class="text-slate-600 inline-block w-28">Area / Region</span>: <span x-text="rekonPdfDraft.region"></span></p>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-800 uppercase underline mb-1">II. Mitra Subcont (Pihak Kedua)</div>
+                            <p><span class="text-slate-600 inline-block w-28">Nama Subcont</span>: <strong x-text="rekonPdfDraft.subcontName"></strong></p>
+                            <p><span class="text-slate-600 inline-block w-28">Area Kerja</span>: <span x-text="rekonPdfDraft.subcontArea"></span></p>
+                            <p><span class="text-slate-600 inline-block w-28">Tanggal Rekon</span>: <span x-text="rekonPdfDraft.tanggal"></span></p>
+                            <p><span class="text-slate-600 inline-block w-28">Status Dokumen</span>: <strong>Final Opname & Rekon Bersama</strong></p>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-700 mb-3 leading-relaxed">
+                        Pada hari ini tanggal <strong x-text="rekonPdfDraft.tanggal"></strong>, telah dilaksanakan pemeriksaan bersama (Opname Lapangan & Rekonsiliasi Akhir) antara <strong>PT Acero Cetha Metalindo</strong> (Pihak Pertama) dan <strong x-text="rekonPdfDraft.subcontName"></strong> (Pihak Kedua) atas hasil pelaksanaan pekerjaan dan pemakaian material dengan rincian sebagai berikut:
+                    </p>
+
+                    <!-- A. Tabel Rekon Volume Jasa & Pekerjaan Tambah Kurang -->
+                    <div class="font-bold text-[11px] text-slate-900 uppercase mb-1">A. Rekapitulasi Opname Jasa & Pekerjaan Tambah / Kurang</div>
+                    <table class="w-full border-collapse border border-slate-800 text-[10px] mb-4">
+                        <thead>
+                            <tr class="bg-slate-200 text-slate-900">
+                                <th class="border border-slate-800 p-1.5 text-center w-7">No</th>
+                                <th class="border border-slate-800 p-1.5 text-left">Designator & Uraian Pekerjaan</th>
+                                <th class="border border-slate-800 p-1.5 text-center">Sat</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Vol SPK</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Tambah (+)</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Kurang (-)</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Vol Rekon</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Harga Satuan</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Nilai Hasil Rekon</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(row, idx) in rekonPdfDraft.jasaRows" :key="'prev-rk-j-' + row.id">
+                                <tr>
+                                    <td class="border border-slate-800 p-1.5 text-center" x-text="idx + 1"></td>
+                                    <td class="border border-slate-800 p-1.5">
+                                        <span class="font-mono font-bold" x-text="row.designator"></span> - <span x-text="row.namaPekerjaan"></span>
+                                    </td>
+                                    <td class="border border-slate-800 p-1.5 text-center" x-text="row.satuan"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="row.volAwal.toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="row.volTambah > 0 ? '+' + row.volTambah.toLocaleString('id-ID') : '0'"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="row.volKurang > 0 ? '-' + row.volKurang.toLocaleString('id-ID') : '0'"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono font-bold" x-text="row.volRekon.toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="formatRupiah(row.hargaSubcont)"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono font-semibold" x-text="formatRupiah(row.nilaiRekon)"></td>
+                                </tr>
+                            </template>
+                            <tr x-show="rekonPdfDraft.jasaRows.length === 0">
+                                <td colspan="9" class="border border-slate-800 p-3 text-center text-slate-500 italic">Tidak ada item pekerjaan untuk subcont ini.</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-slate-100 font-bold">
+                                <td colspan="8" class="border border-slate-800 p-1.5 text-right uppercase">Subtotal Nilai Jasa Hasil Rekon</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="formatRupiah(rekonPdfDraft.summary.totalJasaRekon)"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- B. Tabel Rekonsiliasi Material -->
+                    <div class="font-bold text-[11px] text-slate-900 uppercase mb-1">B. Rekonsiliasi Pemakaian Material & Potongan Selisih</div>
+                    <table class="w-full border-collapse border border-slate-800 text-[10px] mb-4">
+                        <thead>
+                            <tr class="bg-slate-200 text-slate-900">
+                                <th class="border border-slate-800 p-1.5 text-center w-7">No</th>
+                                <th class="border border-slate-800 p-1.5 text-left">Kode & Nama Material</th>
+                                <th class="border border-slate-800 p-1.5 text-center">Sat</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Ambil Gudang</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Terpasang</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Return</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Selisih (-)</th>
+                                <th class="border border-slate-800 p-1.5 text-right">Nilai Potongan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(m, idx) in rekonPdfDraft.materialRows" :key="'prev-rk-m-' + m.id">
+                                <tr>
+                                    <td class="border border-slate-800 p-1.5 text-center" x-text="idx + 1"></td>
+                                    <td class="border border-slate-800 p-1.5"><span class="font-mono font-bold" x-text="m.kodeBarang"></span> - <span x-text="m.namaBarang"></span></td>
+                                    <td class="border border-slate-800 p-1.5 text-center" x-text="m.satuan"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="Number(m.qtyAmbil).toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="Number(m.qtyTerpasang).toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="Number(m.qtyReturn).toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono font-bold" x-text="calcMaterialSelisih(m).toLocaleString('id-ID')"></td>
+                                    <td class="border border-slate-800 p-1.5 text-right font-mono font-semibold" x-text="formatRupiah(calcMaterialPotongan(m))"></td>
+                                </tr>
+                            </template>
+                            <tr x-show="rekonPdfDraft.materialRows.length === 0">
+                                <td colspan="8" class="border border-slate-800 p-2.5 text-center text-slate-600">Nihil / Tidak ada selisih pemotongan material.</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-slate-100 font-bold">
+                                <td colspan="7" class="border border-slate-800 p-1.5 text-right uppercase">Subtotal Potongan Selisih Material</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="'-' + formatRupiah(rekonPdfDraft.summary.potonganMaterial)"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- C. Ringkasan Perhitungan Akhir & Sisa Tagihan -->
+                    <div class="font-bold text-[11px] text-slate-900 uppercase mb-1">C. Ringkasan Nilai Akhir & Sisa Hak Tagihan Subcont</div>
+                    <table class="w-full border-collapse border border-slate-800 text-[11px] mb-3">
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-800 p-1.5">1. Nilai Kontrak SPK Awal</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono w-44" x-text="formatRupiah(rekonPdfDraft.summary.nilaiKontrakAwal)"></td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-800 p-1.5">2. Nett Pekerjaan Tambah / Kurang (<span x-text="'+' + formatRupiah(rekonPdfDraft.summary.nilaiTambah) + ' / -' + formatRupiah(rekonPdfDraft.summary.nilaiKurang)"></span>)</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="(rekonPdfDraft.summary.nilaiTambahKurang >= 0 ? '+' : '') + formatRupiah(rekonPdfDraft.summary.nilaiTambahKurang)"></td>
+                            </tr>
+                            <tr class="bg-slate-50 font-semibold">
+                                <td class="border border-slate-800 p-1.5">3. Total Nilai Jasa Hasil Rekon (1 + 2)</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="formatRupiah(rekonPdfDraft.summary.totalJasaRekon)"></td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-800 p-1.5">4. Dikurangi: Potongan Selisih Material Gudang</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="'-' + formatRupiah(rekonPdfDraft.summary.potonganMaterial)"></td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-800 p-1.5">5. Dikurangi: Invoice / Termin Subcont yang Sudah Diajukan/Dibayar</td>
+                                <td class="border border-slate-800 p-1.5 text-right font-mono" x-text="'-' + formatRupiah(rekonPdfDraft.summary.totalSudahDitagih)"></td>
+                            </tr>
+                            <tr class="bg-slate-200 font-extrabold text-xs">
+                                <td class="border border-slate-800 p-2 uppercase">6. SISA HAK TAGIHAN BERSIH SUBCONT (3 - 4 - 5)</td>
+                                <td class="border border-slate-800 p-2 text-right font-mono" x-text="formatRupiah(rekonPdfDraft.summary.sisaTagihanSubcont)"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="text-[11px] bg-slate-100 border border-slate-400 p-2 rounded mb-4">
+                        <strong>Terbilang Sisa Tagihan:</strong> <em class="capitalize" x-text="terbilangRupiah(rekonPdfDraft.summary.sisaTagihanSubcont)"></em>
+                    </div>
+
+                    <p class="text-[10px] text-slate-700 mb-5 leading-relaxed">
+                        Demikian Berita Acara Rekonsiliasi ini dibuat dengan sebenar-benarnya dan disepakati bersama oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya sebagai dasar penagihan dan penyelesaian administrasi proyek.
+                    </p>
+
+                    <!-- Kolom Tanda Tangan Bersama (3 Pihak: Project Manager, Waspang/Warehouse, Direktur Subcont) -->
+                    <div class="grid grid-cols-3 gap-4 text-center text-[11px] pt-2">
+                        <div>
+                            <p class="font-semibold">Diperiksa Oleh,</p>
+                            <p class="font-bold">Waspang / Logistik ACM</p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline" x-text="rekonPdfDraft.waspangName || '( ............................ )'"></p>
+                            <p class="text-[10px] text-slate-600">Waspang / Warehouse</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Menyetujui (Pihak Pertama),</p>
+                            <p class="font-bold">PT ACERO CETHA METALINDO</p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline" x-text="currentUser || 'Project Manager'"></p>
+                            <p class="text-[10px] text-slate-600">Project Manager</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Menyetujui (Pihak Kedua),</p>
+                            <p class="font-bold uppercase" x-text="rekonPdfDraft.subcontName"></p>
+                            <div class="h-16"></div>
+                            <p class="font-bold underline">( ............................ )</p>
+                            <p class="text-[10px] text-slate-600">Direktur / Koordinator Subcont</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Modal Rekon PDF -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800 shrink-0">
+                    <span class="text-[11px] text-slate-400">💡 Klik tombol cetak lalu pilih <strong>"Save as PDF / Simpan sebagai PDF"</strong> untuk ditandatangani bersama.</span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs">Tutup</button>
+                        <button type="button" @click="executePrintRekon()"
+                                class="px-5 py-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-semibold rounded-lg text-xs flex items-center gap-2 shadow-lg shadow-rose-600/20">
+                            <i data-lucide="file-down" class="w-4 h-4"></i> Cetak / Export PDF BA Rekon Sekarang
                         </button>
                     </div>
                 </div>
@@ -2999,6 +3237,190 @@
         </div>
     </div>
 
+
+    <!-- ==================== PRINTABLE AREA 3: BERITA ACARA REKONSILIASI SUBCONT (EXPORT PDF) ==================== -->
+    <div id="printable-rekon" class="hidden bg-white text-black">
+        <!-- Kop Surat PT Acero Cetha Metalindo -->
+        <div class="flex items-start justify-between border-b-2 border-black pb-3 mb-4">
+            <div>
+                <h1 class="text-base font-extrabold uppercase tracking-tight">PT ACERO CETHA METALINDO</h1>
+                <p class="text-[11px] text-gray-700">Telecommunication Infrastructure, FTTH Rollout & Engineering Services</p>
+                <p class="text-[10px] text-gray-600">Divisi Operasional, Project Management & Warehouse • Sumatera Region</p>
+            </div>
+            <div class="text-right">
+                <div class="inline-block px-2.5 py-1 border-2 border-black font-bold text-xs uppercase tracking-wider">BERITA ACARA REKONSILIASI</div>
+                <div class="font-mono text-[11px] font-bold mt-1" x-text="'No: ' + rekonPdfDraft.noBaRekon"></div>
+            </div>
+        </div>
+
+        <!-- Informasi Project & Subcont -->
+        <div class="grid grid-cols-2 gap-4 text-[11px] mb-4 p-3 border border-black bg-gray-50">
+            <div class="space-y-1">
+                <div class="font-bold uppercase underline mb-1">I. Data Project & Pihak Pertama</div>
+                <p><span class="inline-block w-24">Kode Project</span>: <strong class="font-mono" x-text="rekonPdfDraft.kodeProject"></strong></p>
+                <p><span class="inline-block w-24">Nama Project</span>: <strong x-text="rekonPdfDraft.projectName"></strong></p>
+                <p><span class="inline-block w-24">No. PO Klien</span>: <span class="font-mono" x-text="rekonPdfDraft.noPO || '-'"></span></p>
+                <p><span class="inline-block w-24">Area / Region</span>: <span x-text="rekonPdfDraft.region"></span></p>
+            </div>
+            <div class="space-y-1">
+                <div class="font-bold uppercase underline mb-1">II. Mitra Subcont (Pihak Kedua)</div>
+                <p><span class="inline-block w-24">Nama Subcont</span>: <strong x-text="rekonPdfDraft.subcontName"></strong></p>
+                <p><span class="inline-block w-24">Area Kerja</span>: <span x-text="rekonPdfDraft.subcontArea"></span></p>
+                <p><span class="inline-block w-24">Tanggal Rekon</span>: <span x-text="rekonPdfDraft.tanggal"></span></p>
+                <p><span class="inline-block w-24">Status Dokumen</span>: <strong>Final Opname & Rekon Bersama</strong></p>
+            </div>
+        </div>
+
+        <p class="text-[11px] mb-3 leading-relaxed">
+            Pada hari ini tanggal <strong x-text="rekonPdfDraft.tanggal"></strong>, telah dilaksanakan pemeriksaan bersama (Opname Lapangan & Rekonsiliasi Akhir) antara <strong>PT Acero Cetha Metalindo</strong> (Pihak Pertama) dan <strong x-text="rekonPdfDraft.subcontName"></strong> (Pihak Kedua) atas hasil pelaksanaan pekerjaan dan pemakaian material dengan rincian sebagai berikut:
+        </p>
+
+        <!-- A. Tabel Rekon Volume Jasa -->
+        <div class="font-bold text-[11px] uppercase mb-1">A. Rekapitulasi Opname Jasa & Pekerjaan Tambah / Kurang</div>
+        <table class="w-full border-collapse border border-black text-[10px] mb-3">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-black p-1 text-center w-7">No</th>
+                    <th class="border border-black p-1 text-left">Designator & Uraian Pekerjaan</th>
+                    <th class="border border-black p-1 text-center">Sat</th>
+                    <th class="border border-black p-1 text-right">Vol SPK</th>
+                    <th class="border border-black p-1 text-right">Tambah (+)</th>
+                    <th class="border border-black p-1 text-right">Kurang (-)</th>
+                    <th class="border border-black p-1 text-right">Vol Rekon</th>
+                    <th class="border border-black p-1 text-right">Harga Satuan</th>
+                    <th class="border border-black p-1 text-right">Nilai Hasil Rekon</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(row, idx) in rekonPdfDraft.jasaRows" :key="'prt-rk-j-' + row.id">
+                    <tr>
+                        <td class="border border-black p-1 text-center" x-text="idx + 1"></td>
+                        <td class="border border-black p-1">
+                            <span class="font-mono font-bold" x-text="row.designator"></span> - <span x-text="row.namaPekerjaan"></span>
+                        </td>
+                        <td class="border border-black p-1 text-center" x-text="row.satuan"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="row.volAwal.toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="row.volTambah > 0 ? '+' + row.volTambah.toLocaleString('id-ID') : '0'"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="row.volKurang > 0 ? '-' + row.volKurang.toLocaleString('id-ID') : '0'"></td>
+                        <td class="border border-black p-1 text-right font-mono font-bold" x-text="row.volRekon.toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="formatRupiah(row.hargaSubcont)"></td>
+                        <td class="border border-black p-1 text-right font-mono font-semibold" x-text="formatRupiah(row.nilaiRekon)"></td>
+                    </tr>
+                </template>
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray-100 font-bold">
+                    <td colspan="8" class="border border-black p-1.5 text-right uppercase">Subtotal Nilai Jasa Hasil Rekon</td>
+                    <td class="border border-black p-1.5 text-right font-mono" x-text="formatRupiah(rekonPdfDraft.summary.totalJasaRekon)"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- B. Tabel Rekonsiliasi Material -->
+        <div class="font-bold text-[11px] uppercase mb-1">B. Rekonsiliasi Pemakaian Material & Potongan Selisih</div>
+        <table class="w-full border-collapse border border-black text-[10px] mb-3">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-black p-1 text-center w-7">No</th>
+                    <th class="border border-black p-1 text-left">Kode & Nama Material</th>
+                    <th class="border border-black p-1 text-center">Sat</th>
+                    <th class="border border-black p-1 text-right">Ambil Gudang</th>
+                    <th class="border border-black p-1 text-right">Terpasang</th>
+                    <th class="border border-black p-1 text-right">Return</th>
+                    <th class="border border-black p-1 text-right">Selisih (-)</th>
+                    <th class="border border-black p-1 text-right">Nilai Potongan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(m, idx) in rekonPdfDraft.materialRows" :key="'prt-rk-m-' + m.id">
+                    <tr>
+                        <td class="border border-black p-1 text-center" x-text="idx + 1"></td>
+                        <td class="border border-black p-1"><span class="font-mono font-bold" x-text="m.kodeBarang"></span> - <span x-text="m.namaBarang"></span></td>
+                        <td class="border border-black p-1 text-center" x-text="m.satuan"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="Number(m.qtyAmbil).toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="Number(m.qtyTerpasang).toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1 text-right font-mono" x-text="Number(m.qtyReturn).toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1 text-right font-mono font-bold" x-text="calcMaterialSelisih(m).toLocaleString('id-ID')"></td>
+                        <td class="border border-black p-1 text-right font-mono font-semibold" x-text="formatRupiah(calcMaterialPotongan(m))"></td>
+                    </tr>
+                </template>
+                <tr x-show="rekonPdfDraft.materialRows.length === 0">
+                    <td colspan="8" class="border border-black p-2 text-center text-gray-600">Nihil / Tidak ada selisih pemotongan material.</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray-100 font-bold">
+                    <td colspan="7" class="border border-black p-1.5 text-right uppercase">Subtotal Potongan Selisih Material</td>
+                    <td class="border border-black p-1.5 text-right font-mono" x-text="'-' + formatRupiah(rekonPdfDraft.summary.potonganMaterial)"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- C. Ringkasan Perhitungan Akhir -->
+        <div class="font-bold text-[11px] uppercase mb-1">C. Ringkasan Nilai Akhir & Sisa Hak Tagihan Subcont</div>
+        <table class="w-full border-collapse border border-black text-[11px] mb-3">
+            <tbody>
+                <tr>
+                    <td class="border border-black p-1.5">1. Nilai Kontrak SPK Awal</td>
+                    <td class="border border-black p-1.5 text-right font-mono w-44" x-text="formatRupiah(rekonPdfDraft.summary.nilaiKontrakAwal)"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1.5">2. Nett Pekerjaan Tambah / Kurang (<span x-text="'+' + formatRupiah(rekonPdfDraft.summary.nilaiTambah) + ' / -' + formatRupiah(rekonPdfDraft.summary.nilaiKurang)"></span>)</td>
+                    <td class="border border-black p-1.5 text-right font-mono" x-text="(rekonPdfDraft.summary.nilaiTambahKurang >= 0 ? '+' : '') + formatRupiah(rekonPdfDraft.summary.nilaiTambahKurang)"></td>
+                </tr>
+                <tr class="bg-gray-50 font-semibold">
+                    <td class="border border-black p-1.5">3. Total Nilai Jasa Hasil Rekon (1 + 2)</td>
+                    <td class="border border-black p-1.5 text-right font-mono" x-text="formatRupiah(rekonPdfDraft.summary.totalJasaRekon)"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1.5">4. Dikurangi: Potongan Selisih Material Gudang</td>
+                    <td class="border border-black p-1.5 text-right font-mono" x-text="'-' + formatRupiah(rekonPdfDraft.summary.potonganMaterial)"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-1.5">5. Dikurangi: Invoice / Termin Subcont yang Sudah Diajukan/Dibayar</td>
+                    <td class="border border-black p-1.5 text-right font-mono" x-text="'-' + formatRupiah(rekonPdfDraft.summary.totalSudahDitagih)"></td>
+                </tr>
+                <tr class="bg-gray-200 font-extrabold text-xs">
+                    <td class="border border-black p-2 uppercase">6. SISA HAK TAGIHAN BERSIH SUBCONT (3 - 4 - 5)</td>
+                    <td class="border border-black p-2 text-right font-mono" x-text="formatRupiah(rekonPdfDraft.summary.sisaTagihanSubcont)"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="text-[11px] bg-gray-100 border border-black p-2 mb-3">
+            <strong>Terbilang Sisa Tagihan:</strong> <em class="capitalize" x-text="terbilangRupiah(rekonPdfDraft.summary.sisaTagihanSubcont)"></em>
+        </div>
+
+        <p class="text-[10px] mb-5 leading-relaxed">
+            Demikian Berita Acara Rekonsiliasi ini dibuat dengan sebenar-benarnya dan disepakati bersama oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya sebagai dasar penagihan dan penyelesaian administrasi proyek.
+        </p>
+
+        <!-- Kolom Tanda Tangan Bersama (3 Pihak) -->
+        <div class="grid grid-cols-3 gap-4 text-center text-[11px] pt-2">
+            <div>
+                <p class="font-semibold">Diperiksa Oleh,</p>
+                <p class="font-bold">Waspang / Logistik ACM</p>
+                <div class="h-16"></div>
+                <p class="font-bold underline" x-text="rekonPdfDraft.waspangName || '( ............................ )'"></p>
+                <p class="text-[10px]">Waspang / Warehouse</p>
+            </div>
+            <div>
+                <p class="font-semibold">Menyetujui (Pihak Pertama),</p>
+                <p class="font-bold">PT ACERO CETHA METALINDO</p>
+                <div class="h-16"></div>
+                <p class="font-bold underline" x-text="currentUser || 'Project Manager'"></p>
+                <p class="text-[10px]">Project Manager</p>
+            </div>
+            <div>
+                <p class="font-semibold">Menyetujui (Pihak Kedua),</p>
+                <p class="font-bold uppercase" x-text="rekonPdfDraft.subcontName"></p>
+                <div class="h-16"></div>
+                <p class="font-bold underline">( ............................ )</p>
+                <p class="text-[10px]">Direktur / Koordinator Subcont</p>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== ALPINE.JS ENGINE & SUPABASE SYNC ==================== -->
     <script>
         const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
@@ -3168,6 +3590,32 @@
                     durasiKerja: '30 Hari Kalender',
                     items: [],
                     totalNilai: 0
+                },
+
+                // Rekon PDF Draft State
+                rekonPdfDraft: {
+                    kodeProject: '',
+                    projectName: '',
+                    noPO: '',
+                    region: '',
+                    subcontId: '',
+                    subcontName: '',
+                    subcontArea: '',
+                    noBaRekon: '',
+                    tanggal: new Date().toISOString().split('T')[0],
+                    waspangName: '',
+                    jasaRows: [],
+                    materialRows: [],
+                    summary: {
+                        nilaiKontrakAwal: 0,
+                        nilaiTambah: 0,
+                        nilaiKurang: 0,
+                        nilaiTambahKurang: 0,
+                        totalJasaRekon: 0,
+                        potonganMaterial: 0,
+                        totalSudahDitagih: 0,
+                        sisaTagihanSubcont: 0
+                    }
                 },
 
                 // Forms
@@ -4226,6 +4674,123 @@
                     csvRows.push(['RINGKASAN', '', '', 'SUDAH DITAGIH / INVOICE SUBCONT', '', '', '', '', '', '', '', '', -sum.totalSudahDitagih]);
                     csvRows.push(['RINGKASAN', '', '', 'SISA HAK TAGIHAN SUBCONT', '', '', '', '', '', '', '', '', sum.sisaTagihanSubcont]);
                     this.downloadCSV(`ACM_Hasil_Rekon_Subcont_${this.selectedRekonProject}_${new Date().toISOString().slice(0,10)}.csv`, headers, csvRows);
+                },
+
+                // ==================== EXPORT PDF BERITA ACARA REKONSILIASI SUBCONT ====================
+                computeRekonDataFor(kodeProject, subcontId) {
+                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
+                    const jasaRows = lines.map(l => {
+                        const volAwal = Number(l.volAwal) || 0;
+                        const volRekon = Number(l.volAkhir) || 0;
+                        const volTambah = volRekon > volAwal ? (volRekon - volAwal) : 0;
+                        const volKurang = volRekon < volAwal ? (volAwal - volRekon) : 0;
+                        const hargaSubcont = Number(l.hargaSubcont) || 0;
+                        const nilaiAwal = volAwal * hargaSubcont;
+                        const nilaiRekon = volRekon * hargaSubcont;
+                        return {
+                            ...l,
+                            volAwal,
+                            volTambah,
+                            volKurang,
+                            volRekon,
+                            hargaSubcont,
+                            nilaiAwal,
+                            nilaiRekon,
+                            nilaiSelisih: nilaiRekon - nilaiAwal
+                        };
+                    });
+
+                    const materialRows = this.rekonMaterialItems.filter(m =>
+                        m.kodeProject === kodeProject && m.subcontId === subcontId
+                    );
+
+                    const invItems = this.subcontInvoices.filter(inv =>
+                        inv.kodeProject === kodeProject && inv.subcontId === subcontId
+                    );
+
+                    const nilaiKontrakAwal = jasaRows.reduce((s, r) => s + r.nilaiAwal, 0);
+                    const totalJasaRekon = jasaRows.reduce((s, r) => s + r.nilaiRekon, 0);
+                    const nilaiTambah = jasaRows.reduce((s, r) => s + (r.volTambah * r.hargaSubcont), 0);
+                    const nilaiKurang = jasaRows.reduce((s, r) => s + (r.volKurang * r.hargaSubcont), 0);
+                    const nilaiTambahKurang = totalJasaRekon - nilaiKontrakAwal;
+                    const potonganMaterial = materialRows.reduce((s, m) => s + this.calcMaterialPotongan(m), 0);
+                    const totalSudahDitagih = invItems.reduce((s, i) => s + (Number(i.nominal) || 0), 0);
+                    const sisaTagihanSubcont = totalJasaRekon - potonganMaterial - totalSudahDitagih;
+
+                    return {
+                        jasaRows,
+                        materialRows,
+                        summary: {
+                            nilaiKontrakAwal,
+                            nilaiTambah,
+                            nilaiKurang,
+                            nilaiTambahKurang,
+                            totalJasaRekon,
+                            potonganMaterial,
+                            totalSudahDitagih,
+                            sisaTagihanSubcont
+                        }
+                    };
+                },
+
+                openRekonPdfPreviewModal() {
+                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    if (!prj) return;
+                    const targetSubcontId = this.selectedRekonSubcont !== 'ALL'
+                        ? this.selectedRekonSubcont
+                        : (prj.subcontIds?.[0] || '');
+
+                    if (!targetSubcontId) {
+                        this.showToast('Project ini belum memiliki Tim Subcont untuk dibuatkan Berita Acara Rekon.', 'error');
+                        return;
+                    }
+
+                    const sub = this.subconts.find(s => s.id === targetSubcontId);
+                    const computed = this.computeRekonDataFor(prj.kodeProject, targetSubcontId);
+                    const year = new Date().getFullYear();
+
+                    this.rekonPdfDraft = {
+                        kodeProject: prj.kodeProject,
+                        projectName: prj.projectName,
+                        noPO: prj.noPO || '-',
+                        region: prj.region || '-',
+                        subcontId: targetSubcontId,
+                        subcontName: sub ? sub.name : 'Subcont Pelaksana',
+                        subcontArea: sub ? sub.area : '-',
+                        noBaRekon: `BA-REKON/ACM/${prj.kodeProject}/${targetSubcontId}/${year}`,
+                        tanggal: new Date().toISOString().split('T')[0],
+                        waspangName: '',
+                        jasaRows: computed.jasaRows,
+                        materialRows: computed.materialRows,
+                        summary: computed.summary
+                    };
+
+                    this.modalTitle = 'Pratinjau & Export PDF Berita Acara Rekonsiliasi (Tanda Tangan Bersama)';
+                    this.activeModal = 'rekon-preview';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+
+                refreshRekonPdfDraft() {
+                    const sub = this.subconts.find(s => s.id === this.rekonPdfDraft.subcontId);
+                    const computed = this.computeRekonDataFor(this.rekonPdfDraft.kodeProject, this.rekonPdfDraft.subcontId);
+                    const year = new Date().getFullYear();
+
+                    this.rekonPdfDraft.subcontName = sub ? sub.name : 'Subcont Pelaksana';
+                    this.rekonPdfDraft.subcontArea = sub ? sub.area : '-';
+                    this.rekonPdfDraft.noBaRekon = `BA-REKON/ACM/${this.rekonPdfDraft.kodeProject}/${this.rekonPdfDraft.subcontId}/${year}`;
+                    this.rekonPdfDraft.jasaRows = computed.jasaRows;
+                    this.rekonPdfDraft.materialRows = computed.materialRows;
+                    this.rekonPdfDraft.summary = computed.summary;
+                },
+
+                executePrintRekon() {
+                    this.printMode = 'rekon';
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            window.print();
+                            setTimeout(() => { this.printMode = ''; }, 500);
+                        }, 150);
+                    });
                 },
 
                 // ==================== WASPANG DAILY VOLUME (DENGAN VALIDASI & BUKTI FOTO) ====================
