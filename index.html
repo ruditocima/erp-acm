@@ -161,21 +161,54 @@
                                 <a href="#" @click.prevent="switchTab('prj-khs')" :class="currentTab === 'prj-khs' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Master KHS & Klien
                                 </a>
-                                <a href="#" @click.prevent="switchTab('prj-subcont')" :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="users" class="w-3.5 h-3.5"></i> Master Subcont
-                                </a>
+
                                 <a href="#" @click.prevent="switchTab('prj-list')" :class="currentTab === 'prj-list' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Keuangan
                                 </a>
-                                <a href="#" @click.prevent="switchTab('prj-boq')" :class="currentTab === 'prj-boq' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i> BoQ Project & SPK Subcont
-                                </a>
-                                <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Invoice Subcont
-                                </a>
-                                <a href="#" @click.prevent="switchTab('prj-rekon')" :class="currentTab === 'prj-rekon' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="scale" class="w-3.5 h-3.5"></i> Rekon & Sisa Tagihan Subcont
-                                </a>
+
+                                <!-- PARENT ACCORDION: MASTER SUBCONT -->
+                                <div class="space-y-0.5">
+                                    <button type="button"
+                                            @click="toggleSubcontMenu()"
+                                            :class="isSubcontGroupActive() ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'"
+                                            class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-transparent font-medium transition text-left">
+                                        <span class="flex items-center gap-2.5">
+                                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                                            <span>Master Subcont</span>
+                                        </span>
+                                        <i data-lucide="chevron-down"
+                                           class="w-3.5 h-3.5 transition-transform duration-200"
+                                           :class="subcontMenuOpen ? 'rotate-180 text-cyan-400' : ''"></i>
+                                    </button>
+
+                                    <!-- SUBMENU ITEMS DI BAWAH MASTER SUBCONT -->
+                                    <div x-show="subcontMenuOpen" x-transition.opacity.duration.150ms class="pl-3 ml-3 border-l border-slate-800 space-y-0.5 py-0.5">
+                                        <a href="#" @click.prevent="switchTab('prj-subcont')"
+                                           :class="currentTab === 'prj-subcont' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30 font-semibold' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'"
+                                           class="flex items-center gap-2 px-2.5 py-2 rounded-lg border border-transparent text-[11px] transition">
+                                            <i data-lucide="user-cog" class="w-3 h-3 shrink-0"></i>
+                                            <span class="truncate">Data Master & Rate Subcont</span>
+                                        </a>
+                                        <a href="#" @click.prevent="switchTab('prj-boq')"
+                                           :class="currentTab === 'prj-boq' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30 font-semibold' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'"
+                                           class="flex items-center gap-2 px-2.5 py-2 rounded-lg border border-transparent text-[11px] transition">
+                                            <i data-lucide="calculator" class="w-3 h-3 shrink-0"></i>
+                                            <span class="truncate">BoQ Project & SPK Subcont</span>
+                                        </a>
+                                        <a href="#" @click.prevent="switchTab('prj-subcont-inv')"
+                                           :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30 font-semibold' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'"
+                                           class="flex items-center gap-2 px-2.5 py-2 rounded-lg border border-transparent text-[11px] transition">
+                                            <i data-lucide="receipt" class="w-3 h-3 shrink-0"></i>
+                                            <span class="truncate">Invoice Subcont</span>
+                                        </a>
+                                        <a href="#" @click.prevent="switchTab('prj-rekon')"
+                                           :class="currentTab === 'prj-rekon' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30 font-semibold' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'"
+                                           class="flex items-center gap-2 px-2.5 py-2 rounded-lg border border-transparent text-[11px] transition">
+                                            <i data-lucide="scale" class="w-3 h-3 shrink-0"></i>
+                                            <span class="truncate">Rekon & Sisa Tagihan Subcont</span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -2902,7 +2935,7 @@
             Berdasarkan kebutuhan pelaksanaan konstruksi jaringan fiber optik pada proyek tersebut di atas, <strong>PT Acero Cetha Metalindo</strong> (Pihak Pertama) memberikan perintah kerja kepada <strong x-text="spkDraft.subcontName"></strong> (Pihak Kedua) untuk melaksanakan ruang lingkup pekerjaan sebagai berikut:
         </p>
 
-        <!-- Tabel Rincian Item Pekerjaan SPK -->
+        <!-- Tabel Rincian BoQ SPK -->
         <table class="w-full border-collapse border border-black text-[11px] mb-3">
             <thead>
                 <tr class="bg-gray-200">
@@ -2916,7 +2949,7 @@
                 </tr>
             </thead>
             <tbody>
-                <template x-for="(item, idx) in spkDraft.items" :key="'print-spk-' + item.id">
+                <template x-for="(item, idx) in spkDraft.items" :key="'prt-spk-' + item.id">
                     <tr>
                         <td class="border border-black p-1.5 text-center" x-text="idx + 1"></td>
                         <td class="border border-black p-1.5 font-mono font-semibold" x-text="item.designator"></td>
@@ -2936,7 +2969,7 @@
             </tfoot>
         </table>
 
-        <div class="text-[11px] border border-black p-2 bg-gray-50 mb-4">
+        <div class="text-[11px] bg-gray-100 border border-black p-2 mb-4">
             <strong>Terbilang:</strong> <em class="capitalize" x-text="terbilangRupiah(spkDraft.totalNilai)"></em>
         </div>
 
@@ -2947,7 +2980,8 @@
             <p>3. Material yang disuplai oleh Pihak Pertama / Klien wajib dipertanggungjawabkan penggunaannya sesuai BAST Gudang.</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-8 text-center text-[11px] pt-2">
+        <!-- Kolom Tanda Tangan Resmi -->
+        <div class="grid grid-cols-2 gap-8 text-center text-[11px] pt-4">
             <div>
                 <p class="font-semibold">Pihak Pertama,</p>
                 <p class="font-bold">PT ACERO CETHA METALINDO</p>
@@ -2965,59 +2999,162 @@
         </div>
     </div>
 
-    <!-- ==================== APPLICATION LOGIC ==================== -->
+    <!-- ==================== ALPINE.JS ENGINE & SUPABASE SYNC ==================== -->
     <script>
-        const SUPABASE_URL = 'SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'SUPABASE_ANON_KEY';
-        let sbClient = null;
-        try {
-            if (window.supabase && SUPABASE_URL !== 'SUPABASE_URL') {
-                sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-        } catch (e) { console.warn('Supabase fallback to local storage'); }
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const isSupabaseConfigured = !SUPABASE_URL.includes('YOUR_PROJECT_ID') && SUPABASE_ANON_KEY.length > 20;
+        const supabaseClient = isSupabaseConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-        function acmErpApp() {
-            const defaultProjects = [
-                {
-                    kodeProject: 'PLB-2026-001',
-                    clientId: 'CLI-YOFC',
-                    region: 'PALEMBANG',
-                    noPO: 'POS25-26011535',
-                    projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG',
-                    subcontIds: ['SUB-01', 'SUB-02'],
-                    nominalAwal: 0
-                }
-            ];
-
-            let loadedProjects = JSON.parse(localStorage.getItem('acm_projects_v2') || 'null') || defaultProjects;
-
-            return {
-                supabaseReady: !!sbClient,
-                isLoggedIn: localStorage.getItem('acm_erp_logged_in') === 'true',
-                currentUser: localStorage.getItem('acm_erp_user') || 'Rudi (PM YOFC)',
-                currentRole: localStorage.getItem('acm_erp_role') || 'Super Admin',
-                currentTab: 'dashboard',
-                mobileMenuOpen: false,
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('acmErpApp', () => ({
+                supabaseReady: isSupabaseConfigured,
+                isLoggedIn: false,
                 isLoading: false,
-                printMode: '', // 'bast' | 'spk'
-                toast: { show: false, message: '', type: 'info' },
-
-                loginForm: { email: 'rudi@acerocetha.co.id', password: '••••••••', demoRole: 'Super Admin' },
-
-                // State Seleksi KHS & Klien
-                selectedKhsClient: 'CLI-YOFC',
-                selectedKhsVersionId: 'VERS-2026',
-                selectedSubcontId: 'SUB-01',
-                selectedBoqProject: 'PLB-2026-001',
-                selectedBoqSubcontFilter: 'ALL',
-                selectedRekonProject: 'PLB-2026-001',
-                selectedRekonSubcont: 'ALL',
-                boqMode: 'awal',
+                mobileMenuOpen: false,
+                subcontMenuOpen: true,
+                currentUser: '',
+                currentRole: 'Super Admin',
+                currentTab: 'dashboard',
                 activeModal: '',
                 modalTitle: '',
-                previewAttachment: { url: '', name: '' },
+                printMode: '',
+                toast: { show: false, message: '', type: 'info' },
 
-                // State Draft Dokumen SPK Subcont
+                loginForm: { email: 'admin@acerocetha.co.id', password: 'password123', demoRole: 'Super Admin' },
+
+                // ==================== DATA MASTER & STATE ====================
+                clients: [
+                    { id: 'CL-01', code: 'YOFC', name: 'PT YOFC Indonesia' },
+                    { id: 'CL-02', code: 'TA', name: 'PT Telkom Akses' }
+                ],
+                selectedKhsClient: 'CL-01',
+
+                khsVersions: [
+                    { id: 'VER-2025', clientId: 'CL-01', versionName: 'KHS 2025 (Kontrak Lama / Baseline)', isDefault: false },
+                    { id: 'VER-2026', clientId: 'CL-01', versionName: 'KHS 2026 (Kontrak Terbaru Aktif)', isDefault: true },
+                    { id: 'VER-TA-2026', clientId: 'CL-02', versionName: 'KHS Telkom Akses 2026', isDefault: true }
+                ],
+                selectedKhsVersionId: 'VER-2026',
+
+                khsItems: [
+                    { id: 'KHS-01', clientId: 'CL-01', khsVersionId: 'VER-2026', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 5800 },
+                    { id: 'KHS-02', clientId: 'CL-01', khsVersionId: 'VER-2026', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7 Meter 140kg', satuan: 'Batang', isClientMaterial: false, hargaMaterial: 1150000, hargaJasa: 250000 },
+                    { id: 'KHS-03', clientId: 'CL-01', khsVersionId: 'VER-2026', designator: 'ODP-SOLID-16C', namaPekerjaan: 'Instalasi & Terminasi ODP Solid 16 Core (Material Klien)', satuan: 'Unit', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 385000 },
+                    { id: 'KHS-04', clientId: 'CL-01', khsVersionId: 'VER-2025', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core (Tarif 2025)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 5000 }
+                ],
+
+                subconts: [
+                    { id: 'SUB-01', name: 'CV Mitra Fiber Jaya', area: 'Palembang' },
+                    { id: 'SUB-02', name: 'PT Andalas Kabelindo', area: 'Padang' },
+                    { id: 'SUB-03', name: 'CV Sriwijaya Mandiri', area: 'Palembang' }
+                ],
+                selectedSubcontId: 'SUB-01',
+                subcontRates: [
+                    { id: 'SR-01', subcontId: 'SUB-01', khsItemId: 'KHS-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core', satuan: 'Meter', hargaSubcont: 3500 },
+                    { id: 'SR-02', subcontId: 'SUB-01', khsItemId: 'KHS-02', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7 Meter', satuan: 'Batang', hargaSubcont: 150000 },
+                    { id: 'SR-03', subcontId: 'SUB-01', khsItemId: 'KHS-03', designator: 'ODP-SOLID-16C', namaPekerjaan: 'Instalasi & Terminasi ODP Solid 16 Core', satuan: 'Unit', hargaSubcont: 220000 },
+                    { id: 'SR-04', subcontId: 'SUB-03', khsItemId: 'KHS-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core', satuan: 'Meter', hargaSubcont: 3400 },
+                    { id: 'SR-05', subcontId: 'SUB-03', khsItemId: 'KHS-03', designator: 'ODP-SOLID-16C', namaPekerjaan: 'Instalasi & Terminasi ODP Solid 16 Core', satuan: 'Unit', hargaSubcont: 210000 }
+                ],
+
+                masterProject: [
+                    { kodeProject: 'PRJ-PLB-01', clientId: 'CL-01', noPO: 'POS25-26011535', region: 'PALEMBANG', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontIds: ['SUB-01', 'SUB-03'], nilaiKontrakAwal: 138315725 },
+                    { kodeProject: 'PRJ-PDG-01', clientId: 'CL-01', noPO: 'POS25-25101301', region: 'PADANG', projectName: 'DISTRIBUSI KABEL-KOTO TANGAH-PADANG-001', subcontIds: ['SUB-02'], nilaiKontrakAwal: 416645166 }
+                ],
+
+                selectedBoqProject: 'PRJ-PLB-01',
+                selectedBoqSubcontFilter: 'ALL',
+                boqMode: 'awal',
+                projectBoqLines: [
+                    { id: 'BL-01', kodeProject: 'PRJ-PLB-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, volAwal: 10000, volAkhir: 6500, hargaMaterial: 0, hargaJasa: 5800 },
+                    { id: 'BL-02', kodeProject: 'PRJ-PLB-01', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7 Meter 140kg', satuan: 'Batang', isClientMaterial: false, volAwal: 50, volAkhir: 35, hargaMaterial: 1150000, hargaJasa: 250000 },
+                    { id: 'BL-03', kodeProject: 'PRJ-PLB-01', designator: 'ODP-SOLID-16C', namaPekerjaan: 'Instalasi & Terminasi ODP Solid 16 Core (Material Klien)', satuan: 'Unit', isClientMaterial: true, volAwal: 27, volAkhir: 18, hargaMaterial: 0, hargaJasa: 385000 },
+                    { id: 'BL-04', kodeProject: 'PRJ-PDG-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, volAwal: 35000, volAkhir: 22000, hargaMaterial: 0, hargaJasa: 5800 },
+                    { id: 'BL-05', kodeProject: 'PRJ-PDG-01', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7 Meter 140kg', satuan: 'Batang', isClientMaterial: false, volAwal: 152, volAkhir: 105, hargaMaterial: 1150000, hargaJasa: 250000 }
+                ],
+
+                subcontBoqLines: [
+                    { id: 'SBL-01', kodeProject: 'PRJ-PLB-01', subcontId: 'SUB-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core (Segmen Utara)', satuan: 'Meter', volAwal: 6000, volAkhir: 4500, hargaSubcont: 3500 },
+                    { id: 'SBL-02', kodeProject: 'PRJ-PLB-01', subcontId: 'SUB-01', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7 Meter', satuan: 'Batang', volAwal: 50, volAkhir: 35, hargaSubcont: 150000 },
+                    { id: 'SBL-03', kodeProject: 'PRJ-PLB-01', subcontId: 'SUB-03', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core (Segmen Selatan)', satuan: 'Meter', volAwal: 4000, volAkhir: 2000, hargaSubcont: 3400 },
+                    { id: 'SBL-04', kodeProject: 'PRJ-PLB-01', subcontId: 'SUB-03', designator: 'ODP-SOLID-16C', namaPekerjaan: 'Instalasi & Terminasi ODP Solid 16 Core', satuan: 'Unit', volAwal: 27, volAkhir: 18, hargaSubcont: 210000 },
+                    { id: 'SBL-05', kodeProject: 'PRJ-PDG-01', subcontId: 'SUB-02', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core', satuan: 'Meter', volAwal: 35000, volAkhir: 22000, hargaSubcont: 3500 }
+                ],
+
+                // STATE REKON SUBCONT & SISA TAGIHAN
+                selectedRekonProject: 'PRJ-PLB-01',
+                selectedRekonSubcont: 'ALL',
+                rekonMaterialItems: [
+                    {
+                        id: 'RMAT-01',
+                        kodeProject: 'PRJ-PLB-01',
+                        subcontId: 'SUB-01',
+                        kodeBarang: 'ADSS-24C-YOFC',
+                        namaBarang: 'Kabel ADSS 24 Core YOFC (Free-Issue)',
+                        satuan: 'Meter',
+                        qtyAmbil: 4800,
+                        qtyTerpasang: 4500,
+                        qtyReturn: 220,
+                        hargaSatuan: 8500,
+                        keterangan: 'Selisih 80 meter sisa potongan tidak kembali ke gudang (BAP Mat-01)'
+                    }
+                ],
+
+                adendumLogs: [],
+
+                subcontInvoices: [
+                    {
+                        id: 'SINV-01',
+                        noInvoice: 'INV-MFJ/2026/001',
+                        tanggal: '2026-03-10',
+                        kodeProject: 'PRJ-PLB-01',
+                        projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG',
+                        subcontId: 'SUB-01',
+                        subcontName: 'CV Mitra Fiber Jaya',
+                        termin: 'Termin 1 (Progress 50%)',
+                        nominal: 15000000,
+                        status: 'Pending',
+                        attachmentUrl: 'https://placehold.co/800x520/0f172a/38bdf8?text=BAP+Progress+50%25+-+CV+Mitra+Fiber+Jaya',
+                        attachmentName: 'BAP_Termin_1_CV_Mitra_Fiber_Jaya.jpg'
+                    }
+                ],
+
+                clientInvoices: [
+                    { id: 'CINV-01', area: 'PALEMBANG', noPO: 'POS25-26011535', lokasiPekerjaan: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', termInv: 'INV I (40%)', noInvoice: '074/ACM-INV-YOFC/III/2026', tglInvoice: '2026-03-13', noFakturPajak: '4012600069041490', nilaiDpp: 55326290, pph175: 968210, ppn11: 6085892, nettTerima: 60443972, tglCb: '2026-03-27', statusPembayaran: 'LUNAS' },
+                    { id: 'CINV-02', area: 'PADANG', noPO: 'POS25-25101301', lokasiPekerjaan: 'DISTRIBUSI KABEL-KOTO TANGAH-PADANG-001', termInv: 'INV I (40%)', noInvoice: '219/ACM-INV-YOFC/XI/2025', tglInvoice: '2025-11-26', noFakturPajak: '4012500427488016', nilaiDpp: 166658066, pph175: 2916516, ppn11: 18332387, nettTerima: 182073937, tglCb: '2025-12-23', statusPembayaran: 'LUNAS' },
+                    { id: 'CINV-03', area: 'PADANG', noPO: 'POS25-25101301', lokasiPekerjaan: 'DISTRIBUSI KABEL-KOTO TANGAH-PADANG-001', termInv: 'INV II (30%)', noInvoice: '082/ACM-INV-YOFC/IV/2026', tglInvoice: '2026-04-06', noFakturPajak: '4012600090802003', nilaiDpp: 124993550, pph175: 2187387, ppn11: 13749291, nettTerima: 136555454, tglCb: '', statusPembayaran: 'OUTSTANDING' }
+                ],
+
+                notifications: [
+                    { id: 'NTF-01', type: 'SUBCONT_INVOICE', title: 'Tagihan Subcont Masuk: CV Mitra Fiber Jaya', nominal: 15000000, detail: 'INV-MFJ/2026/001 • DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', timestamp: 'Hari ini, 10:15', isRead: false },
+                    { id: 'NTF-02', type: 'NEW_PROJECT', title: 'Project Baru Diinput: DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', nominal: 138315725, detail: 'PO: POS25-26011535 • Klien: PT YOFC Indonesia', timestamp: 'Kemarin, 16:40', isRead: false }
+                ],
+
+                waspangLogs: [
+                    { id: 'WSP-01', tanggal: '2026-03-14', kodeProject: 'PRJ-PLB-01', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Mitra Fiber Jaya', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel Udara ADSS 24 Core', volume: 1500, waspangName: 'Budi (Waspang PLB)', attachmentUrl: 'https://placehold.co/800x520/0f172a/fbbf24?text=Dokumentasi+Penarikan+Kabel+ADSS+24C', attachmentName: 'Foto_Tarik_Kabel_Segmen_Utara.jpg' }
+                ],
+
+                masterBarang: [
+                    { kategori: 'Cable', jenis: 'ADSS', kodeBarang: 'ADSS-24C-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC (Free-Issue)', isClientSupplied: true, sat: 'Meter' },
+                    { kategori: 'Pole', jenis: 'Tiang Besi', kodeBarang: 'TIANG-7M-140', namaBarang: 'Tiang Besi 7 Meter 140kg', isClientSupplied: false, sat: 'Batang' }
+                ],
+                masterGudang: [
+                    { region: 'PALEMBANG', kodeGudang: 'PLB-01', namaGudang: 'Gudang Regional Palembang', tipeKepemilikan: 'Milik Sendiri', lokasi: 'Palembang' },
+                    { region: 'PADANG', kodeGudang: 'PDG-01', namaGudang: 'Gudang Regional Padang', tipeKepemilikan: 'Milik Sendiri', lokasi: 'Padang' }
+                ],
+                drumLedger: [
+                    { drumId: 'PLB01-ADSS24C-D01', kodeBarang: 'ADSS-24C-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC', gudang: 'Gudang Regional Palembang', initialLength: 4000, remainingLength: 1850 }
+                ],
+                materialUsage: [
+                    { id: 'USG-01', tanggal: '2026-03-14', kodeProject: 'PRJ-PLB-01', namaBarang: 'Kabel ADSS 24 Core YOFC', drumId: 'PLB01-ADSS24C-D01', qty: 2150 }
+                ],
+                transactions: [
+                    { noTransaksi: 'WH-2026-001', tanggal: '2026-03-14', tipeTransaksi: 'Keluar', gudangAsal: 'Gudang Regional Palembang', kodeProject: 'PRJ-PLB-01', singleKodeBarang: 'ADSS-24C-YOFC', singleNamaBarang: 'Kabel ADSS 24 Core YOFC', singleDrumId: 'PLB01-ADSS24C-D01', singleQty: 2150, keterangan: 'Pengambilan Material CV Mitra Fiber Jaya', attachmentUrl: 'https://placehold.co/800x520/0f172a/818cf8?text=Surat+Jalan+WH-2026-001', attachmentName: 'SJ_Keluar_Drum_D01.jpg' }
+                ],
+                activeBast: {},
+
+                // SPK Draft State
                 spkDraft: {
                     kodeProject: '',
                     projectName: '',
@@ -3033,147 +3170,809 @@
                     totalNilai: 0
                 },
 
-                // Data Master Klien & Versi KHS
-                clients: JSON.parse(localStorage.getItem('acm_clients') || 'null') || [
-                    { id: 'CLI-YOFC', code: 'YOFC', name: 'PT YOFC Fiber Indonesia' },
-                    { id: 'CLI-TLK', code: 'TELKOM', name: 'PT Telkom Akses' }
-                ],
-                khsVersions: JSON.parse(localStorage.getItem('acm_khsVersions') || 'null') || [
-                    { id: 'VERS-2026', clientId: 'CLI-YOFC', versionName: 'KHS 2026 (Aktif)', isDefault: true },
-                    { id: 'VERS-2025', clientId: 'CLI-YOFC', versionName: 'KHS 2025 (Arsip)', isDefault: false },
-                    { id: 'VERS-TLK-2026', clientId: 'CLI-TLK', versionName: 'KHS Telkom 2026', isDefault: true }
-                ],
-                khsItems: JSON.parse(localStorage.getItem('acm_khsItems_v2') || 'null') || [
-                    { id: 'KHS-1', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2026', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 4500 },
-                    { id: 'KHS-2', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2026', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', isClientMaterial: false, hargaMaterial: 1150000, hargaJasa: 250000 },
-                    { id: 'KHS-3', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2026', designator: 'ODP-SOLID-16', namaPekerjaan: 'Pemasangan & Terminasi ODP 16 Core', satuan: 'Unit', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 320000 },
-                    { id: 'KHS-4', clientId: 'CLI-YOFC', khsVersionId: 'VERS-2025', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (KHS 2025 Lama)', satuan: 'Meter', isClientMaterial: true, hargaMaterial: 0, hargaJasa: 4200 },
-                    { id: 'KHS-5', clientId: 'CLI-TLK', khsVersionId: 'VERS-TLK-2026', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core Telkom', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 8500, hargaJasa: 5000 }
-                ],
-
-                // Data Subcont & Rate Card
-                subconts: JSON.parse(localStorage.getItem('acm_subconts') || 'null') || [
-                    { id: 'SUB-01', name: 'CV Sriwijaya Fiberindo', area: 'PALEMBANG' },
-                    { id: 'SUB-02', name: 'PT Andalas Optik Mandiri', area: 'SUMATERA' }
-                ],
-                subcontRates: JSON.parse(localStorage.getItem('acm_subcontRates') || 'null') || [
-                    { id: 'SR-1', subcontId: 'SUB-01', khsItemId: 'KHS-1', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core', satuan: 'Meter', hargaSubcont: 2800 },
-                    { id: 'SR-2', subcontId: 'SUB-01', khsItemId: 'KHS-3', designator: 'ODP-SOLID-16', namaPekerjaan: 'Pemasangan & Terminasi ODP 16 Core', satuan: 'Unit', hargaSubcont: 185000 },
-                    { id: 'SR-3', subcontId: 'SUB-02', khsItemId: 'KHS-2', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', hargaSubcont: 980000 },
-                    { id: 'SR-4', subcontId: 'SUB-02', khsItemId: 'KHS-1', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core', satuan: 'Meter', hargaSubcont: 3000 }
-                ],
-
-                // Data Project (Multi-Subcont), BoQ Klien, dan BoQ Alokasi per Subcont
-                masterProject: loadedProjects,
-                projectBoqLines: JSON.parse(localStorage.getItem('acm_boq_lines_v2') || 'null') || [
-                    { id: 'BL-1', kodeProject: 'PLB-2026-001', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Material Klien)', satuan: 'Meter', isClientMaterial: true, volAwal: 4500, volAkhir: 3150, hargaMaterial: 0, hargaJasa: 4500 },
-                    { id: 'BL-2', kodeProject: 'PLB-2026-001', designator: 'PU-S7.0-140', namaPekerjaan: 'Pengadaan & Pemasangan Tiang Besi 7m', satuan: 'Batang', isClientMaterial: false, volAwal: 23, volAkhir: 18, hargaMaterial: 1150000, hargaJasa: 250000 }
-                ],
-                subcontBoqLines: JSON.parse(localStorage.getItem('acm_subcont_boq_lines_v2') || 'null') || [
-                    { id: 'SBL-1', kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Utara)', satuan: 'Meter', volAwal: 3000, volAkhir: 2250, hargaSubcont: 2800 },
-                    { id: 'SBL-2', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Selatan)', satuan: 'Meter', volAwal: 1500, volAkhir: 900, hargaSubcont: 3000 },
-                    { id: 'SBL-3', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7m', satuan: 'Batang', volAwal: 23, volAkhir: 18, hargaSubcont: 980000 }
-                ],
-                boqAdendumLogs: JSON.parse(localStorage.getItem('acm_boq_adendum_logs') || 'null') || [],
-                subcontRekonMaterials: JSON.parse(localStorage.getItem('acm_subcont_rekon_mat') || 'null') || [
-                    { id: 'RM-1', kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', kodeBarang: 'ADSS-024-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC (Free-Issue Klien)', satuan: 'Meter', qtyAmbil: 2300, qtyTerpasang: 2250, qtyReturn: 30, hargaSatuan: 8500, keterangan: 'Selisih 20m kabel tidak dikembalikan (klaim potong tagihan)' }
-                ],
-
-                // Data Waspang Harian
-                waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', subcontBoqLineId: '', volume: '', attachmentUrl: '', attachmentName: '' },
-                waspangLogs: JSON.parse(localStorage.getItem('acm_waspang_logs_v2') || 'null') || [
-                    { id: 1, tanggal: '2026-11-12', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', designator: 'AC-OF-SM-24C', namaPekerjaan: 'Penarikan Kabel ADSS 24 Core (Segmen Utara)', volume: 1500, waspangName: 'Waspang Palembang', attachmentUrl: '', attachmentName: '' }
-                ],
-
-                // Data Warehouse
-                masterBarang: JSON.parse(localStorage.getItem('acm_wh_barang') || 'null') || [
-                    { kategori: 'Cable', jenis: 'ADSS', kodeBarang: 'ADSS-024-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC (Free-Issue Klien)', isClientSupplied: true, sat: 'Meter' },
-                    { kategori: 'Tiang', jenis: 'Besi 7m', kodeBarang: 'TNG-7M-140', namaBarang: 'Tiang Besi 7 Meter 140kg', isClientSupplied: false, sat: 'Batang' }
-                ],
-                masterGudang: JSON.parse(localStorage.getItem('acm_wh_gudang') || 'null') || [
-                    { region: 'PALEMBANG', kodeGudang: 'PLB-01', namaGudang: 'Gudang Regional Palembang', tipeKepemilikan: 'Milik Sendiri', lokasi: 'Palembang' },
-                    { region: 'PADANG', kodeGudang: 'PDG-01', namaGudang: 'Gudang Regional Padang', tipeKepemilikan: 'Milik Sendiri', lokasi: 'Padang' }
-                ],
-                drumLedger: JSON.parse(localStorage.getItem('acm_wh_drums') || 'null') || [
-                    { drumId: 'PLB01-ADSS024YOFC-D01', kodeBarang: 'ADSS-024-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC', gudang: 'Gudang Regional Palembang', initialLength: 4000, remainingLength: 1850 }
-                ],
-                materialUsage: JSON.parse(localStorage.getItem('acm_wh_usage') || 'null') || [
-                    { id: 1, tanggal: '2026-11-10', kodeProject: 'PLB-2026-001', namaBarang: 'Kabel ADSS 24 Core YOFC', drumId: 'PLB01-ADSS024YOFC-D01', qty: 2150 }
-                ],
-                transactions: JSON.parse(localStorage.getItem('acm_wh_tx') || 'null') || [
-                    { noTransaksi: 'PLB01-OUT-2611-001', tanggal: '2026-11-10', tipeTransaksi: 'Keluar', gudangAsal: 'Gudang Regional Palembang', kodeProject: 'PLB-2026-001', keterangan: 'Pengambilan Kabel Tim Subcont', singleKodeBarang: 'ADSS-024-YOFC', singleNamaBarang: 'Kabel ADSS 24 Core YOFC', singleDrumId: 'PLB01-ADSS024YOFC-D01', singleQty: 2150, attachmentUrl: '', attachmentName: '' }
-                ],
-                newTrans: { tanggal: new Date().toISOString().split('T')[0], tipeTransaksi: 'Masuk', gudangAsal: '', kodeProject: '', singleKodeBarang: '', singleDrumId: '', singleQty: '', keterangan: '', attachmentUrl: '', attachmentName: '' },
-                activeBast: {},
-
-                // Data Accounting & Notifikasi
-                notifications: JSON.parse(localStorage.getItem('acm_notifications') || 'null') || [
-                    { id: 1, type: 'NEW_PROJECT', title: 'Project Baru: DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', nominal: 52450000, detail: 'No PO: POS25-26011535 | Area: PALEMBANG | 2 Subcont', timestamp: 'Hari ini, 09:15', isRead: false },
-                    { id: 2, type: 'SUBCONT_INV', title: 'Tagihan Subcont: CV Sriwijaya Fiberindo', nominal: 4200000, detail: 'Project PLB-2026-001 | Termin 1 (50% Segmen Utara)', timestamp: 'Hari ini, 11:30', isRead: false }
-                ],
-                subcontInvoices: JSON.parse(localStorage.getItem('acm_subcont_inv_v2') || 'null') || [
-                    { id: 1, noInvoice: 'INV-SUB/PLB/2026/001', tanggal: '2026-11-13', kodeProject: 'PLB-2026-001', projectName: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', subcontId: 'SUB-01', subcontName: 'CV Sriwijaya Fiberindo', termin: 'Termin 1 (50% Fisik)', nominal: 4200000, status: 'Pending', attachmentUrl: '', attachmentName: '' }
-                ],
-                clientInvoices: JSON.parse(localStorage.getItem('acm_client_inv') || 'null') || [
-                    { id: 1, area: 'PALEMBANG', noPO: 'POS25-26011535', lokasiPekerjaan: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', termInv: 'INV I (40%)', noInvoice: '074/ACM-INV-YOFC/III/2026', tglInvoice: '2026-03-02', noFakturPajak: '4012600069041490', nilaiDpp: 21005440, pph175: 367595, ppn11: 2310598, nettTerima: 22948443, tglCb: '2026-03-27', statusPembayaran: 'LUNAS' },
-                    { id: 2, area: 'PALEMBANG', noPO: 'POS25-26011535', lokasiPekerjaan: 'DIST-DESA TANJUNG DAYANG SELATAN PALEMBANG', termInv: 'INV II (30%)', noInvoice: '235/ACM-INV-YOFC/VII/2026', tglInvoice: '2026-07-01', noFakturPajak: '4002600245988767', nilaiDpp: 15754080, pph175: 275696, ppn11: 1732949, nettTerima: 17211333, tglCb: '', statusPembayaran: 'OUTSTANDING' }
-                ],
-
-                // Form Models
+                // Forms
                 formClient: { name: '', code: '' },
-                formKhsVersion: { clientId: 'CLI-YOFC', versionName: 'KHS 2027', isDefault: false },
-                formKhs: { khsVersionId: 'VERS-2026', designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 },
+                formKhsVersion: { clientId: 'CL-01', versionName: '', isDefault: false },
+                formKhs: { khsVersionId: 'VER-2026', designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 },
                 formSubcont: { name: '', area: '' },
                 formSubcontRate: { khsItemId: '', hargaSubcont: 0 },
-                formProject: { clientId: 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: [], projectName: '', nominalAwal: 0 },
+                formProject: { clientId: 'CL-01', region: 'PALEMBANG', noPO: '', projectName: '', subcontIds: [], nilaiKontrakAwal: 0 },
                 manageSubcontProject: null,
                 managedSubcontIds: [],
-                formBoqAdd: { khsItemId: '', volAwal: 0, volAkhir: 0 },
-                formBoqAdendum: { lineId: '', designator: '', namaPekerjaan: '', isClientMaterial: false, volAwal: 0, hargaMaterial: 0, hargaJasa: 0, alasan: '' },
-                formSubcontBoq: { subcontId: '', boqLineId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 },
+                formBoqAdd: { khsItemId: '', volAwal: 100, volAkhir: 0 },
+                formBoqAdendum: { id: '', designator: '', namaPekerjaan: '', isClientMaterial: false, volAwal: 0, hargaMaterial: 0, hargaJasa: 0, alasan: '' },
+                formSubcontBoq: { subcontId: '', boqLineId: '', volAwal: 100, volAkhir: 0, hargaSubcont: 0 },
                 formSubcontInv: { kodeProject: '', subcontId: '', noInvoice: '', termin: '', nominal: 0, attachmentUrl: '', attachmentName: '' },
-                formRekonAdjust: { subcontId: '', mode: 'existing', subcontBoqLineId: '', volAwalRef: 0, volRekonBaru: 0, designator: '', namaPekerjaan: '', satuan: 'Meter', hargaSubcont: 0 },
-                formRekonMat: { subcontId: '', kodeBarang: '', qtyAmbil: 0, qtyTerpasang: 0, qtyReturn: 0, hargaSatuan: 0, keterangan: '' },
                 formClientInv: { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: '', noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' },
+                waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PRJ-PLB-01', subcontId: 'SUB-01', subcontBoqLineId: '', volume: '', attachmentUrl: '', attachmentName: '' },
+                newTrans: { tanggal: new Date().toISOString().split('T')[0], tipeTransaksi: 'Keluar', gudangAsal: 'Gudang Regional Palembang', kodeProject: 'PRJ-PLB-01', singleKodeBarang: '', singleDrumId: '', singleQty: '', keterangan: '', attachmentUrl: '', attachmentName: '' },
                 formWhBarang: { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' },
-                formWhGudang: { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' },
+                formWhGudang: { region: 'PEKANBARU', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' },
+                previewAttachment: { url: '', name: '' },
+                formRekonAdjust: { subcontId: '', mode: 'existing', subcontBoqLineId: '', volAwalRef: 0, volRekonBaru: 0, designator: '', satuan: 'Meter', namaPekerjaan: '', hargaSubcont: 0 },
+                formRekonMat: { subcontId: '', kodeBarang: '', qtyAmbil: 0, qtyTerpasang: 0, qtyReturn: 0, hargaSatuan: 0, keterangan: '' },
 
                 init() {
-                    window.addEventListener('afterprint', () => {
-                        this.printMode = '';
-                    });
-                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                },
-
-                persistAll() {
-                    try {
-                        localStorage.setItem('acm_clients', JSON.stringify(this.clients));
-                        localStorage.setItem('acm_khsVersions', JSON.stringify(this.khsVersions));
-                        localStorage.setItem('acm_khsItems_v2', JSON.stringify(this.khsItems));
-                        localStorage.setItem('acm_subconts', JSON.stringify(this.subconts));
-                        localStorage.setItem('acm_subcontRates', JSON.stringify(this.subcontRates));
-                        localStorage.setItem('acm_projects_v2', JSON.stringify(this.masterProject));
-                        localStorage.setItem('acm_boq_lines_v2', JSON.stringify(this.projectBoqLines));
-                        localStorage.setItem('acm_subcont_boq_lines_v2', JSON.stringify(this.subcontBoqLines));
-                        localStorage.setItem('acm_boq_adendum_logs', JSON.stringify(this.boqAdendumLogs));
-                        localStorage.setItem('acm_subcont_rekon_mat', JSON.stringify(this.subcontRekonMaterials));
-                        localStorage.setItem('acm_waspang_logs_v2', JSON.stringify(this.waspangLogs));
-                        localStorage.setItem('acm_wh_barang', JSON.stringify(this.masterBarang));
-                        localStorage.setItem('acm_wh_gudang', JSON.stringify(this.masterGudang));
-                        localStorage.setItem('acm_wh_drums', JSON.stringify(this.drumLedger));
-                        localStorage.setItem('acm_wh_usage', JSON.stringify(this.materialUsage));
-                        localStorage.setItem('acm_wh_tx', JSON.stringify(this.transactions));
-                        localStorage.setItem('acm_notifications', JSON.stringify(this.notifications));
-                        localStorage.setItem('acm_subcont_inv_v2', JSON.stringify(this.subcontInvoices));
-                        localStorage.setItem('acm_client_inv', JSON.stringify(this.clientInvoices));
-                    } catch (err) {
-                        console.warn('Storage quota warning:', err);
-                        this.showToast('Peringatan kapasitas penyimpanan lokal penuh, gunakan link URL untuk file berukuran besar.', 'error');
+                    this.loadLocalState();
+                    this.syncAllProjectsContractValue();
+                    if (this.isSubcontGroupActive()) {
+                        this.subcontMenuOpen = true;
                     }
-                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
                 },
 
-                                // ==================== HASIL REKON SUBCONT (MATERIAL & JASA, TAMBAH/KURANG, SISA TAGIHAN) ====================
+                // ==================== PERSISTENCE & AUTO-SYNC NILAI KONTRAK ====================
+                saveLocalState() {
+                    try {
+                        const snapshot = {
+                            clients: this.clients,
+                            khsVersions: this.khsVersions,
+                            khsItems: this.khsItems,
+                            subconts: this.subconts,
+                            subcontRates: this.subcontRates,
+                            masterProject: this.masterProject,
+                            projectBoqLines: this.projectBoqLines,
+                            subcontBoqLines: this.subcontBoqLines,
+                            rekonMaterialItems: this.rekonMaterialItems,
+                            adendumLogs: this.adendumLogs,
+                            subcontInvoices: this.subcontInvoices,
+                            clientInvoices: this.clientInvoices,
+                            notifications: this.notifications,
+                            waspangLogs: this.waspangLogs,
+                            masterBarang: this.masterBarang,
+                            masterGudang: this.masterGudang,
+                            drumLedger: this.drumLedger,
+                            materialUsage: this.materialUsage,
+                            transactions: this.transactions
+                        };
+                        localStorage.setItem('acm_erp_state_v4', JSON.stringify(snapshot));
+                    } catch (e) {
+                        console.warn('Gagal menyimpan state lokal:', e);
+                    }
+                },
+
+                loadLocalState() {
+                    try {
+                        const raw = localStorage.getItem('acm_erp_state_v4');
+                        if (!raw) return;
+                        const data = JSON.parse(raw);
+                        if (data && typeof data === 'object') {
+                            Object.keys(data).forEach(key => {
+                                if (Array.isArray(data[key])) this[key] = data[key];
+                            });
+                        }
+                    } catch (e) {
+                        console.warn('Gagal memuat state lokal:', e);
+                    }
+                },
+
+                syncAllProjectsContractValue() {
+                    this.masterProject.forEach(p => {
+                        p.nilaiKontrakAwal = this.getProjectBoqTotal(p.kodeProject, 'awal');
+                    });
+                },
+
+                // ==================== AUTH & ROLE ACCESS ====================
+                applyDemoPreset() {
+                    const roleMap = {
+                        'Super Admin': 'admin@acerocetha.co.id',
+                        'Project': 'project.ops@acerocetha.co.id',
+                        'Warehouse': 'warehouse.plb@acerocetha.co.id',
+                        'Accounting': 'finance.acc@acerocetha.co.id',
+                        'Waspang': 'waspang.field@acerocetha.co.id'
+                    };
+                    this.loginForm.email = roleMap[this.loginForm.demoRole] || 'user@acerocetha.co.id';
+                },
+
+                login() {
+                    this.isLoading = true;
+                    setTimeout(() => {
+                        this.isLoading = false;
+                        this.isLoggedIn = true;
+                        this.currentRole = this.loginForm.demoRole;
+                        this.currentUser = this.loginForm.email.split('@')[0].replace('.', ' ').toUpperCase();
+                        this.mobileMenuOpen = false;
+                        if (this.currentRole === 'Waspang') this.currentTab = 'waspang-daily';
+                        else if (this.currentRole === 'Warehouse') this.currentTab = 'wh-stok';
+                        else if (this.currentRole === 'Accounting') this.currentTab = 'acc-notif';
+                        else if (this.currentRole === 'Project') this.currentTab = 'prj-list';
+                        else this.currentTab = 'dashboard';
+                        this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                    }, 300);
+                },
+
+                logout() {
+                    this.isLoggedIn = false;
+                    this.mobileMenuOpen = false;
+                },
+
+                canAccessModule(mod) {
+                    if (this.currentRole === 'Super Admin') return true;
+                    if (mod === 'project' && this.currentRole === 'Project') return true;
+                    if (mod === 'warehouse' && this.currentRole === 'Warehouse') return true;
+                    if (mod === 'accounting' && this.currentRole === 'Accounting') return true;
+                    if (mod === 'waspang' && (this.currentRole === 'Waspang' || this.currentRole === 'Project')) return true;
+                    return false;
+                },
+
+                userRegion() {
+                    if (this.currentRole === 'Warehouse') return 'PALEMBANG';
+                    if (this.currentRole === 'Waspang') return 'PALEMBANG';
+                    return 'ALL REGION';
+                },
+
+                isSubcontGroupActive() {
+                    return ['prj-subcont', 'prj-boq', 'prj-subcont-inv', 'prj-rekon'].includes(this.currentTab);
+                },
+
+                toggleSubcontMenu() {
+                    this.subcontMenuOpen = !this.subcontMenuOpen;
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+
+                switchTab(tab) {
+                    this.currentTab = tab;
+                    if (['prj-subcont', 'prj-boq', 'prj-subcont-inv', 'prj-rekon'].includes(tab)) {
+                        this.subcontMenuOpen = true;
+                    }
+                    this.mobileMenuOpen = false;
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+
+                getTabTitle() {
+                    const titles = {
+                        'dashboard': 'Dashboard Terpadu PT Acero Cetha Metalindo',
+                        'prj-khs': 'Project • Master KHS & Klien (Multi-Versi KHS)',
+                        'prj-subcont': 'Project • Master Subcont & Rate Card',
+                        'prj-list': 'Project • Data Project, Multi-Subcont & Progress Keuangan',
+                        'prj-boq': 'Project • BoQ Klien, Alokasi Multi-Subcont & SPK',
+                        'prj-subcont-inv': 'Project • Pengajuan Invoice Subcont (Dengan Bukti BAP)',
+                        'prj-rekon': 'Project • Hasil Rekon Subcont & Sisa Tagihan Subcont',
+                        'waspang-daily': 'Lapangan • Input Volume Harian Waspang per Subcont',
+                        'wh-barang': 'Warehouse • Master Barang (Free-Issue & Stok ACM)',
+                        'wh-gudang': 'Warehouse • Master Gudang Regional',
+                        'wh-input': 'Warehouse • Input Transaksi & Lampiran Surat Jalan',
+                        'wh-stok': 'Warehouse • Stok & Pelacakan Drum Kabel',
+                        'wh-usage': 'Warehouse • Material Usage per Project',
+                        'wh-transaksi': 'Warehouse • Data Transaksi & Cetak BAST',
+                        'acc-notif': 'Accounting • Notifikasi Real-Time dari Divisi Project',
+                        'acc-client-inv': 'Accounting • Invoice Klien & Rekap Cash Bank (CB)',
+                        'acc-subcont-pay': 'Accounting • Pembayaran & Verifikasi Tagihan Subcont',
+                        'acc-rekap-bulanan': 'Accounting • Rekap Bulanan & Cash Flow'
+                    };
+                    return titles[this.currentTab] || 'ACM-ERP';
+                },
+
+                showToast(message, type = 'info') {
+                    this.toast = { show: true, message, type };
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                    setTimeout(() => { this.toast.show = false; }, 4500);
+                },
+
+                formatRupiah(num) {
+                    return 'Rp ' + Math.round(Number(num) || 0).toLocaleString('id-ID');
+                },
+
+                // Konversi Angka ke Terbilang Rupiah untuk Dokumen Resmi SPK
+                terbilangRupiah(angka) {
+                    const n = Math.floor(Math.abs(Number(angka) || 0));
+                    if (n === 0) return 'Nol Rupiah';
+                    const satuan = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+                    const baca = (x) => {
+                        if (x < 12) return ' ' + satuan[x];
+                        if (x < 20) return baca(x - 10) + ' Belas';
+                        if (x < 100) return baca(Math.floor(x / 10)) + ' Puluh' + baca(x % 10);
+                        if (x < 200) return ' Seratus' + baca(x - 100);
+                        if (x < 1000) return baca(Math.floor(x / 100)) + ' Ratus' + baca(x % 100);
+                        if (x < 2000) return ' Seribu' + baca(x - 1000);
+                        if (x < 1000000) return baca(Math.floor(x / 1000)) + ' Ribu' + baca(x % 1000);
+                        if (x < 1000000000) return baca(Math.floor(x / 1000000)) + ' Juta' + baca(x % 1000000);
+                        if (x < 1000000000000) return baca(Math.floor(x / 1000000000)) + ' Miliar' + baca(x % 1000000000);
+                        return baca(Math.floor(x / 1000000000000)) + ' Triliun' + baca(x % 1000000000000);
+                    };
+                    return baca(n).trim().replace(/\s+/g, ' ') + ' Rupiah';
+                },
+
+                // ==================== FILE UPLOAD & ATTACHMENT PREVIEW ====================
+                handleFileUpload(event, targetContext) {
+                    const file = event.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const dataUrl = e.target.result;
+                        if (targetContext === 'waspang') {
+                            this.waspangForm.attachmentUrl = dataUrl;
+                            this.waspangForm.attachmentName = file.name;
+                        } else if (targetContext === 'subcont-inv') {
+                            this.formSubcontInv.attachmentUrl = dataUrl;
+                            this.formSubcontInv.attachmentName = file.name;
+                        } else if (targetContext === 'wh-tx') {
+                            this.newTrans.attachmentUrl = dataUrl;
+                            this.newTrans.attachmentName = file.name;
+                        }
+                        this.showToast('File lampiran "' + file.name + '" berhasil dimuat.');
+                    };
+                    reader.readAsDataURL(file);
+                },
+
+                isImageUrl(url) {
+                    if (!url) return false;
+                    if (url.startsWith('data:image/')) return true;
+                    if (url.includes('placehold.co')) return true;
+                    return /\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(url);
+                },
+
+                openAttachmentPreview(title, url, name) {
+                    this.modalTitle = title;
+                    this.previewAttachment = { url: url || '', name: name || 'Dokumen Bukti' };
+                    this.activeModal = 'attachment-preview';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+
+                // ==================== CSV / EXCEL EXPORT UTILITIES ====================
+                downloadCSV(filename, headers, rows) {
+                    const escapeCell = (val) => {
+                        const str = String(val ?? '').replace(/"/g, '""');
+                        return `"${str}"`;
+                    };
+                    const csvContent = '\uFEFF' + [
+                        headers.map(escapeCell).join(','),
+                        ...rows.map(r => r.map(escapeCell).join(','))
+                    ].join('\r\n');
+
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    this.showToast('Berhasil mengekspor file ' + filename);
+                },
+
+                exportProjectsCSV() {
+                    const headers = ['Kode Project', 'No PO', 'Region', 'Klien', 'Nama Project', 'Tim Subcont', 'BoQ Klien Awal (Rp)', 'BoQ Klien Akhir (Rp)', 'Total BoQ Subcont Awal (Rp)', 'Progress Fisik (%)', 'Cair Klien (Rp)', 'Bayar Subcont (Rp)'];
+                    const rows = this.masterProject.map(p => [
+                        p.kodeProject,
+                        p.noPO || '-',
+                        p.region,
+                        this.getClientName(p.clientId),
+                        p.projectName,
+                        (p.subcontIds || []).map(sid => this.getSubcontName(sid)).join(' | '),
+                        this.getProjectBoqTotal(p.kodeProject, 'awal'),
+                        this.getProjectBoqTotal(p.kodeProject, 'akhir'),
+                        this.getAllSubcontsProjectBoqTotal(p.kodeProject, 'awal'),
+                        this.getProjectPhysicalProgress(p.kodeProject),
+                        this.getProjectClientPaid(p.noPO),
+                        this.getProjectSubcontPaid(p.kodeProject)
+                    ]);
+                    this.downloadCSV(`ACM_Daftar_Project_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                exportBoqCSV() {
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    const headers = ['Kategori', 'Kode Project', 'Subcont', 'Designator', 'Nama Pekerjaan', 'Satuan', 'Vol Awal', 'Vol Akhir', 'Harga Material (Rp)', 'Harga Jasa / Subcont (Rp)', 'Total Awal (Rp)', 'Total Akhir (Rp)'];
+                    const clientRows = this.getProjectBoqLines(this.selectedBoqProject).map(l => [
+                        'BoQ Klien',
+                        this.selectedBoqProject,
+                        this.getClientName(prj?.clientId),
+                        l.designator,
+                        l.namaPekerjaan,
+                        l.satuan || '',
+                        l.volAwal,
+                        l.volAkhir,
+                        l.isClientMaterial ? 0 : l.hargaMaterial,
+                        l.hargaJasa,
+                        this.calcBoqLineClientTotal(l, 'awal'),
+                        this.calcBoqLineClientTotal(l, 'akhir')
+                    ]);
+                    const subRows = this.getFilteredSubcontBoqLines().map(s => [
+                        'BoQ Subcont',
+                        this.selectedBoqProject,
+                        this.getSubcontName(s.subcontId),
+                        s.designator,
+                        s.namaPekerjaan,
+                        s.satuan || '',
+                        s.volAwal,
+                        s.volAkhir,
+                        0,
+                        s.hargaSubcont,
+                        s.volAwal * s.hargaSubcont,
+                        s.volAkhir * s.hargaSubcont
+                    ]);
+                    this.downloadCSV(`ACM_BoQ_${this.selectedBoqProject}_${new Date().toISOString().slice(0,10)}.csv`, headers, [...clientRows, ...subRows]);
+                },
+
+                exportSubcontInvoicesCSV() {
+                    const headers = ['No Tagihan', 'Tanggal', 'Kode Project', 'Nama Project', 'Subcont', 'Termin', 'Nominal (Rp)', 'Status'];
+                    const rows = this.subcontInvoices.map(i => [
+                        i.noInvoice, i.tanggal, i.kodeProject, i.projectName, i.subcontName, i.termin, i.nominal, i.status
+                    ]);
+                    this.downloadCSV(`ACM_Invoice_Subcont_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                exportClientInvoicesCSV() {
+                    const headers = ['No', 'Area', 'No PO', 'Lokasi Pekerjaan', 'Term Inv', 'No Invoice', 'Tgl Invoice', 'No Faktur Pajak', 'Nilai DPP (Rp)', 'PPh 1.75% (Rp)', 'PPN 11% (Rp)', 'Nett Cash & Bank (Rp)', 'Tgl CB', 'Status'];
+                    const rows = this.clientInvoices.map((i, idx) => [
+                        idx + 1, i.area, i.noPO, i.lokasiPekerjaan, i.termInv, i.noInvoice, i.tglInvoice, i.noFakturPajak, i.nilaiDpp, i.pph175, i.ppn11, i.nettTerima, i.tglCb, i.statusPembayaran
+                    ]);
+                    this.downloadCSV(`ACM_Rekap_Invoice_Klien_CB_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                exportWarehouseTxCSV() {
+                    const headers = ['No Transaksi', 'Tanggal', 'Tipe', 'Gudang Asal', 'Project / Tujuan', 'Kode Barang', 'Nama Barang', 'Drum ID', 'Qty', 'Keterangan'];
+                    const rows = this.transactions.map(t => [
+                        t.noTransaksi, t.tanggal, t.tipeTransaksi, t.gudangAsal, t.kodeProject || t.gudangTujuan || '-', t.singleKodeBarang, t.singleNamaBarang, t.singleDrumId || '-', t.singleQty, t.keterangan
+                    ]);
+                    this.downloadCSV(`ACM_Transaksi_Gudang_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                },
+
+                // ==================== EXPORT PDF SPK SUBCONT ====================
+                openSpkPreviewModal(kodeProject, subcontId) {
+                    const prj = this.getProjectByCode(kodeProject);
+                    if (!prj) return;
+                    const targetSubcontId = subcontId || prj.subcontIds?.[0] || '';
+                    if (!targetSubcontId) {
+                        this.showToast('Project ini belum memiliki Tim Subcont. Silakan tambahkan subcont terlebih dahulu.', 'error');
+                        return;
+                    }
+                    const sub = this.subconts.find(s => s.id === targetSubcontId);
+                    const items = this.getSubcontBoqLines(kodeProject, targetSubcontId);
+                    const total = items.reduce((sum, l) => sum + ((Number(l.volAwal) || 0) * (Number(l.hargaSubcont) || 0)), 0);
+                    const year = new Date().getFullYear();
+
+                    this.spkDraft = {
+                        kodeProject: prj.kodeProject,
+                        projectName: prj.projectName,
+                        noPO: prj.noPO || '-',
+                        region: prj.region || '-',
+                        subcontId: targetSubcontId,
+                        subcontName: sub ? sub.name : 'Subcont Pelaksana',
+                        subcontArea: sub ? sub.area : '-',
+                        noSpk: `SPK/ACM/${prj.kodeProject}/${targetSubcontId}/${year}`,
+                        tanggal: new Date().toISOString().split('T')[0],
+                        durasiKerja: '30 Hari Kalender',
+                        items: items,
+                        totalNilai: total
+                    };
+
+                    this.modalTitle = 'Pratinjau & Export PDF Surat Perintah Kerja (SPK) Subcont';
+                    this.activeModal = 'spk-preview';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+
+                refreshSpkDraftData() {
+                    const prj = this.getProjectByCode(this.spkDraft.kodeProject);
+                    const sub = this.subconts.find(s => s.id === this.spkDraft.subcontId);
+                    const items = this.getSubcontBoqLines(this.spkDraft.kodeProject, this.spkDraft.subcontId);
+                    const total = items.reduce((sum, l) => sum + ((Number(l.volAwal) || 0) * (Number(l.hargaSubcont) || 0)), 0);
+                    const year = new Date().getFullYear();
+
+                    this.spkDraft.subcontName = sub ? sub.name : 'Subcont Pelaksana';
+                    this.spkDraft.subcontArea = sub ? sub.area : '-';
+                    this.spkDraft.noSpk = `SPK/ACM/${this.spkDraft.kodeProject}/${this.spkDraft.subcontId}/${year}`;
+                    this.spkDraft.items = items;
+                    this.spkDraft.totalNilai = total;
+                },
+
+                triggerSpkExportFromHeader() {
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    const targetSubId = this.selectedBoqSubcontFilter !== 'ALL'
+                        ? this.selectedBoqSubcontFilter
+                        : (prj?.subcontIds?.[0] || '');
+                    this.openSpkPreviewModal(this.selectedBoqProject, targetSubId);
+                },
+
+                executePrintSpk() {
+                    this.printMode = 'spk';
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            window.print();
+                            setTimeout(() => { this.printMode = ''; }, 500);
+                        }, 150);
+                    });
+                },
+
+                // ==================== PROJECT & MULTI-SUBCONT LOGIC ====================
+                getClientName(id) { return this.clients.find(c => c.id === id)?.name || id; },
+                getSubcontName(id) { return this.subconts.find(s => s.id === id)?.name || id; },
+                getProjectByCode(code) { return this.masterProject.find(p => p.kodeProject === code); },
+
+                getFilteredKhsVersions() {
+                    return this.khsVersions.filter(v => v.clientId === this.selectedKhsClient);
+                },
+                onClientFilterChange() {
+                    const versions = this.getFilteredKhsVersions();
+                    if (versions.length > 0) {
+                        const def = versions.find(v => v.isDefault) || versions[0];
+                        this.selectedKhsVersionId = def.id;
+                    } else {
+                        this.selectedKhsVersionId = '';
+                    }
+                },
+                getKhsVersionNameById(verId) {
+                    return this.khsVersions.find(v => v.id === verId)?.versionName || 'KHS Standar';
+                },
+                getActiveKhsVersionName() {
+                    return this.getKhsVersionNameById(this.selectedKhsVersionId);
+                },
+                getFilteredKhsItems() {
+                    return this.khsItems.filter(i => i.clientId === this.selectedKhsClient && (!this.selectedKhsVersionId || i.khsVersionId === this.selectedKhsVersionId));
+                },
+
+                openKhsVersionModal() {
+                    this.modalTitle = 'Buat Versi KHS Baru (Contoh: KHS 2026 / Adendum)';
+                    this.formKhsVersion = { clientId: this.selectedKhsClient, versionName: '', isDefault: true };
+                    this.activeModal = 'khs-version';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+                saveKhsVersion() {
+                    if (this.formKhsVersion.isDefault) {
+                        this.khsVersions.forEach(v => {
+                            if (v.clientId === this.formKhsVersion.clientId) v.isDefault = false;
+                        });
+                    }
+                    const newVer = {
+                        id: 'VER-' + Date.now(),
+                        clientId: this.formKhsVersion.clientId,
+                        versionName: this.formKhsVersion.versionName,
+                        isDefault: this.formKhsVersion.isDefault
+                    };
+                    this.khsVersions.push(newVer);
+                    this.selectedKhsClient = newVer.clientId;
+                    this.selectedKhsVersionId = newVer.id;
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Versi KHS baru berhasil dibuat: ' + newVer.versionName);
+                },
+
+                getFilteredSubcontRates() { return this.subcontRates.filter(r => r.subcontId === this.selectedSubcontId); },
+
+                openClientModal() { this.modalTitle = 'Tambah Master Klien Baru'; this.formClient = { name: '', code: '' }; this.activeModal = 'client'; },
+                saveClient() {
+                    const id = 'CL-' + (this.clients.length + 1).toString().padStart(2, '0');
+                    this.clients.push({ id, ...this.formClient });
+                    this.selectedKhsClient = id;
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Klien baru berhasil ditambahkan: ' + this.formClient.name);
+                },
+
+                openKhsItemModal() {
+                    this.modalTitle = 'Tambah Item Harga KHS Klien';
+                    this.formKhs = { khsVersionId: this.selectedKhsVersionId || (this.getFilteredKhsVersions()[0]?.id || ''), designator: '', namaPekerjaan: '', satuan: 'Meter', isClientMaterial: false, hargaMaterial: 0, hargaJasa: 0 };
+                    this.activeModal = 'khs';
+                },
+                saveKhsItem() {
+                    const matPrice = this.formKhs.isClientMaterial ? 0 : Number(this.formKhs.hargaMaterial);
+                    this.khsItems.push({
+                        id: 'KHS-' + Date.now(),
+                        clientId: this.selectedKhsClient,
+                        khsVersionId: this.formKhs.khsVersionId || this.selectedKhsVersionId,
+                        designator: this.formKhs.designator,
+                        namaPekerjaan: this.formKhs.namaPekerjaan,
+                        satuan: this.formKhs.satuan,
+                        isClientMaterial: this.formKhs.isClientMaterial,
+                        hargaMaterial: matPrice,
+                        hargaJasa: Number(this.formKhs.hargaJasa)
+                    });
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Item KHS berhasil disimpan ke versi ' + this.getKhsVersionNameById(this.formKhs.khsVersionId));
+                },
+
+                openSubcontModal() { this.modalTitle = 'Tambah Tim / Vendor Subcont'; this.formSubcont = { name: '', area: '' }; this.activeModal = 'subcont'; },
+                saveSubcont() {
+                    const id = 'SUB-' + (this.subconts.length + 1).toString().padStart(2, '0');
+                    this.subconts.push({ id, ...this.formSubcont });
+                    this.selectedSubcontId = id;
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Tim Subcont baru ditambahkan: ' + this.formSubcont.name);
+                },
+
+                openSubcontRateModal() { this.modalTitle = 'Set Harga Item Khusus Subcont'; this.formSubcontRate = { khsItemId: '', hargaSubcont: 0 }; this.activeModal = 'subcont-rate'; },
+                saveSubcontRate() {
+                    const khs = this.khsItems.find(k => k.id === this.formSubcontRate.khsItemId);
+                    if (!khs) return;
+                    this.subcontRates.push({
+                        id: 'SR-' + Date.now(),
+                        subcontId: this.selectedSubcontId,
+                        khsItemId: khs.id,
+                        designator: khs.designator,
+                        namaPekerjaan: khs.namaPekerjaan,
+                        satuan: khs.satuan,
+                        hargaSubcont: Number(this.formSubcontRate.hargaSubcont)
+                    });
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Harga satuan subcont berhasil diperbarui.');
+                },
+
+                openNewProjectModal() {
+                    this.modalTitle = 'Input Project Baru (Nilai Kontrak Awal Otomatis Rp 0 dari BoQ)';
+                    this.formProject = { clientId: 'CL-01', region: 'PALEMBANG', noPO: '', projectName: '', subcontIds: [], nilaiKontrakAwal: 0 };
+                    this.activeModal = 'new-project';
+                },
+                saveNewProject() {
+                    const kodeProject = 'PRJ-' + this.formProject.region.substring(0, 3).toUpperCase() + '-' + (this.masterProject.length + 1).toString().padStart(2, '0');
+                    const subIds = Array.isArray(this.formProject.subcontIds) ? [...this.formProject.subcontIds] : [];
+                    const newPrj = {
+                        kodeProject,
+                        clientId: this.formProject.clientId,
+                        noPO: this.formProject.noPO,
+                        region: this.formProject.region.toUpperCase(),
+                        projectName: this.formProject.projectName,
+                        subcontIds: subIds,
+                        nilaiKontrakAwal: 0
+                    };
+                    this.masterProject.unshift(newPrj);
+                    this.selectedBoqProject = kodeProject;
+
+                    const subNames = subIds.length > 0 ? subIds.map(id => this.getSubcontName(id)).join(', ') : 'Belum ditetapkan';
+                    this.notifications.unshift({
+                        id: 'NTF-' + Date.now(),
+                        type: 'NEW_PROJECT',
+                        title: 'Project Baru Diinput: ' + newPrj.projectName,
+                        nominal: 0,
+                        detail: 'PO: ' + newPrj.noPO + ' • Tim Subcont: ' + subNames + ' (Menunggu Input BoQ)',
+                        timestamp: 'Baru saja',
+                        isRead: false
+                    });
+
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Project baru disimpan! Nilai Kontrak Awal = Rp 0 (otomatis terisi saat item BoQ Klien ditambahkan).');
+                },
+
+                openManageProjectSubconts(prj) {
+                    this.manageSubcontProject = prj;
+                    this.managedSubcontIds = [...(prj.subcontIds || [])];
+                    this.modalTitle = 'Kelola Tim Subcont Pelaksana Project';
+                    this.activeModal = 'manage-prj-subconts';
+                },
+                saveManagedProjectSubconts() {
+                    if (this.manageSubcontProject) {
+                        this.manageSubcontProject.subcontIds = [...this.managedSubcontIds];
+                    }
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Daftar tim subcont pada project berhasil diperbarui.');
+                },
+
+                // ==================== BoQ KLIEN, ADENDUM & ALOKASI MULTI-SUBCONT ====================
+                getProjectBoqLines(kodeProject) { return this.projectBoqLines.filter(l => l.kodeProject === kodeProject); },
+                getSubcontBoqLines(kodeProject, subcontId) {
+                    return this.subcontBoqLines.filter(l => l.kodeProject === kodeProject && (!subcontId || subcontId === 'ALL' || l.subcontId === subcontId));
+                },
+                getFilteredSubcontBoqLines() {
+                    return this.getSubcontBoqLines(this.selectedBoqProject, this.selectedBoqSubcontFilter);
+                },
+
+                getAllocatedSubcontVolumeForDesignator(kodeProject, designator) {
+                    return this.subcontBoqLines
+                        .filter(l => l.kodeProject === kodeProject && l.designator === designator)
+                        .reduce((sum, l) => sum + (Number(l.volAwal) || 0), 0);
+                },
+
+                getRemainingClientBoqVolume(kodeProject, designator) {
+                    const clientTotalVol = this.projectBoqLines
+                        .filter(l => l.kodeProject === kodeProject && l.designator === designator)
+                        .reduce((sum, l) => sum + (Number(l.volAwal) || 0), 0);
+                    const allocated = this.getAllocatedSubcontVolumeForDesignator(kodeProject, designator);
+                    return Math.max(0, clientTotalVol - allocated);
+                },
+
+                getSelectedClientBoqLineForAllocation() {
+                    if (!this.formSubcontBoq.boqLineId) return null;
+                    return this.projectBoqLines.find(l => l.id === this.formSubcontBoq.boqLineId) || null;
+                },
+
+                calcBoqLineClientTotal(line, mode) {
+                    const vol = mode === 'awal' ? Number(line.volAwal) : Number(line.volAkhir);
+                    const mat = line.isClientMaterial ? 0 : Number(line.hargaMaterial);
+                    return vol * (mat + Number(line.hargaJasa));
+                },
+
+                getProjectBoqTotal(kodeProject, mode) {
+                    const lines = this.getProjectBoqLines(kodeProject);
+                    return lines.reduce((sum, l) => sum + this.calcBoqLineClientTotal(l, mode), 0);
+                },
+
+                getSubcontProjectBoqTotal(kodeProject, subcontId, mode) {
+                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
+                    return lines.reduce((sum, l) => {
+                        const vol = mode === 'awal' ? Number(l.volAwal) : Number(l.volAkhir);
+                        return sum + (vol * Number(l.hargaSubcont));
+                    }, 0);
+                },
+
+                getAllSubcontsProjectBoqTotal(kodeProject, mode) {
+                    const lines = this.getSubcontBoqLines(kodeProject, 'ALL');
+                    return lines.reduce((sum, l) => {
+                        const vol = mode === 'awal' ? Number(l.volAwal) : Number(l.volAkhir);
+                        return sum + (vol * Number(l.hargaSubcont));
+                    }, 0);
+                },
+
+                getSubcontPhysicalProgress(kodeProject, subcontId) {
+                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
+                    const totalTarget = lines.reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
+                    const totalReal = lines.reduce((s, l) => s + (Number(l.volAkhir) || 0), 0);
+                    if (totalTarget === 0) return 0;
+                    return Math.min(100, Math.round((totalReal / totalTarget) * 100));
+                },
+
+                getProjectPhysicalProgress(kodeProject) {
+                    const lines = this.getProjectBoqLines(kodeProject);
+                    const totalAwal = lines.reduce((s, l) => s + (Number(l.volAwal) || 0), 0);
+                    const totalAkhir = lines.reduce((s, l) => s + (Number(l.volAkhir) || 0), 0);
+                    if (totalAwal === 0) return 0;
+                    return Math.min(100, Math.round((totalAkhir / totalAwal) * 100));
+                },
+
+                syncClientBoqRealizationFromSubconts(kodeProject, designator) {
+                    const totalSubcontReal = this.subcontBoqLines
+                        .filter(l => l.kodeProject === kodeProject && l.designator === designator)
+                        .reduce((s, l) => s + (Number(l.volAkhir) || 0), 0);
+                    const clientLine = this.projectBoqLines.find(l => l.kodeProject === kodeProject && l.designator === designator);
+                    if (clientLine) {
+                        clientLine.volAkhir = totalSubcontReal;
+                    }
+                },
+
+                openAddBoqFromKhsModal() {
+                    this.modalTitle = 'Tambah Item ke BoQ Utama Klien';
+                    this.formBoqAdd = { khsItemId: '', volAwal: 100, volAkhir: 0 };
+                    this.activeModal = 'boq-from-khs';
+                },
+                saveBoqFromKhs() {
+                    const khs = this.khsItems.find(k => k.id === this.formBoqAdd.khsItemId);
+                    if (!khs) return;
+                    this.projectBoqLines.push({
+                        id: 'BL-' + Date.now(),
+                        kodeProject: this.selectedBoqProject,
+                        designator: khs.designator,
+                        namaPekerjaan: khs.namaPekerjaan,
+                        satuan: khs.satuan,
+                        isClientMaterial: khs.isClientMaterial,
+                        volAwal: Number(this.formBoqAdd.volAwal),
+                        volAkhir: Number(this.formBoqAdd.volAkhir || 0),
+                        hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
+                        hargaJasa: Number(khs.hargaJasa)
+                    });
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    if (prj) prj.nilaiKontrakAwal = this.getProjectBoqTotal(this.selectedBoqProject, 'awal');
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Item BoQ Klien ditambahkan & Nilai Kontrak Awal otomatis terupdate.');
+                },
+
+                // REVISI / ADENDUM KONTRAK DENGAN AUDIT TRAIL
+                openBoqAdendumModal(line) {
+                    this.modalTitle = 'Revisi / Adendum Item BoQ Klien (Audit Trail)';
+                    this.formBoqAdendum = {
+                        id: line.id,
+                        designator: line.designator,
+                        namaPekerjaan: line.namaPekerjaan,
+                        isClientMaterial: line.isClientMaterial,
+                        volAwal: Number(line.volAwal),
+                        hargaMaterial: Number(line.hargaMaterial),
+                        hargaJasa: Number(line.hargaJasa),
+                        alasan: ''
+                    };
+                    this.activeModal = 'boq-adendum';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+
+                saveBoqAdendum() {
+                    const line = this.projectBoqLines.find(l => l.id === this.formBoqAdendum.id);
+                    if (!line) return;
+
+                    const oldVolAwal = Number(line.volAwal);
+                    const oldHargaMaterial = Number(line.hargaMaterial);
+                    const oldHargaJasa = Number(line.hargaJasa);
+
+                    const newVolAwal = Number(this.formBoqAdendum.volAwal);
+                    const newHargaMaterial = line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial);
+                    const newHargaJasa = Number(this.formBoqAdendum.hargaJasa);
+
+                    line.volAwal = newVolAwal;
+                    line.hargaMaterial = newHargaMaterial;
+                    line.hargaJasa = newHargaJasa;
+
+                    const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+                    this.adendumLogs.unshift({
+                        id: 'REV-' + Date.now(),
+                        kodeProject: line.kodeProject,
+                        timestamp: nowStr,
+                        user: this.currentUser || 'Project User',
+                        designator: line.designator,
+                        oldVolAwal,
+                        newVolAwal,
+                        oldHargaMaterial,
+                        newHargaMaterial,
+                        oldHargaJasa,
+                        newHargaJasa,
+                        alasan: this.formBoqAdendum.alasan
+                    });
+
+                    const prj = this.getProjectByCode(line.kodeProject);
+                    if (prj) prj.nilaiKontrakAwal = this.getProjectBoqTotal(line.kodeProject, 'awal');
+
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Revisi Adendum disimpan & tercatat di Log Audit Trail.');
+                },
+
+                getProjectAdendumLogs(kodeProject) {
+                    return this.adendumLogs.filter(r => r.kodeProject === kodeProject);
+                },
+
+                openAddSubcontBoqModal() {
+                    const prj = this.getProjectByCode(this.selectedBoqProject);
+                    if (!prj || !prj.subcontIds || prj.subcontIds.length === 0) {
+                        this.showToast('Tambahkan minimal 1 Tim Subcont terlebih dahulu di menu Data Project!', 'error');
+                        return;
+                    }
+                    const defaultSub = this.selectedBoqSubcontFilter !== 'ALL' ? this.selectedBoqSubcontFilter : prj.subcontIds[0];
+                    this.modalTitle = 'Alokasi Item & Volume SPK ke Subcont';
+                    this.formSubcontBoq = { subcontId: defaultSub, boqLineId: '', volAwal: 100, volAkhir: 0, hargaSubcont: 0 };
+                    this.activeModal = 'subcont-boq-add';
+                },
+
+                autoFillSubcontRateOnModal() {
+                    const boqLine = this.projectBoqLines.find(b => b.id === this.formSubcontBoq.boqLineId);
+                    if (!boqLine) return;
+                    const rem = this.getRemainingClientBoqVolume(this.selectedBoqProject, boqLine.designator);
+                    if (rem > 0) this.formSubcontBoq.volAwal = rem;
+                    const rate = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === boqLine.designator);
+                    this.formSubcontBoq.hargaSubcont = rate ? rate.hargaSubcont : Math.round(boqLine.hargaJasa * 0.6);
+                },
+
+                saveSubcontBoqLine() {
+                    const boqLine = this.projectBoqLines.find(b => b.id === this.formSubcontBoq.boqLineId);
+                    if (!boqLine || !this.formSubcontBoq.subcontId) return;
+
+                    const reqVol = Number(this.formSubcontBoq.volAwal) || 0;
+                    const remainingQuota = this.getRemainingClientBoqVolume(this.selectedBoqProject, boqLine.designator);
+
+                    if (reqVol > remainingQuota) {
+                        this.showToast(
+                            `Alokasi ditolak! Volume (${reqVol}) melebihi sisa kuota BoQ Klien (${remainingQuota} ${boqLine.satuan || ''}) untuk ${boqLine.designator}.`,
+                            'error'
+                        );
+                        return;
+                    }
+
+                    this.subcontBoqLines.push({
+                        id: 'SBL-' + Date.now(),
+                        kodeProject: this.selectedBoqProject,
+                        subcontId: this.formSubcontBoq.subcontId,
+                        designator: boqLine.designator,
+                        namaPekerjaan: boqLine.namaPekerjaan,
+                        satuan: boqLine.satuan,
+                        volAwal: reqVol,
+                        volAkhir: Number(this.formSubcontBoq.volAkhir || 0),
+                        hargaSubcont: Number(this.formSubcontBoq.hargaSubcont)
+                    });
+                    this.syncClientBoqRealizationFromSubconts(this.selectedBoqProject, boqLine.designator);
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Item SPK berhasil dialokasikan ke ' + this.getSubcontName(this.formSubcontBoq.subcontId));
+                },
+
+                removeSubcontBoqLine(id) {
+                    const line = this.subcontBoqLines.find(l => l.id === id);
+                    this.subcontBoqLines = this.subcontBoqLines.filter(l => l.id !== id);
+                    if (line) this.syncClientBoqRealizationFromSubconts(line.kodeProject, line.designator);
+                    this.saveLocalState();
+                    this.showToast('Item alokasi subcont dihapus.');
+                },
+
+                // ==================== REKON SUBCONT & SISA TAGIHAN LOGIC ====================
                 openProjectRekonTab(kodeProject) {
                     this.selectedRekonProject = kodeProject;
                     this.selectedRekonSubcont = 'ALL';
@@ -3184,42 +3983,24 @@
                     this.selectedRekonSubcont = 'ALL';
                 },
 
-                openSubcontInvoiceModalForRekon() {
-                    const prj = this.getProjectByCode(this.selectedRekonProject);
-                    const defSub = (this.selectedRekonSubcont !== 'ALL') ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
-                    const sisa = this.getRekonSummary().sisaTagihanSubcont;
-                    this.modalTitle = 'Ajukan Sisa Tagihan Hasil Rekon Subcont';
-                    this.formSubcontInv = {
-                        kodeProject: this.selectedRekonProject,
-                        subcontId: defSub,
-                        noInvoice: '',
-                        termin: 'Pelunasan Hasil Rekon (100%)',
-                        nominal: sisa,
-                        attachmentUrl: '',
-                        attachmentName: ''
-                    };
-                    this.activeModal = 'subcont-inv';
-                },
-
                 getRekonJasaRows() {
                     const lines = this.getSubcontBoqLines(this.selectedRekonProject, this.selectedRekonSubcont);
                     return lines.map(l => {
                         const volAwal = Number(l.volAwal) || 0;
                         const volRekon = Number(l.volAkhir) || 0;
-                        const harga = Number(l.hargaSubcont) || 0;
-                        const delta = volRekon - volAwal;
-                        const volTambah = delta > 0 ? delta : 0;
-                        const volKurang = delta < 0 ? Math.abs(delta) : 0;
-                        const nilaiAwal = volAwal * harga;
-                        const nilaiRekon = volRekon * harga;
+                        const volTambah = volRekon > volAwal ? (volRekon - volAwal) : 0;
+                        const volKurang = volRekon < volAwal ? (volAwal - volRekon) : 0;
+                        const hargaSubcont = Number(l.hargaSubcont) || 0;
+                        const nilaiAwal = volAwal * hargaSubcont;
+                        const nilaiRekon = volRekon * hargaSubcont;
                         const nilaiSelisih = nilaiRekon - nilaiAwal;
                         return {
                             ...l,
                             volAwal,
-                            volRekon,
                             volTambah,
                             volKurang,
-                            hargaSubcont: harga,
+                            volRekon,
+                            hargaSubcont,
                             nilaiAwal,
                             nilaiRekon,
                             nilaiSelisih
@@ -3228,14 +4009,14 @@
                 },
 
                 getFilteredRekonMaterials() {
-                    return this.subcontRekonMaterials.filter(m =>
+                    return this.rekonMaterialItems.filter(m =>
                         m.kodeProject === this.selectedRekonProject &&
                         (this.selectedRekonSubcont === 'ALL' || m.subcontId === this.selectedRekonSubcont)
                     );
                 },
 
                 calcMaterialSelisih(m) {
-                    const selisih = (Number(m.qtyAmbil) || 0) - ((Number(m.qtyTerpasang) || 0) + (Number(m.qtyReturn) || 0));
+                    const selisih = (Number(m.qtyAmbil) || 0) - (Number(m.qtyTerpasang) || 0) - (Number(m.qtyReturn) || 0);
                     return selisih > 0 ? selisih : 0;
                 },
 
@@ -3251,48 +4032,38 @@
                 },
 
                 getRekonSummary() {
-                    const jasaRows = this.getRekonJasaRows();
-                    let volAwalTotal = 0;
-                    let volTambahTotal = 0;
-                    let volKurangTotal = 0;
-                    let volRekonTotal = 0;
-                    let nilaiKontrakAwal = 0;
-                    let nilaiTambah = 0;
-                    let nilaiKurang = 0;
-                    let totalJasaRekon = 0;
+                    const rows = this.getRekonJasaRows();
+                    const nilaiKontrakAwal = rows.reduce((s, r) => s + r.nilaiAwal, 0);
+                    const totalJasaRekon = rows.reduce((s, r) => s + r.nilaiRekon, 0);
+                    const nilaiTambah = rows.reduce((s, r) => s + (r.volTambah * r.hargaSubcont), 0);
+                    const nilaiKurang = rows.reduce((s, r) => s + (r.volKurang * r.hargaSubcont), 0);
+                    const nilaiTambahKurang = totalJasaRekon - nilaiKontrakAwal;
 
-                    jasaRows.forEach(r => {
-                        volAwalTotal += r.volAwal;
-                        volTambahTotal += r.volTambah;
-                        volKurangTotal += r.volKurang;
-                        volRekonTotal += r.volRekon;
-                        nilaiKontrakAwal += r.nilaiAwal;
-                        if (r.nilaiSelisih > 0) nilaiTambah += r.nilaiSelisih;
-                        if (r.nilaiSelisih < 0) nilaiKurang += Math.abs(r.nilaiSelisih);
-                        totalJasaRekon += r.nilaiRekon;
-                    });
+                    const volAwalTotal = rows.reduce((s, r) => s + r.volAwal, 0);
+                    const volTambahTotal = rows.reduce((s, r) => s + r.volTambah, 0);
+                    const volKurangTotal = rows.reduce((s, r) => s + r.volKurang, 0);
+                    const volRekonTotal = rows.reduce((s, r) => s + r.volRekon, 0);
+                    const sisaVolumeTotal = rows.reduce((s, r) => s + Math.max(0, r.volAwal - r.volRekon), 0);
 
-                    const matRows = this.getFilteredRekonMaterials();
-                    const potonganMaterial = matRows.reduce((sum, m) => sum + this.calcMaterialPotongan(m), 0);
+                    const matItems = this.getFilteredRekonMaterials();
+                    const potonganMaterial = matItems.reduce((s, m) => s + this.calcMaterialPotongan(m), 0);
 
-                    const invRows = this.getFilteredRekonInvoices();
-                    const totalSudahDitagih = invRows.reduce((sum, inv) => sum + (Number(inv.nominal) || 0), 0);
+                    const invItems = this.getFilteredRekonInvoices();
+                    const totalSudahDitagih = invItems.reduce((s, i) => s + (Number(i.nominal) || 0), 0);
 
-                    const nilaiTambahKurang = nilaiTambah - nilaiKurang;
-                    const sisaTagihanSubcont = Math.max(0, totalJasaRekon - potonganMaterial - totalSudahDitagih);
-                    const sisaVolumeTotal = Math.max(0, volAwalTotal - volRekonTotal);
+                    const sisaTagihanSubcont = totalJasaRekon - potonganMaterial - totalSudahDitagih;
 
                     return {
-                        volAwalTotal,
-                        volTambahTotal,
-                        volKurangTotal,
-                        volRekonTotal,
-                        sisaVolumeTotal,
                         nilaiKontrakAwal,
                         nilaiTambah,
                         nilaiKurang,
                         nilaiTambahKurang,
                         totalJasaRekon,
+                        volAwalTotal,
+                        volTambahTotal,
+                        volKurangTotal,
+                        volRekonTotal,
+                        sisaVolumeTotal,
                         potonganMaterial,
                         totalSudahDitagih,
                         sisaTagihanSubcont
@@ -3301,24 +4072,25 @@
 
                 openRekonAdjustModal() {
                     const prj = this.getProjectByCode(this.selectedRekonProject);
-                    const defSub = (this.selectedRekonSubcont !== 'ALL') ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
-                    this.modalTitle = 'Input Pekerjaan Tambah / Kurang Subcont';
+                    const defaultSub = this.selectedRekonSubcont !== 'ALL' ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
+                    this.modalTitle = 'Input Hasil Rekon Jasa / Pekerjaan Tambah & Kurang';
                     this.formRekonAdjust = {
-                        subcontId: defSub,
+                        subcontId: defaultSub,
                         mode: 'existing',
                         subcontBoqLineId: '',
                         volAwalRef: 0,
                         volRekonBaru: 0,
                         designator: '',
-                        namaPekerjaan: '',
                         satuan: 'Meter',
+                        namaPekerjaan: '',
                         hargaSubcont: 0
                     };
                     this.activeModal = 'rekon-adjust';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
                 },
 
                 openQuickEditRekonVol(row) {
-                    this.modalTitle = 'Update Volume Hasil Rekon Item';
+                    this.modalTitle = 'Update Volume Hasil Rekon Opname • ' + row.designator;
                     this.formRekonAdjust = {
                         subcontId: row.subcontId,
                         mode: 'existing',
@@ -3326,62 +4098,55 @@
                         volAwalRef: row.volAwal,
                         volRekonBaru: row.volRekon,
                         designator: row.designator,
-                        namaPekerjaan: row.namaPekerjaan,
                         satuan: row.satuan,
+                        namaPekerjaan: row.namaPekerjaan,
                         hargaSubcont: row.hargaSubcont
                     };
                     this.activeModal = 'rekon-adjust';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
                 },
 
                 onSelectExistingLineForRekon() {
-                    const line = this.subcontBoqLines.find(s => s.id === this.formRekonAdjust.subcontBoqLineId);
-                    if (line) {
-                        this.formRekonAdjust.volAwalRef = Number(line.volAwal) || 0;
-                        this.formRekonAdjust.volRekonBaru = Number(line.volAkhir) || 0;
-                    }
+                    const line = this.subcontBoqLines.find(l => l.id === this.formRekonAdjust.subcontBoqLineId);
+                    if (!line) return;
+                    this.formRekonAdjust.volAwalRef = Number(line.volAwal) || 0;
+                    this.formRekonAdjust.volRekonBaru = Number(line.volAkhir) || 0;
                 },
 
                 saveRekonAdjust() {
                     if (this.formRekonAdjust.mode === 'existing') {
-                        const line = this.subcontBoqLines.find(s => s.id === this.formRekonAdjust.subcontBoqLineId);
+                        const line = this.subcontBoqLines.find(l => l.id === this.formRekonAdjust.subcontBoqLineId);
                         if (!line) return;
                         line.volAkhir = Number(this.formRekonAdjust.volRekonBaru) || 0;
-
-                        const parentBoq = this.projectBoqLines.find(b => b.kodeProject === this.selectedRekonProject && b.designator === line.designator);
-                        if (parentBoq) {
-                            parentBoq.volAkhir = this.subcontBoqLines
-                                .filter(s => s.kodeProject === this.selectedRekonProject && s.designator === line.designator)
-                                .reduce((sum, s) => sum + (Number(s.volAkhir) || 0), 0);
-                        }
-                        this.showToast(`Volume hasil rekon ${line.designator} diperbarui menjadi ${line.volAkhir}!`);
+                        this.syncClientBoqRealizationFromSubconts(line.kodeProject, line.designator);
+                        this.showToast('Volume hasil rekon item ' + line.designator + ' berhasil diperbarui.');
                     } else {
                         if (!this.formRekonAdjust.subcontId) return;
-                        const volTambah = Number(this.formRekonAdjust.volRekonBaru) || 0;
                         this.subcontBoqLines.push({
-                            id: 'SBL-EXT-' + Date.now(),
+                            id: 'SBL-ADD-' + Date.now(),
                             kodeProject: this.selectedRekonProject,
                             subcontId: this.formRekonAdjust.subcontId,
-                            designator: this.formRekonAdjust.designator.toUpperCase(),
+                            designator: this.formRekonAdjust.designator,
                             namaPekerjaan: this.formRekonAdjust.namaPekerjaan,
                             satuan: this.formRekonAdjust.satuan,
                             volAwal: 0,
-                            volAkhir: volTambah,
+                            volAkhir: Number(this.formRekonAdjust.volRekonBaru) || 0,
                             hargaSubcont: Number(this.formRekonAdjust.hargaSubcont) || 0,
                             isExtraWork: true
                         });
-                        this.showToast(`Pekerjaan tambah baru (${this.formRekonAdjust.designator.toUpperCase()}) ditambahkan ke hasil rekon!`);
+                        this.showToast('Item pekerjaan tambah baru berhasil ditambahkan ke hasil rekon.');
                     }
-                    this.persistAll();
                     this.activeModal = '';
+                    this.saveLocalState();
                 },
 
                 openRekonMaterialModal() {
                     const prj = this.getProjectByCode(this.selectedRekonProject);
-                    const defSub = (this.selectedRekonSubcont !== 'ALL') ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
-                    this.modalTitle = 'Input Rekonsiliasi Material Subcont';
+                    const defaultSub = this.selectedRekonSubcont !== 'ALL' ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
+                    this.modalTitle = 'Input Rekonsiliasi Material & Potongan Subcont';
                     this.formRekonMat = {
-                        subcontId: defSub,
-                        kodeBarang: '',
+                        subcontId: defaultSub,
+                        kodeBarang: this.masterBarang[0]?.kodeBarang || '',
                         qtyAmbil: 0,
                         qtyTerpasang: 0,
                         qtyReturn: 0,
@@ -3389,13 +4154,14 @@
                         keterangan: ''
                     };
                     this.activeModal = 'rekon-material';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
                 },
 
                 saveRekonMaterial() {
                     const brg = this.masterBarang.find(b => b.kodeBarang === this.formRekonMat.kodeBarang);
                     if (!brg || !this.formRekonMat.subcontId) return;
-                    this.subcontRekonMaterials.unshift({
-                        id: 'RM-' + Date.now(),
+                    this.rekonMaterialItems.push({
+                        id: 'RMAT-' + Date.now(),
                         kodeProject: this.selectedRekonProject,
                         subcontId: this.formRekonMat.subcontId,
                         kodeBarang: brg.kodeBarang,
@@ -3407,1017 +4173,163 @@
                         hargaSatuan: Number(this.formRekonMat.hargaSatuan) || 0,
                         keterangan: this.formRekonMat.keterangan
                     });
-                    this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Data rekonsiliasi material subcont berhasil disimpan.');
+                    this.saveLocalState();
+                    this.showToast('Rekon material & perhitungan potongan berhasil disimpan.');
                 },
 
                 removeRekonMaterial(id) {
-                    this.subcontRekonMaterials = this.subcontRekonMaterials.filter(m => m.id !== id);
-                    this.persistAll();
-                    this.showToast('Baris rekon material dihapus.');
+                    this.rekonMaterialItems = this.rekonMaterialItems.filter(m => m.id !== id);
+                    this.saveLocalState();
+                    this.showToast('Catatan rekon material dihapus.');
+                },
+
+                openSubcontInvoiceModalForRekon() {
+                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    const defaultSub = this.selectedRekonSubcont !== 'ALL' ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
+                    const sisaNominal = Math.max(0, Math.round(this.getRekonSummary().sisaTagihanSubcont));
+                    this.modalTitle = 'Ajukan Invoice Sisa Tagihan Hasil Rekon Subcont';
+                    this.formSubcontInv = {
+                        kodeProject: this.selectedRekonProject,
+                        subcontId: defaultSub,
+                        noInvoice: 'INV-REKON/' + new Date().getFullYear() + '/' + (this.subcontInvoices.length + 1).toString().padStart(3, '0'),
+                        termin: 'Pelunasan Hasil Rekon Akhir',
+                        nominal: sisaNominal,
+                        attachmentUrl: '',
+                        attachmentName: ''
+                    };
+                    this.activeModal = 'subcont-inv';
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
                 },
 
                 exportRekonSubcontCSV() {
-                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    const rows = this.getRekonJasaRows();
                     const sum = this.getRekonSummary();
-                    const headers = ['Kategori', 'Subcont', 'Kode / Designator', 'Uraian', 'Satuan', 'Vol Awal / Ambil', 'Vol Tambah / Terpasang', 'Vol Kurang / Return', 'Vol Rekon / Selisih', 'Harga Satuan', 'Nilai Total'];
-                    const rows = [];
-
-                    this.getRekonJasaRows().forEach(r => {
-                        rows.push([
-                            'Rekon Jasa',
-                            this.getSubcontName(r.subcontId),
-                            r.designator,
-                            r.namaPekerjaan,
-                            r.satuan,
-                            r.volAwal,
-                            r.volTambah,
-                            r.volKurang,
-                            r.volRekon,
-                            r.hargaSubcont,
-                            r.nilaiRekon
-                        ]);
-                    });
-
-                    this.getFilteredRekonMaterials().forEach(m => {
-                        rows.push([
-                            'Rekon Material (Potongan)',
-                            this.getSubcontName(m.subcontId),
-                            m.kodeBarang,
-                            m.namaBarang,
-                            m.satuan,
-                            m.qtyAmbil,
-                            m.qtyTerpasang,
-                            m.qtyReturn,
-                            this.calcMaterialSelisih(m),
-                            m.hargaSatuan,
-                            -this.calcMaterialPotongan(m)
-                        ]);
-                    });
-
-                    this.getFilteredRekonInvoices().forEach(inv => {
-                        rows.push([
-                            'Tagihan Diajukan (' + inv.status + ')',
-                            inv.subcontName,
-                            inv.noInvoice,
-                            inv.termin,
-                            'Termin',
-                            1,
-                            0,
-                            0,
-                            1,
-                            inv.nominal,
-                            -inv.nominal
-                        ]);
-                    });
-
-                    rows.push(['RINGKASAN AKHIR', this.selectedRekonSubcont === 'ALL' ? 'Semua Subcont' : this.getSubcontName(this.selectedRekonSubcont), prj?.kodeProject || '', 'SISA TAGIHAN SUBCONT BERSIH', '', sum.volAwalTotal, sum.volTambahTotal, sum.volKurangTotal, sum.volRekonTotal, '', sum.sisaTagihanSubcont]);
-
-                    this.downloadCSV(`ACM_Hasil_Rekon_Subcont_${prj?.kodeProject || 'Project'}_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+                    const headers = ['Project', 'Subcont', 'Designator', 'Uraian Pekerjaan', 'Satuan', 'Vol Awal', 'Vol Tambah', 'Vol Kurang', 'Vol Hasil Rekon', 'Harga Satuan', 'Nilai SPK Awal', 'Nilai Tambah/Kurang', 'Total Nilai Rekon'];
+                    const csvRows = rows.map(r => [
+                        this.selectedRekonProject,
+                        this.getSubcontName(r.subcontId),
+                        r.designator,
+                        r.namaPekerjaan,
+                        r.satuan,
+                        r.volAwal,
+                        r.volTambah,
+                        r.volKurang,
+                        r.volRekon,
+                        r.hargaSubcont,
+                        r.nilaiAwal,
+                        r.nilaiSelisih,
+                        r.nilaiRekon
+                    ]);
+                    csvRows.push(['RINGKASAN', '', '', 'TOTAL JASA REKON', '', '', '', '', '', '', sum.nilaiKontrakAwal, sum.nilaiTambahKurang, sum.totalJasaRekon]);
+                    csvRows.push(['RINGKASAN', '', '', 'POTONGAN SELISIH MATERIAL', '', '', '', '', '', '', '', '', -sum.potonganMaterial]);
+                    csvRows.push(['RINGKASAN', '', '', 'SUDAH DITAGIH / INVOICE SUBCONT', '', '', '', '', '', '', '', '', -sum.totalSudahDitagih]);
+                    csvRows.push(['RINGKASAN', '', '', 'SISA HAK TAGIHAN SUBCONT', '', '', '', '', '', '', '', '', sum.sisaTagihanSubcont]);
+                    this.downloadCSV(`ACM_Hasil_Rekon_Subcont_${this.selectedRekonProject}_${new Date().toISOString().slice(0,10)}.csv`, headers, csvRows);
                 },
 
-                // ==================== EXPORT / CETAK PDF SPK SUBCONT ====================
-                triggerSpkExportFromHeader() {
-                    const prj = this.getProjectByCode(this.selectedBoqProject);
-                    if (!prj || !prj.subcontIds || prj.subcontIds.length === 0) {
-                        this.showToast('Project ini belum memiliki Tim Subcont pelaksana.', 'error');
-                        return;
-                    }
-                    const targetSubcontId = (this.selectedBoqSubcontFilter !== 'ALL')
-                        ? this.selectedBoqSubcontFilter
-                        : prj.subcontIds[0];
-                    this.openSpkPreviewModal(this.selectedBoqProject, targetSubcontId);
+                // ==================== WASPANG DAILY VOLUME (DENGAN VALIDASI & BUKTI FOTO) ====================
+                getSelectedWaspangBoqLine() {
+                    if (!this.waspangForm.subcontBoqLineId) return null;
+                    return this.subcontBoqLines.find(l => l.id === this.waspangForm.subcontBoqLineId) || null;
                 },
 
-                openSpkPreviewModal(kodeProject, subcontId) {
-                    const prj = this.getProjectByCode(kodeProject);
-                    if (!prj) return;
-                    const targetSubId = subcontId || (prj.subcontIds && prj.subcontIds[0]) || '';
-                    if (!targetSubId) {
-                        this.showToast('Tidak ada Tim Subcont terpilih untuk SPK.', 'error');
+                submitWaspangDaily() {
+                    const prj = this.getProjectByCode(this.waspangForm.kodeProject);
+                    const sline = this.subcontBoqLines.find(l => l.id === this.waspangForm.subcontBoqLineId);
+                    if (!prj || !sline) return;
+
+                    const vol = Number(this.waspangForm.volume);
+                    const sisaTarget = Math.max(0, (Number(sline.volAwal) || 0) - (Number(sline.volAkhir) || 0));
+
+                    if (vol > sisaTarget) {
+                        this.showToast(
+                            `Input ditolak! Volume harian (${vol}) melebihi sisa target SPK Subcont (${sisaTarget} ${sline.satuan || ''}).`,
+                            'error'
+                        );
                         return;
                     }
 
-                    const subObj = this.subconts.find(s => s.id === targetSubId);
-                    const lines = this.getSubcontBoqLines(kodeProject, targetSubId);
-                    const total = lines.reduce((sum, l) => sum + ((Number(l.volAwal) || 0) * (Number(l.hargaSubcont) || 0)), 0);
-                    const clientCode = this.clients.find(c => c.id === prj.clientId)?.code || 'ACM';
-                    const today = new Date();
-                    const yyyy = today.getFullYear();
-                    const mm = String(today.getMonth() + 1).padStart(2, '0');
-                    const seq = String(targetSubId).replace(/\D/g, '') || '01';
+                    sline.volAkhir = (Number(sline.volAkhir) || 0) + vol;
+                    this.syncClientBoqRealizationFromSubconts(prj.kodeProject, sline.designator);
 
-                    this.spkDraft = {
+                    const subName = this.getSubcontName(this.waspangForm.subcontId);
+                    this.waspangLogs.unshift({
+                        id: 'WSP-' + Date.now(),
+                        tanggal: this.waspangForm.tanggal,
                         kodeProject: prj.kodeProject,
                         projectName: prj.projectName,
-                        noPO: prj.noPO || '-',
-                        region: prj.region || '-',
-                        subcontId: targetSubId,
-                        subcontName: subObj ? subObj.name : targetSubId,
-                        subcontArea: subObj ? subObj.area : '-',
-                        noSpk: `SPK/ACM-${clientCode}/${prj.kodeProject}/${seq}/${mm}-${yyyy}`,
-                        tanggal: today.toISOString().split('T')[0],
-                        durasiKerja: '30 Hari Kalender',
-                        items: lines,
-                        totalNilai: total
-                    };
-
-                    this.modalTitle = 'Pratinjau & Export PDF SPK Subcont';
-                    this.activeModal = 'spk-preview';
-                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                },
-
-                refreshSpkDraftData() {
-                    this.openSpkPreviewModal(this.spkDraft.kodeProject, this.spkDraft.subcontId);
-                },
-
-                executePrintSpk() {
-                    if (!this.spkDraft.items || this.spkDraft.items.length === 0) {
-                        this.showToast('Tidak dapat mencetak SPK kosong. Alokasikan item pekerjaan ke Subcont terlebih dahulu.', 'error');
-                        return;
-                    }
-                    this.printMode = 'spk';
-                    const origTitle = document.title;
-                    document.title = `${this.spkDraft.noSpk.replace(/\//g, '_')} - ${this.spkDraft.subcontName}`;
-                    setTimeout(() => {
-                        window.print();
-                        setTimeout(() => {
-                            document.title = origTitle;
-                            this.printMode = '';
-                        }, 500);
-                    }, 200);
-                },
-
-                terbilangRupiah(angka) {
-                    const num = Math.floor(Math.abs(Number(angka) || 0));
-                    if (num === 0) return 'Nol Rupiah';
-                    const satuan = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
-                    const baca = (n) => {
-                        if (n < 12) return satuan[n];
-                        if (n < 20) return baca(n - 10) + ' Belas';
-                        if (n < 100) return baca(Math.floor(n / 10)) + ' Puluh ' + baca(n % 10);
-                        if (n < 200) return 'Seratus ' + baca(n - 100);
-                        if (n < 1000) return baca(Math.floor(n / 100)) + ' Ratus ' + baca(n % 100);
-                        if (n < 2000) return 'Seribu ' + baca(n - 1000);
-                        if (n < 1000000) return baca(Math.floor(n / 1000)) + ' Ribu ' + baca(n % 1000);
-                        if (n < 1000000000) return baca(Math.floor(n / 1000000)) + ' Juta ' + baca(n % 1000000);
-                        if (n < 1000000000000) return baca(Math.floor(n / 1000000000)) + ' Miliar ' + baca(n % 1000000000);
-                        return baca(Math.floor(n / 1000000000000)) + ' Triliun ' + baca(n % 1000000000000);
-                    };
-                    return baca(num).replace(/\s+/g, ' ').trim() + ' Rupiah';
-                },
-
-                // ==================== ROLE-BASED ACCESS & NAVIGATION ====================
-                applyDemoPreset() {
-                    const roleMap = {
-                        'Super Admin': 'rudi@acerocetha.co.id',
-                        'Project': 'project.yofc@acerocetha.co.id',
-                        'Warehouse': 'gudang.plb@acerocetha.co.id',
-                        'Accounting': 'finance@acerocetha.co.id',
-                        'Waspang': 'waspang.lapangan@acerocetha.co.id'
-                    };
-                    this.loginForm.email = roleMap[this.loginForm.demoRole] || 'user@acerocetha.co.id';
-                },
-
-                login() {
-                    this.isLoggedIn = true;
-                    this.currentRole = this.loginForm.demoRole;
-                    this.currentUser = this.loginForm.email.split('@')[0].toUpperCase();
-                    localStorage.setItem('acm_erp_logged_in', 'true');
-                    localStorage.setItem('acm_erp_role', this.currentRole);
-                    localStorage.setItem('acm_erp_user', this.currentUser);
-                    this.currentTab = 'dashboard';
-                    this.showToast(`Selamat datang ${this.currentUser} — Akses Divisi: ${this.currentRole}`);
-                },
-
-                logout() {
-                    this.isLoggedIn = false;
-                    localStorage.removeItem('acm_erp_logged_in');
-                },
-
-                canAccessModule(mod) {
-                    const role = (this.currentRole || '').toLowerCase();
-                    if (role === 'super admin') return true;
-                    if (mod === 'project') return role === 'project';
-                    if (mod === 'warehouse') return role === 'warehouse';
-                    if (mod === 'accounting') return role === 'accounting';
-                    if (mod === 'waspang') return role === 'waspang' || role === 'project';
-                    return false;
-                },
-
-                switchTab(tab) {
-                    this.currentTab = tab;
-                    this.mobileMenuOpen = false;
-                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                },
-
-                getTabTitle() {
-                    const map = {
-                        'dashboard': 'Dashboard Terintegrasi ACM-ERP',
-                        'prj-khs': 'Project • Master KHS • Klien',
-                        'prj-subcont': 'Project • Master Subcont',
-                        'prj-list': 'Project • Daftar Project • Subcont • Progress Keuangan',
-                        'prj-boq': 'Project • BoQ Utama • SPK Subcont & Adendum',
-                        'prj-subcont-inv': 'Project • Tagihan Subcont',
-                        'prj-rekon': 'Project • Hasil Rekon Material & Jasa • Sisa Tagihan Subcont',
-                        'waspang-daily': 'Waspang • Input Volume Harian Subcont',
-                        'wh-barang': 'Warehouse • Master Barang',
-                        'wh-gudang': 'Warehouse • Master Gudang',
-                        'wh-input': 'Warehouse • Input Transaksi',
-                        'wh-stok': 'Warehouse • Stok & Pelacakan Drum',
-                        'wh-usage': 'Warehouse • Material Usage',
-                        'wh-transaksi': 'Warehouse • Data Transaksi & BAST',
-                        'acc-notif': 'Accounting • Notifikasi Real-Time Divisi Project',
-                        'acc-client-inv': 'Accounting • Invoice Klien & Rekap CB',
-                        'acc-subcont-pay': 'Accounting • Proses Pembayaran Subcont',
-                        'acc-rekap-bulanan': 'Accounting • Rekap Bulanan & Cash Flow'
-                    };
-                    return map[this.currentTab] || 'ACM-ERP';
-                },
-
-                userRegion() { return 'ALL AREA (SUMATERA)'; },
-
-                showToast(msg, type = 'info') {
-                    this.toast = { show: true, message: msg, type: type };
-                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                    setTimeout(() => { this.toast.show = false; }, 4800);
-                },
-
-                formatRupiah(val) {
-                    const num = Number(val) || 0;
-                    return 'Rp ' + num.toLocaleString('id-ID');
-                },
-
-                // ==================== FILE ATTACHMENT & PREVIEW HELPERS ====================
-                handleFileUpload(event, target) {
-                    const file = event.target.files[0];
-                    if (!file) return;
-                    if (file.size > 1500000) {
-                        this.showToast('Ukuran file melebihi 1.5MB untuk penyimpanan lokal. Disarankan memakai link Google Drive.', 'error');
-                        event.target.value = '';
-                        return;
-                    }
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const dataUrl = e.target.result;
-                        if (target === 'waspang') {
-                            this.waspangForm.attachmentUrl = dataUrl;
-                            this.waspangForm.attachmentName = file.name;
-                        } else if (target === 'wh-tx') {
-                            this.newTrans.attachmentUrl = dataUrl;
-                            this.newTrans.attachmentName = file.name;
-                        } else if (target === 'subcont-inv') {
-                            this.formSubcontInv.attachmentUrl = dataUrl;
-                            this.formSubcontInv.attachmentName = file.name;
-                        }
-                        this.showToast(`Lampiran "${file.name}" siap disimpan.`);
-                    };
-                    reader.readAsDataURL(file);
-                },
-
-                openAttachmentPreview(title, url, name) {
-                    this.modalTitle = title;
-                    this.previewAttachment = { url: url, name: name || url };
-                    this.activeModal = 'attachment-preview';
-                    this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
-                },
-
-                isImageUrl(url) {
-                    if (!url) return false;
-                    if (url.startsWith('data:image/')) return true;
-                    return /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(url);
-                },
-
-                // ==================== EXPORT CSV / EXCEL HELPERS ====================
-                downloadCSV(filename, headers, rows) {
-                    const escapeCell = (val) => {
-                        const str = String(val === null || val === undefined ? '' : val);
-                        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-                            return '"' + str.replace(/"/g, '""') + '"';
-                        }
-                        return str;
-                    };
-                    const csvContent = '\uFEFF' + [
-                        headers.map(escapeCell).join(','),
-                        ...rows.map(r => r.map(escapeCell).join(','))
-                    ].join('\n');
-
-                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    this.showToast(`File ${filename} berhasil diunduh!`);
-                },
-
-                exportProjectsCSV() {
-                    const headers = ['Kode Project', 'No PO', 'Klien', 'Region', 'Nama Project', 'Tim Subcont', 'BoQ Klien Awal', 'BoQ Klien Akhir', 'BoQ Subcont Awal', 'Progress Fisik (%)', 'Cair Klien', 'Bayar Subcont'];
-                    const rows = this.masterProject.map(p => [
-                        p.kodeProject,
-                        p.noPO,
-                        this.getClientName(p.clientId),
-                        p.region,
-                        p.projectName,
-                        (p.subcontIds || []).map(sid => this.getSubcontName(sid)).join('; '),
-                        this.getProjectBoqTotal(p.kodeProject, 'awal'),
-                        this.getProjectBoqTotal(p.kodeProject, 'akhir'),
-                        this.getAllSubcontsProjectBoqTotal(p.kodeProject, 'awal'),
-                        this.getProjectPhysicalProgress(p.kodeProject),
-                        this.getProjectClientPaid(p.noPO),
-                        this.getProjectSubcontPaid(p.kodeProject)
-                    ]);
-                    this.downloadCSV(`ACM_Daftar_Project_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
-                },
-
-                exportBoqCSV() {
-                    const prj = this.getProjectByCode(this.selectedBoqProject);
-                    const headers = ['Tipe', 'Subcont', 'Designator', 'Nama Pekerjaan', 'Satuan', 'Vol Awal', 'Vol Akhir', 'Harga Material', 'Harga Jasa / Subcont', 'Total Awal', 'Total Akhir'];
-                    const clientRows = this.getProjectBoqLines(this.selectedBoqProject).map(l => [
-                        'BoQ Klien',
-                        '-',
-                        l.designator,
-                        l.namaPekerjaan,
-                        l.satuan,
-                        l.volAwal,
-                        l.volAkhir,
-                        l.isClientMaterial ? 0 : l.hargaMaterial,
-                        l.hargaJasa,
-                        this.calcBoqLineClientTotal(l, 'awal'),
-                        this.calcBoqLineClientTotal(l, 'akhir')
-                    ]);
-                    const subRows = this.getSubcontBoqLines(this.selectedBoqProject, 'ALL').map(s => [
-                        'BoQ Subcont',
-                        this.getSubcontName(s.subcontId),
-                        s.designator,
-                        s.namaPekerjaan,
-                        s.satuan,
-                        s.volAwal,
-                        s.volAkhir,
-                        0,
-                        s.hargaSubcont,
-                        s.volAwal * s.hargaSubcont,
-                        s.volAkhir * s.hargaSubcont
-                    ]);
-                    this.downloadCSV(`ACM_BoQ_${prj?.kodeProject || 'Project'}_${new Date().toISOString().slice(0,10)}.csv`, headers, [...clientRows, ...subRows]);
-                },
-
-                exportClientInvoicesCSV() {
-                    const headers = ['No', 'Area', 'No PO', 'Lokasi Pekerjaan', 'Termin', 'No Invoice', 'Tgl Invoice', 'No Faktur Pajak', 'Nilai DPP', 'PPh 1.75%', 'PPN 11%', 'Nett Cash Bank', 'Tgl CB', 'Status'];
-                    const rows = this.clientInvoices.map((inv, idx) => [
-                        idx + 1,
-                        inv.area,
-                        inv.noPO,
-                        inv.lokasiPekerjaan,
-                        inv.termInv,
-                        inv.noInvoice,
-                        inv.tglInvoice,
-                        inv.noFakturPajak,
-                        inv.nilaiDpp,
-                        inv.pph175,
-                        inv.ppn11,
-                        inv.nettTerima,
-                        inv.tglCb,
-                        inv.statusPembayaran
-                    ]);
-                    this.downloadCSV(`ACM_Rekap_Invoice_Klien_CB_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
-                },
-
-                exportSubcontInvoicesCSV() {
-                    const headers = ['No Tagihan', 'Tanggal', 'Kode Project', 'Nama Project', 'Subcont Penagih', 'Termin', 'Nominal', 'Status'];
-                    const rows = this.subcontInvoices.map(inv => [
-                        inv.noInvoice,
-                        inv.tanggal,
-                        inv.kodeProject,
-                        inv.projectName,
-                        inv.subcontName,
-                        inv.termin,
-                        inv.nominal,
-                        inv.status
-                    ]);
-                    this.downloadCSV(`ACM_Tagihan_Subcont_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
-                },
-
-                exportWarehouseTxCSV() {
-                    const headers = ['No Transaksi', 'Tanggal', 'Tipe', 'Gudang Asal', 'Project / Tujuan', 'Kode Barang', 'Nama Barang', 'Drum ID', 'Qty', 'Keterangan'];
-                    const rows = this.transactions.map(tx => [
-                        tx.noTransaksi,
-                        tx.tanggal,
-                        tx.tipeTransaksi,
-                        tx.gudangAsal,
-                        tx.kodeProject || tx.gudangTujuan || '-',
-                        tx.singleKodeBarang,
-                        tx.singleNamaBarang,
-                        tx.singleDrumId || '-',
-                        tx.singleQty,
-                        tx.keterangan
-                    ]);
-                    this.downloadCSV(`ACM_Transaksi_Gudang_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
-                },
-
-                // ==================== HELPER GETTERS ====================
-                getClientName(id) { return this.clients.find(c => c.id === id)?.name || id; },
-                getSubcontName(id) { return this.subconts.find(s => s.id === id)?.name || id; },
-                getProjectByCode(code) { return this.masterProject.find(p => p.kodeProject === code); },
-                getKhsVersionNameById(vid) { return this.khsVersions.find(v => v.id === vid)?.versionName || 'KHS Standar'; },
-                getActiveKhsVersionName() {
-                    const cName = this.getClientName(this.selectedKhsClient);
-                    const vName = this.getKhsVersionNameById(this.selectedKhsVersionId);
-                    return `${cName} — ${vName}`;
-                },
-
-                getFilteredKhsVersions() {
-                    return this.khsVersions.filter(v => v.clientId === this.selectedKhsClient);
-                },
-
-                onClientFilterChange() {
-                    const versions = this.getFilteredKhsVersions();
-                    if (versions.length > 0) {
-                        const def = versions.find(v => v.isDefault) || versions[0];
-                        this.selectedKhsVersionId = def.id;
-                    } else {
-                        this.selectedKhsVersionId = '';
-                    }
-                },
-
-                getFilteredKhsItems() {
-                    return this.khsItems.filter(k => k.clientId === this.selectedKhsClient && k.khsVersionId === this.selectedKhsVersionId);
-                },
-
-                getFilteredSubcontRates() { return this.subcontRates.filter(r => r.subcontId === this.selectedSubcontId); },
-
-                // BoQ Klien Getters
-                getProjectBoqLines(kodeProject) { return this.projectBoqLines.filter(l => l.kodeProject === kodeProject); },
-                calcBoqLineClientTotal(line, mode) {
-                    const vol = mode === 'awal' ? (Number(line.volAwal) || 0) : (Number(line.volAkhir) || 0);
-                    const matPrice = line.isClientMaterial ? 0 : (Number(line.hargaMaterial) || 0);
-                    return vol * (matPrice + (Number(line.hargaJasa) || 0));
-                },
-                getProjectBoqTotal(kodeProject, mode) {
-                    const lines = this.getProjectBoqLines(kodeProject);
-                    if (lines.length === 0) {
-                        const prj = this.getProjectByCode(kodeProject);
-                        return Number(prj?.nominalAwal) || 0;
-                    }
-                    return lines.reduce((sum, l) => sum + this.calcBoqLineClientTotal(l, mode), 0);
-                },
-
-                // BoQ Multi-Subcont Getters
-                getSubcontBoqLines(kodeProject, subcontId = 'ALL') {
-                    return this.subcontBoqLines.filter(s => s.kodeProject === kodeProject && (subcontId === 'ALL' || s.subcontId === subcontId));
-                },
-                getFilteredSubcontBoqLines() {
-                    return this.getSubcontBoqLines(this.selectedBoqProject, this.selectedBoqSubcontFilter);
-                },
-                getSubcontProjectBoqTotal(kodeProject, subcontId, mode) {
-                    return this.getSubcontBoqLines(kodeProject, subcontId).reduce((sum, s) => {
-                        const vol = mode === 'awal' ? (Number(s.volAwal) || 0) : (Number(s.volAkhir) || 0);
-                        return sum + (vol * (Number(s.hargaSubcont) || 0));
-                    }, 0);
-                },
-                getAllSubcontsProjectBoqTotal(kodeProject, mode) {
-                    return this.getSubcontBoqLines(kodeProject, 'ALL').reduce((sum, s) => {
-                        const vol = mode === 'awal' ? (Number(s.volAwal) || 0) : (Number(s.volAkhir) || 0);
-                        return sum + (vol * (Number(s.hargaSubcont) || 0));
-                    }, 0);
-                },
-                getAllocatedSubcontVolumeForDesignator(kodeProject, designator) {
-                    return this.subcontBoqLines
-                        .filter(s => s.kodeProject === kodeProject && s.designator === designator)
-                        .reduce((sum, s) => sum + (Number(s.volAwal) || 0), 0);
-                },
-                getRemainingClientBoqVolume(kodeProject, designator) {
-                    const clientLine = this.projectBoqLines.find(l => l.kodeProject === kodeProject && l.designator === designator);
-                    if (!clientLine) return 0;
-                    const allocated = this.getAllocatedSubcontVolumeForDesignator(kodeProject, designator);
-                    return Math.max(0, (Number(clientLine.volAwal) || 0) - allocated);
-                },
-                getSelectedClientBoqLineForAllocation() {
-                    return this.projectBoqLines.find(l => l.id === this.formSubcontBoq.boqLineId) || null;
-                },
-                getSelectedWaspangBoqLine() {
-                    return this.subcontBoqLines.find(s => s.id === this.waspangForm.subcontBoqLineId) || null;
-                },
-                getProjectAdendumLogs(kodeProject) {
-                    return this.boqAdendumLogs.filter(r => r.kodeProject === kodeProject);
-                },
-
-                // Progress Fisik Total & Per Subcont
-                getProjectPhysicalProgress(kodeProject) {
-                    const lines = this.getProjectBoqLines(kodeProject);
-                    if (lines.length === 0) return 0;
-                    let totalAwal = 0, totalAkhir = 0;
-                    lines.forEach(l => { totalAwal += Number(l.volAwal) || 0; totalAkhir += Number(l.volAkhir) || 0; });
-                    return totalAwal > 0 ? Math.min(100, Math.round((totalAkhir / totalAwal) * 100)) : 0;
-                },
-                getSubcontPhysicalProgress(kodeProject, subcontId) {
-                    const lines = this.getSubcontBoqLines(kodeProject, subcontId);
-                    if (lines.length === 0) return 0;
-                    let totalAwal = 0, totalAkhir = 0;
-                    lines.forEach(s => { totalAwal += Number(s.volAwal) || 0; totalAkhir += Number(s.volAkhir) || 0; });
-                    return totalAwal > 0 ? Math.min(100, Math.round((totalAkhir / totalAwal) * 100)) : 0;
-                },
-
-                getProjectClientPaid(noPO) {
-                    return this.clientInvoices.filter(i => i.noPO === noPO && i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0);
-                },
-                getProjectSubcontPaid(kodeProject) {
-                    return this.subcontInvoices.filter(i => i.kodeProject === kodeProject && i.status === 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0);
-                },
-                getProjectFinanceStatusText(prj) {
-                    const paid = this.getProjectClientPaid(prj.noPO);
-                    if (paid > 0) return 'Cair Sebagian / Lunas';
-                    const invExists = this.clientInvoices.some(i => i.noPO === prj.noPO);
-                    return invExists ? 'Sudah Ditagih (Outstanding)' : 'Belum Ditagihkan';
-                },
-
-                totalProjectContractValue() { return this.masterProject.reduce((s, p) => s + this.getProjectBoqTotal(p.kodeProject, 'awal'), 0); },
-                totalClientCashIn() { return this.clientInvoices.filter(i => i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0); },
-                totalSubcontPending() { return this.subcontInvoices.filter(i => i.status !== 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0); },
-                unreadNotificationsCount() { return this.notifications.filter(n => !n.isRead).length; },
-
-                // ==================== PROJECT & KHS ACTIONS ====================
-                openClientModal() { this.modalTitle = 'Tambah Klien Baru'; this.formClient = { name: '', code: '' }; this.activeModal = 'client'; },
-                saveClient() {
-                    const id = 'CLI-' + this.formClient.code.toUpperCase();
-                    const vId = 'VERS-' + Date.now();
-                    this.clients.push({ id, code: this.formClient.code.toUpperCase(), name: this.formClient.name });
-                    this.khsVersions.push({ id: vId, clientId: id, versionName: 'KHS 2026 (Default)', isDefault: true });
-                    this.selectedKhsClient = id;
-                    this.selectedKhsVersionId = vId;
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Klien baru & versi KHS awal berhasil ditambahkan.');
-                },
-
-                openKhsVersionModal() {
-                    this.modalTitle = 'Buat Versi KHS Baru (Multi-Tahun / Adendum)';
-                    this.formKhsVersion = { clientId: this.selectedKhsClient, versionName: '', isDefault: true };
-                    this.activeModal = 'khs-version';
-                },
-                saveKhsVersion() {
-                    if (this.formKhsVersion.isDefault) {
-                        this.khsVersions.forEach(v => { if (v.clientId === this.formKhsVersion.clientId) v.isDefault = false; });
-                    }
-                    const newId = 'VERS-' + Date.now();
-                    this.khsVersions.push({
-                        id: newId,
-                        clientId: this.formKhsVersion.clientId,
-                        versionName: this.formKhsVersion.versionName,
-                        isDefault: this.formKhsVersion.isDefault
+                        subcontId: this.waspangForm.subcontId,
+                        subcontName: subName,
+                        designator: sline.designator,
+                        namaPekerjaan: sline.namaPekerjaan,
+                        volume: vol,
+                        waspangName: this.currentUser + ' (Waspang)',
+                        attachmentUrl: this.waspangForm.attachmentUrl || '',
+                        attachmentName: this.waspangForm.attachmentName || 'Bukti_Lapangan.jpg'
                     });
-                    this.selectedKhsClient = this.formKhsVersion.clientId;
-                    this.selectedKhsVersionId = newId;
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast(`Versi KHS "${this.formKhsVersion.versionName}" berhasil dibuat!`);
+                    this.waspangForm.volume = '';
+                    this.waspangForm.attachmentUrl = '';
+                    this.waspangForm.attachmentName = '';
+                    this.saveLocalState();
+                    this.showToast(`Volume harian +${vol} untuk ${subName} tersimpan.`);
                 },
 
-                openKhsItemModal() {
-                    this.modalTitle = 'Tambah Item KHS Klien';
-                    this.formKhs = {
-                        khsVersionId: this.selectedKhsVersionId || (this.getFilteredKhsVersions()[0]?.id || ''),
-                        designator: '',
-                        namaPekerjaan: '',
-                        satuan: 'Meter',
-                        isClientMaterial: false,
-                        hargaMaterial: 0,
-                        hargaJasa: 0
-                    };
-                    this.activeModal = 'khs';
-                },
-                saveKhsItem() {
-                    this.khsItems.push({
-                        id: 'KHS-' + Date.now(),
-                        clientId: this.selectedKhsClient,
-                        khsVersionId: this.formKhs.khsVersionId,
-                        designator: this.formKhs.designator.toUpperCase(),
-                        namaPekerjaan: this.formKhs.namaPekerjaan,
-                        satuan: this.formKhs.satuan,
-                        isClientMaterial: this.formKhs.isClientMaterial,
-                        hargaMaterial: this.formKhs.isClientMaterial ? 0 : Number(this.formKhs.hargaMaterial),
-                        hargaJasa: Number(this.formKhs.hargaJasa)
-                    });
-                    this.selectedKhsVersionId = this.formKhs.khsVersionId;
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Item KHS berhasil ditambahkan ke versi terpilih.');
-                },
-
-                openSubcontModal() { this.modalTitle = 'Tambah Tim Subcont'; this.formSubcont = { name: '', area: '' }; this.activeModal = 'subcont'; },
-                saveSubcont() {
-                    const id = 'SUB-' + String(this.subconts.length + 1).padStart(2, '0');
-                    this.subconts.push({ id, name: this.formSubcont.name, area: this.formSubcont.area.toUpperCase() });
-                    this.selectedSubcontId = id;
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Tim Subcont baru berhasil ditambahkan.');
-                },
-
-                openSubcontRateModal() { this.modalTitle = 'Set Harga Item Subcont'; this.formSubcontRate = { khsItemId: '', hargaSubcont: 0 }; this.activeModal = 'subcont-rate'; },
-                saveSubcontRate() {
-                    const khs = this.khsItems.find(k => k.id === this.formSubcontRate.khsItemId);
-                    if (!khs) return;
-                    this.subcontRates.push({
-                        id: 'SR-' + Date.now(),
-                        subcontId: this.selectedSubcontId,
-                        khsItemId: khs.id,
-                        designator: khs.designator,
-                        namaPekerjaan: khs.namaPekerjaan,
-                        satuan: khs.satuan,
-                        hargaSubcont: Number(this.formSubcontRate.hargaSubcont)
-                    });
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Harga satuan Subcont berhasil disimpan.');
-                },
-
-                openNewProjectModal() {
-                    this.modalTitle = 'Input Project Baru';
-                    this.formProject = { clientId: this.clients[0]?.id || 'CLI-YOFC', region: 'PALEMBANG', noPO: '', subcontIds: [], projectName: '', nominalAwal: 0 };
-                    this.activeModal = 'new-project';
-                },
-                saveNewProject() {
-                    const code = this.formProject.region.substring(0,3).toUpperCase() + '-2026-' + String(this.masterProject.length + 1).padStart(3, '0');
-                    const subNames = (this.formProject.subcontIds || []).map(sid => this.getSubcontName(sid)).join(', ') || 'Belum ditentukan';
-                    const newPrj = {
-                        kodeProject: code,
-                        clientId: this.formProject.clientId,
-                        region: this.formProject.region.toUpperCase(),
-                        noPO: this.formProject.noPO,
-                        subcontIds: [...(this.formProject.subcontIds || [])],
-                        projectName: this.formProject.projectName,
-                        nominalAwal: 0
-                    };
-                    this.masterProject.unshift(newPrj);
-                    this.selectedBoqProject = code;
-
-                    this.notifications.unshift({
-                        id: Date.now(),
-                        type: 'NEW_PROJECT',
-                        title: `Project Baru: ${newPrj.projectName}`,
-                        nominal: 0,
-                        detail: `No PO: ${newPrj.noPO} | Subcont: ${subNames} | Siap input BoQ & Penagihan`,
-                        timestamp: 'Baru saja',
-                        isRead: false
-                    });
-
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast(`Project ${code} tersimpan (Nominal awal Rp 0, otomatis update saat isi BoQ)!`);
-                },
-
-                openManageProjectSubconts(prj) {
-                    this.manageSubcontProject = prj;
-                    this.managedSubcontIds = [...(prj.subcontIds || [])];
-                    this.modalTitle = 'Kelola Tim Subcont Pelaksana Project';
-                    this.activeModal = 'manage-prj-subconts';
-                },
-                saveManagedProjectSubconts() {
-                    if (!this.manageSubcontProject) return;
-                    this.manageSubcontProject.subcontIds = [...this.managedSubcontIds];
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast(`Daftar tim subcont pada ${this.manageSubcontProject.kodeProject} berhasil diperbarui!`);
-                },
-
-                openAddBoqFromKhsModal() { this.modalTitle = 'Tambah Item ke BoQ Utama Klien'; this.formBoqAdd = { khsItemId: '', volAwal: 0, volAkhir: 0 }; this.activeModal = 'boq-from-khs'; },
-                saveBoqFromKhs() {
-                    const khs = this.khsItems.find(k => k.id === this.formBoqAdd.khsItemId);
-                    if (!khs) return;
-                    this.projectBoqLines.push({
-                        id: 'BL-' + Date.now(),
-                        kodeProject: this.selectedBoqProject,
-                        designator: khs.designator,
-                        namaPekerjaan: khs.namaPekerjaan,
-                        satuan: khs.satuan,
-                        isClientMaterial: khs.isClientMaterial,
-                        volAwal: Number(this.formBoqAdd.volAwal),
-                        volAkhir: Number(this.formBoqAdd.volAkhir) || 0,
-                        hargaMaterial: khs.isClientMaterial ? 0 : Number(khs.hargaMaterial),
-                        hargaJasa: Number(khs.hargaJasa)
-                    });
-                    const prj = this.getProjectByCode(this.selectedBoqProject);
-                    if (prj) prj.nominalAwal = this.getProjectBoqTotal(this.selectedBoqProject, 'awal');
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Item BoQ Klien berhasil ditambahkan & nilai kontrak project terupdate.');
-                },
-
-                openBoqAdendumModal(line) {
-                    this.modalTitle = 'Revisi / Adendum Item BoQ Klien';
-                    this.formBoqAdendum = {
-                        lineId: line.id,
-                        designator: line.designator,
-                        namaPekerjaan: line.namaPekerjaan,
-                        isClientMaterial: line.isClientMaterial,
-                        volAwal: Number(line.volAwal),
-                        hargaMaterial: Number(line.hargaMaterial),
-                        hargaJasa: Number(line.hargaJasa),
-                        alasan: ''
-                    };
-                    this.activeModal = 'boq-adendum';
-                },
-                saveBoqAdendum() {
-                    const line = this.projectBoqLines.find(l => l.id === this.formBoqAdendum.lineId);
-                    if (!line) return;
-
-                    const oldVol = Number(line.volAwal);
-                    const oldMat = Number(line.hargaMaterial);
-                    const oldJasa = Number(line.hargaJasa);
-
-                    const newVol = Number(this.formBoqAdendum.volAwal);
-                    const newMat = line.isClientMaterial ? 0 : Number(this.formBoqAdendum.hargaMaterial);
-                    const newJasa = Number(this.formBoqAdendum.hargaJasa);
-
-                    line.volAwal = newVol;
-                    line.hargaMaterial = newMat;
-                    line.hargaJasa = newJasa;
-
-                    const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
-                    this.boqAdendumLogs.unshift({
-                        id: 'REV-' + Date.now(),
-                        kodeProject: line.kodeProject,
-                        designator: line.designator,
-                        timestamp: nowStr,
-                        user: this.currentUser,
-                        oldVolAwal: oldVol,
-                        newVolAwal: newVol,
-                        oldHargaMaterial: oldMat,
-                        newHargaMaterial: newMat,
-                        oldHargaJasa: oldJasa,
-                        newHargaJasa: newJasa,
-                        alasan: this.formBoqAdendum.alasan
-                    });
-
-                    const prj = this.getProjectByCode(line.kodeProject);
-                    if (prj) prj.nominalAwal = this.getProjectBoqTotal(line.kodeProject, 'awal');
-
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast(`Adendum ${line.designator} berhasil disimpan & tercatat di Log Audit Trail.`);
-                },
-
-                openAddSubcontBoqModal() {
-                    const prj = this.getProjectByCode(this.selectedBoqProject);
-                    const defaultSub = (this.selectedBoqSubcontFilter !== 'ALL') ? this.selectedBoqSubcontFilter : (prj?.subcontIds?.[0] || '');
-                    this.modalTitle = 'Alokasi Item & Volume SPK ke Subcont';
-                    this.formSubcontBoq = { subcontId: defaultSub, boqLineId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 };
-                    this.activeModal = 'subcont-boq-add';
-                },
-                autoFillSubcontRateOnModal() {
-                    const bl = this.projectBoqLines.find(b => b.id === this.formSubcontBoq.boqLineId);
-                    if (!bl || !this.formSubcontBoq.subcontId) return;
-                    const rateObj = this.subcontRates.find(r => r.subcontId === this.formSubcontBoq.subcontId && r.designator === bl.designator);
-                    if (rateObj) {
-                        this.formSubcontBoq.hargaSubcont = Number(rateObj.hargaSubcont);
-                    }
-                    const rem = this.getRemainingClientBoqVolume(this.selectedBoqProject, bl.designator);
-                    if (rem > 0 && (!this.formSubcontBoq.volAwal || this.formSubcontBoq.volAwal > rem)) {
-                        this.formSubcontBoq.volAwal = rem;
-                    }
-                },
-                saveSubcontBoqLine() {
-                    const bl = this.projectBoqLines.find(b => b.id === this.formSubcontBoq.boqLineId);
-                    if (!bl || !this.formSubcontBoq.subcontId) return;
-
-                    const reqVol = Number(this.formSubcontBoq.volAwal) || 0;
-                    const remainingQuota = this.getRemainingClientBoqVolume(this.selectedBoqProject, bl.designator);
-
-                    if (reqVol > remainingQuota) {
-                        this.showToast(`Gagal! Volume alokasi (${reqVol}) melebihi sisa kuota kontrak Klien (${remainingQuota} ${bl.satuan || ''}).`, 'error');
-                        return;
-                    }
-
-                    this.subcontBoqLines.push({
-                        id: 'SBL-' + Date.now(),
-                        kodeProject: this.selectedBoqProject,
-                        subcontId: this.formSubcontBoq.subcontId,
-                        designator: bl.designator,
-                        namaPekerjaan: bl.namaPekerjaan,
-                        satuan: bl.satuan || 'Unit',
-                        volAwal: reqVol,
-                        volAkhir: Number(this.formSubcontBoq.volAkhir) || 0,
-                        hargaSubcont: Number(this.formSubcontBoq.hargaSubcont)
-                    });
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast(`Alokasi pekerjaan untuk ${this.getSubcontName(this.formSubcontBoq.subcontId)} berhasil disimpan!`);
-                },
-                removeSubcontBoqLine(id) {
-                    this.subcontBoqLines = this.subcontBoqLines.filter(s => s.id !== id);
-                    this.persistAll();
-                    this.showToast('Item pekerjaan Subcont dihapus.');
-                },
-
+                // ==================== SUBCONT INVOICE & AUTO-NOTIF ====================
                 openSubcontInvoiceModal() {
                     const defaultPrj = this.masterProject[0]?.kodeProject || '';
                     const defaultSub = this.masterProject[0]?.subcontIds?.[0] || '';
-                    this.modalTitle = 'Ajukan Invoice Tagihan Subcont';
-                    this.formSubcontInv = { kodeProject: defaultPrj, subcontId: defaultSub, noInvoice: '', termin: 'Termin 1 (50%)', nominal: 0, attachmentUrl: '', attachmentName: '' };
+                    this.modalTitle = 'Ajukan Tagihan Subcont (Kirim Notif & Bukti BAP ke Keuangan)';
+                    this.formSubcontInv = { kodeProject: defaultPrj, subcontId: defaultSub, noInvoice: '', termin: 'Termin 1 (Progress)', nominal: 0, attachmentUrl: '', attachmentName: '' };
                     this.activeModal = 'subcont-inv';
                 },
                 saveSubcontInvoice() {
                     const prj = this.getProjectByCode(this.formSubcontInv.kodeProject);
-                    const subName = this.getSubcontName(this.formSubcontInv.subcontId);
-                    const invObj = {
-                        id: Date.now(),
+                    const sub = this.subconts.find(s => s.id === this.formSubcontInv.subcontId);
+                    if (!prj || !sub) return;
+
+                    const newInv = {
+                        id: 'SINV-' + Date.now(),
                         noInvoice: this.formSubcontInv.noInvoice,
                         tanggal: new Date().toISOString().split('T')[0],
-                        kodeProject: this.formSubcontInv.kodeProject,
-                        projectName: prj?.projectName || this.formSubcontInv.kodeProject,
-                        subcontId: this.formSubcontInv.subcontId,
-                        subcontName: subName,
+                        kodeProject: prj.kodeProject,
+                        projectName: prj.projectName,
+                        subcontId: sub.id,
+                        subcontName: sub.name,
                         termin: this.formSubcontInv.termin,
                         nominal: Number(this.formSubcontInv.nominal),
                         status: 'Pending',
                         attachmentUrl: this.formSubcontInv.attachmentUrl || '',
-                        attachmentName: this.formSubcontInv.attachmentName || (this.formSubcontInv.attachmentUrl ? 'Link Dokumen BAP' : '')
+                        attachmentName: this.formSubcontInv.attachmentName || 'Lampiran_BAP.pdf'
                     };
-                    this.subcontInvoices.unshift(invObj);
+                    this.subcontInvoices.unshift(newInv);
 
                     this.notifications.unshift({
-                        id: Date.now() + 1,
-                        type: 'SUBCONT_INV',
-                        title: `Tagihan Subcont Masuk: ${subName} (${invObj.noInvoice})`,
-                        nominal: invObj.nominal,
-                        detail: `Project: ${invObj.projectName} | ${invObj.termin}`,
+                        id: 'NTF-' + Date.now(),
+                        type: 'SUBCONT_INVOICE',
+                        title: 'Tagihan Subcont Masuk: ' + sub.name,
+                        nominal: newInv.nominal,
+                        detail: newInv.noInvoice + ' • ' + prj.projectName + ' (' + newInv.termin + ')',
                         timestamp: 'Baru saja',
                         isRead: false
                     });
 
-                    this.persistAll();
                     this.activeModal = '';
-                    this.showToast('Tagihan Subcont diajukan & Notifikasi dikirim ke Accounting!');
+                    this.saveLocalState();
+                    this.showToast('Tagihan Subcont diajukan beserta bukti BAP! Notifikasi dikirim ke Divisi Accounting.');
                 },
 
-                // ==================== WASPANG DAILY VOLUME (PER SUBCONT + VALIDASI OVER-LIMIT) ====================
-                submitWaspangDaily() {
-                    const sline = this.subcontBoqLines.find(s => s.id === this.waspangForm.subcontBoqLineId);
-                    const prj = this.getProjectByCode(this.waspangForm.kodeProject);
-                    if (!sline || !prj) return;
-
-                    const addVol = Number(this.waspangForm.volume) || 0;
-                    const sisaTargetSubcont = Math.max(0, (Number(sline.volAwal) || 0) - (Number(sline.volAkhir) || 0));
-
-                    if (addVol > sisaTargetSubcont) {
-                        this.showToast(`Gagal! Volume input (${addVol}) melebihi sisa target volume Subcont (${sisaTargetSubcont} ${sline.satuan || ''}).`, 'error');
-                        return;
-                    }
-
-                    sline.volAkhir = (Number(sline.volAkhir) || 0) + addVol;
-
-                    const parentBoqLine = this.projectBoqLines.find(b => b.kodeProject === this.waspangForm.kodeProject && b.designator === sline.designator);
-                    if (parentBoqLine) {
-                        const sumRealisasiSubconts = this.subcontBoqLines
-                            .filter(s => s.kodeProject === this.waspangForm.kodeProject && s.designator === sline.designator)
-                            .reduce((sum, s) => sum + (Number(s.volAkhir) || 0), 0);
-                        parentBoqLine.volAkhir = sumRealisasiSubconts;
-                    }
-
-                    this.waspangLogs.unshift({
-                        id: Date.now(),
-                        tanggal: this.waspangForm.tanggal,
-                        kodeProject: this.waspangForm.kodeProject,
-                        projectName: prj.projectName,
-                        subcontId: this.waspangForm.subcontId,
-                        subcontName: this.getSubcontName(this.waspangForm.subcontId),
-                        designator: sline.designator,
-                        namaPekerjaan: sline.namaPekerjaan,
-                        volume: addVol,
-                        waspangName: this.currentUser,
-                        attachmentUrl: this.waspangForm.attachmentUrl || '',
-                        attachmentName: this.waspangForm.attachmentName || (this.waspangForm.attachmentUrl ? 'Link Dokumentasi Lapangan' : '')
-                    });
-
-                    this.waspangForm.volume = '';
-                    this.waspangForm.attachmentUrl = '';
-                    this.waspangForm.attachmentName = '';
-                    this.persistAll();
-                    this.showToast(`Progress +${addVol} untuk ${this.getSubcontName(this.waspangForm.subcontId)} berhasil disimpan!`);
-                },
-
-                // ==================== WAREHOUSE ACTIONS ====================
-                openWhMasterModal(type) {
-                    if (type === 'barang') {
-                        this.modalTitle = 'Tambah Master Barang Gudang';
-                        this.formWhBarang = { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' };
-                        this.activeModal = 'wh-barang';
-                    } else if (type === 'gudang') {
-                        this.modalTitle = 'Tambah Master Gudang Regional';
-                        this.formWhGudang = { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' };
-                        this.activeModal = 'wh-gudang';
-                    }
-                },
-                saveWhBarang() {
-                    const exists = this.masterBarang.some(b => b.kodeBarang.toUpperCase() === this.formWhBarang.kodeBarang.toUpperCase());
-                    if (exists) {
-                        this.showToast('Kode Barang (SKU) sudah terdaftar di Master Barang.', 'error');
-                        return;
-                    }
-                    this.masterBarang.push({
-                        kategori: this.formWhBarang.kategori,
-                        jenis: this.formWhBarang.jenis,
-                        kodeBarang: this.formWhBarang.kodeBarang.toUpperCase(),
-                        namaBarang: this.formWhBarang.namaBarang,
-                        isClientSupplied: this.formWhBarang.isClientSupplied,
-                        sat: this.formWhBarang.sat
-                    });
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Master Barang baru berhasil ditambahkan!');
-                },
-                saveWhGudang() {
-                    const exists = this.masterGudang.some(g => g.kodeGudang.toUpperCase() === this.formWhGudang.kodeGudang.toUpperCase());
-                    if (exists) {
-                        this.showToast('Kode Gudang sudah terdaftar.', 'error');
-                        return;
-                    }
-                    this.masterGudang.push({
-                        region: this.formWhGudang.region.toUpperCase(),
-                        kodeGudang: this.formWhGudang.kodeGudang.toUpperCase(),
-                        namaGudang: this.formWhGudang.namaGudang,
-                        tipeKepemilikan: this.formWhGudang.tipeKepemilikan,
-                        lokasi: this.formWhGudang.lokasi
-                    });
-                    this.persistAll();
-                    this.activeModal = '';
-                    this.showToast('Master Gudang baru berhasil ditambahkan!');
-                },
-
-                openInputTransaction() { this.switchTab('wh-input'); },
-                submitWhTransaction() {
-                    const brg = this.masterBarang.find(b => b.kodeBarang === this.newTrans.singleKodeBarang);
-                    const qty = Number(this.newTrans.singleQty) || 0;
-                    const noTx = 'WH-' + Date.now().toString().slice(-6);
-                    const tx = {
-                        noTransaksi: noTx,
-                        tanggal: this.newTrans.tanggal,
-                        tipeTransaksi: this.newTrans.tipeTransaksi,
-                        gudangAsal: this.newTrans.gudangAsal,
-                        kodeProject: this.newTrans.kodeProject,
-                        keterangan: this.newTrans.keterangan,
-                        singleKodeBarang: this.newTrans.singleKodeBarang,
-                        singleNamaBarang: brg?.namaBarang || this.newTrans.singleKodeBarang,
-                        singleDrumId: this.newTrans.singleDrumId,
-                        singleQty: qty,
-                        attachmentUrl: this.newTrans.attachmentUrl || '',
-                        attachmentName: this.newTrans.attachmentName || (this.newTrans.attachmentUrl ? 'Link Surat Jalan' : '')
-                    };
-                    this.transactions.unshift(tx);
-
-                    if (tx.singleDrumId) {
-                        let drum = this.drumLedger.find(d => d.drumId === tx.singleDrumId);
-                        if (tx.tipeTransaksi === 'Masuk') {
-                            if (drum) {
-                                drum.initialLength += qty;
-                                drum.remainingLength += qty;
-                            } else {
-                                this.drumLedger.unshift({ drumId: tx.singleDrumId, kodeBarang: tx.singleKodeBarang, namaBarang: tx.singleNamaBarang, gudang: tx.gudangAsal, initialLength: qty, remainingLength: qty });
-                            }
-                        } else if (tx.tipeTransaksi === 'Keluar' && drum) {
-                            drum.remainingLength = Math.max(0, drum.remainingLength - qty);
-                        }
-                    }
-
-                    if (tx.tipeTransaksi === 'Keluar' && tx.kodeProject) {
-                        this.materialUsage.unshift({ id: Date.now(), tanggal: tx.tanggal, kodeProject: tx.kodeProject, namaBarang: tx.singleNamaBarang, drumId: tx.singleDrumId, qty: qty });
-                    }
-
-                    this.newTrans.singleQty = '';
-                    this.newTrans.singleDrumId = '';
-                    this.newTrans.keterangan = '';
-                    this.newTrans.attachmentUrl = '';
-                    this.newTrans.attachmentName = '';
-                    this.persistAll();
-                    this.showToast(`Transaksi ${noTx} berhasil disimpan!`);
-                    this.switchTab('wh-transaksi');
-                },
-
-                printBAST(tx) {
-                    this.activeBast = tx;
-                    this.printMode = 'bast';
-                    setTimeout(() => {
-                        window.print();
-                        setTimeout(() => { this.printMode = ''; }, 500);
-                    }, 200);
-                },
-
-                // ==================== ACCOUNTING ACTIONS ====================
-                markAllNotificationsRead() { this.notifications.forEach(n => n.isRead = true); this.persistAll(); },
-
+                // ==================== ACCOUNTING: INVOICE KLIEN & REKAP CB ====================
                 openClientInvoiceModal() {
-                    this.modalTitle = 'Input Invoice Klien & Kalkulasi Pajak Otomatis';
+                    this.modalTitle = 'Input Invoice Klien & Rekap Cash Bank';
                     this.formClientInv = { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: new Date().toISOString().split('T')[0], noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' };
                     this.activeModal = 'client-inv';
                 },
                 autoFillLocationFromPO() {
                     const prj = this.masterProject.find(p => p.noPO === this.formClientInv.noPO);
                     if (prj) {
-                        this.formClientInv.area = prj.region;
                         this.formClientInv.lokasiPekerjaan = prj.projectName;
+                        this.formClientInv.area = prj.region;
                     }
                 },
                 recalcClientTax() {
@@ -4430,24 +4342,135 @@
                 },
                 saveClientInvoice() {
                     this.recalcClientTax();
-                    this.clientInvoices.unshift({ id: Date.now(), ...this.formClientInv });
-                    this.persistAll();
+                    this.clientInvoices.unshift({ id: 'CINV-' + Date.now(), ...this.formClientInv });
                     this.activeModal = '';
+                    this.saveLocalState();
                     this.showToast('Invoice Klien berhasil dicatat ke Rekap Cash & Bank.');
                 },
                 markClientInvoicePaid(inv) {
                     inv.statusPembayaran = 'LUNAS';
                     inv.tglCb = new Date().toISOString().split('T')[0];
-                    this.persistAll();
-                    this.showToast(`Invoice ${inv.noInvoice || inv.noPO} ditandai LUNAS (Cair CB)!`);
+                    this.saveLocalState();
+                    this.showToast('Invoice ' + inv.noInvoice + ' ditandai LUNAS (Cair Cash & Bank).');
                 },
-                processSubcontInvoice(inv, newStatus) {
-                    inv.status = newStatus;
-                    this.persistAll();
-                    this.showToast(`Tagihan Subcont ${inv.noInvoice} diupdate menjadi ${newStatus}.`);
+                processSubcontInvoice(inv, nextStatus) {
+                    inv.status = nextStatus;
+                    this.saveLocalState();
+                    this.showToast('Tagihan Subcont ' + inv.noInvoice + ' diperbarui menjadi ' + nextStatus);
+                },
+
+                // ==================== HELPERS PERHITUNGAN ====================
+                totalProjectContractValue() {
+                    return this.masterProject.reduce((s, p) => s + this.getProjectBoqTotal(p.kodeProject, 'awal'), 0);
+                },
+                totalClientCashIn() {
+                    return this.clientInvoices.filter(i => i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0);
+                },
+                totalSubcontPending() {
+                    return this.subcontInvoices.filter(i => i.status !== 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0);
+                },
+                getProjectClientPaid(noPO) {
+                    return this.clientInvoices.filter(i => i.noPO === noPO && i.statusPembayaran === 'LUNAS').reduce((s, i) => s + (Number(i.nettTerima) || 0), 0);
+                },
+                getProjectSubcontPaid(kodeProject) {
+                    return this.subcontInvoices.filter(i => i.kodeProject === kodeProject && i.status === 'Paid').reduce((s, i) => s + (Number(i.nominal) || 0), 0);
+                },
+                getProjectFinanceStatusText(prj) {
+                    const invs = this.clientInvoices.filter(i => i.noPO === prj.noPO);
+                    if (invs.length === 0) return 'Belum Ada Invoice Klien';
+                    const lunasCount = invs.filter(i => i.statusPembayaran === 'LUNAS').length;
+                    return `${lunasCount}/${invs.length} Termin Cair`;
+                },
+                unreadNotificationsCount() { return this.notifications.filter(n => !n.isRead).length; },
+                markAllNotificationsRead() {
+                    this.notifications.forEach(n => n.isRead = true);
+                    this.saveLocalState();
+                },
+
+                // ==================== WAREHOUSE LOGIC ====================
+                openWhMasterModal(type) {
+                    if (type === 'barang') {
+                        this.modalTitle = 'Tambah Master Barang Warehouse';
+                        this.formWhBarang = { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' };
+                        this.activeModal = 'wh-barang';
+                    } else {
+                        this.modalTitle = 'Tambah Master Gudang Regional';
+                        this.formWhGudang = { region: 'PEKANBARU', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' };
+                        this.activeModal = 'wh-gudang';
+                    }
+                    this.$nextTick(() => { if (window.lucide) window.lucide.createIcons(); });
+                },
+                saveWhBarang() {
+                    this.masterBarang.push({ ...this.formWhBarang });
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Master barang baru berhasil ditambahkan.');
+                },
+                saveWhGudang() {
+                    this.masterGudang.push({ ...this.formWhGudang });
+                    this.activeModal = '';
+                    this.saveLocalState();
+                    this.showToast('Master gudang baru berhasil ditambahkan.');
+                },
+                openInputTransaction() {
+                    this.switchTab('wh-input');
+                    this.newTrans = { tanggal: new Date().toISOString().split('T')[0], tipeTransaksi: 'Keluar', gudangAsal: 'Gudang Regional Palembang', kodeProject: this.masterProject[0]?.kodeProject || '', singleKodeBarang: '', singleDrumId: '', singleQty: '', keterangan: '', attachmentUrl: '', attachmentName: '' };
+                },
+                submitWhTransaction() {
+                    const brg = this.masterBarang.find(b => b.kodeBarang === this.newTrans.singleKodeBarang);
+                    if (!brg) return;
+                    const noTransaksi = 'WH-' + new Date().getFullYear() + '-' + (this.transactions.length + 1).toString().padStart(3, '0');
+                    const qty = Number(this.newTrans.singleQty);
+                    this.transactions.unshift({
+                        noTransaksi,
+                        ...this.newTrans,
+                        singleNamaBarang: brg.namaBarang,
+                        singleQty: qty
+                    });
+
+                    if (this.newTrans.singleDrumId) {
+                        const existingDrum = this.drumLedger.find(d => d.drumId === this.newTrans.singleDrumId);
+                        if (existingDrum) {
+                            if (this.newTrans.tipeTransaksi === 'Keluar') existingDrum.remainingLength = Math.max(0, existingDrum.remainingLength - qty);
+                            else if (this.newTrans.tipeTransaksi === 'Masuk' || this.newTrans.tipeTransaksi === 'Return') existingDrum.remainingLength += qty;
+                        } else if (this.newTrans.tipeTransaksi === 'Masuk') {
+                            this.drumLedger.push({
+                                drumId: this.newTrans.singleDrumId,
+                                kodeBarang: brg.kodeBarang,
+                                namaBarang: brg.namaBarang,
+                                gudang: this.newTrans.gudangAsal,
+                                initialLength: qty,
+                                remainingLength: qty
+                            });
+                        }
+                    }
+
+                    if (this.newTrans.tipeTransaksi === 'Keluar' && this.newTrans.kodeProject) {
+                        this.materialUsage.unshift({
+                            id: 'USG-' + Date.now(),
+                            tanggal: this.newTrans.tanggal,
+                            kodeProject: this.newTrans.kodeProject,
+                            namaBarang: brg.namaBarang,
+                            drumId: this.newTrans.singleDrumId,
+                            qty
+                        });
+                    }
+                    this.saveLocalState();
+                    this.showToast('Transaksi gudang & lampiran dokumen berhasil disimpan: ' + noTransaksi);
+                    this.switchTab('wh-transaksi');
+                },
+                printBAST(tx) {
+                    this.activeBast = tx;
+                    this.printMode = 'bast';
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            window.print();
+                            setTimeout(() => { this.printMode = ''; }, 500);
+                        }, 150);
+                    });
                 }
-            };
-        }
+            }));
+        });
     </script>
 </body>
 </html>
