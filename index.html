@@ -173,6 +173,9 @@
                                 <a href="#" @click.prevent="switchTab('prj-subcont-inv')" :class="currentTab === 'prj-subcont-inv' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
                                     <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Invoice Subcont
                                 </a>
+                                <a href="#" @click.prevent="switchTab('prj-rekon')" :class="currentTab === 'prj-rekon' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
+                                    <i data-lucide="scale" class="w-3.5 h-3.5"></i> Rekon & Sisa Tagihan Subcont
+                                </a>
                             </div>
                         </div>
                     </template>
@@ -536,9 +539,14 @@
                                     <button type="button" @click="openManageProjectSubconts(prj)" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[11px] font-semibold flex items-center gap-1">
                                         <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> + Kelola Subcont
                                     </button>
-                                    <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="px-3 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
-                                        Atur BoQ & SPK →
-                                    </button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" @click="openProjectRekonTab(prj.kodeProject)" class="px-2.5 py-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
+                                            Rekon
+                                        </button>
+                                        <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="px-3 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
+                                            BoQ & SPK →
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -630,9 +638,12 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="p-3 text-right">
+                                        <td class="p-3 text-right space-x-1">
+                                            <button type="button" @click="openProjectRekonTab(prj.kodeProject)" class="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold">
+                                                Rekon Subcont
+                                            </button>
                                             <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold">
-                                                Atur BoQ & SPK →
+                                                BoQ & SPK →
                                             </button>
                                         </td>
                                     </tr>
@@ -1029,6 +1040,309 @@
                                 </template>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- ==================== MENU PROJECT 6: HASIL REKON SUBCONT & SISA TAGIHAN ==================== -->
+                <div x-show="currentTab === 'prj-rekon'" class="space-y-5" x-cloak>
+                    <!-- Filter Header Project & Subcont -->
+                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">1. Pilih Project</label>
+                                <select x-model="selectedRekonProject" @change="onRekonProjectChange()" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-semibold min-w-[250px] max-w-full">
+                                    <template x-for="p in masterProject" :key="'rek-p-' + p.kodeProject">
+                                        <option :value="p.kodeProject" x-text="p.kodeProject + ' - ' + p.projectName"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">2. Pilih Tim Subcont</label>
+                                <select x-model="selectedRekonSubcont" class="bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold min-w-[210px]">
+                                    <option value="ALL">Semua Subcont di Project Ini</option>
+                                    <template x-for="sid in (getProjectByCode(selectedRekonProject)?.subcontIds || [])" :key="'rek-s-' + sid">
+                                        <option :value="sid" x-text="getSubcontName(sid)"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="exportRekonSubcontCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Hasil Rekon CSV
+                            </button>
+                            <button type="button" @click="openRekonAdjustModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="plus-minus" class="w-4 h-4"></i> + Pekerjaan Tambah / Kurang
+                            </button>
+                            <button type="button" @click="openRekonMaterialModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="package-check" class="w-4 h-4"></i> + Rekon Material & Potongan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards: Ringkasan Hasil Rekon & Sisa Tagihan Subcont -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+                        <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block">1. Kontrak Awal SPK</span>
+                            <div class="text-base font-bold font-mono text-white mt-1" x-text="formatRupiah(getRekonSummary().nilaiKontrakAwal)"></div>
+                            <span class="text-[10px] text-slate-400">Nilai SPK awal sebelum rekon</span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-indigo-500/30 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase block">2. Nett Tambah / Kurang</span>
+                            <div class="text-base font-bold font-mono mt-1"
+                                 :class="getRekonSummary().nilaiTambahKurang >= 0 ? 'text-emerald-400' : 'text-rose-400'"
+                                 x-text="(getRekonSummary().nilaiTambahKurang >= 0 ? '+' : '') + formatRupiah(getRekonSummary().nilaiTambahKurang)"></div>
+                            <span class="text-[10px] text-slate-400" x-text="'Tambah: ' + formatRupiah(getRekonSummary().nilaiTambah) + ' | Kurang: -' + formatRupiah(getRekonSummary().nilaiKurang)"></span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-cyan-500/30 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-cyan-400 uppercase block">3. Total Hak Jasa Hasil Rekon</span>
+                            <div class="text-base font-bold font-mono text-cyan-300 mt-1" x-text="formatRupiah(getRekonSummary().totalJasaRekon)"></div>
+                            <span class="text-[10px] text-slate-400" x-text="'Vol Awal: ' + getRekonSummary().volAwalTotal.toLocaleString('id-ID') + ' → Rekon: ' + getRekonSummary().volRekonTotal.toLocaleString('id-ID')"></span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-rose-500/30 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-rose-400 uppercase block">4. Pengurang (Mat & Invoice)</span>
+                            <div class="text-base font-bold font-mono text-rose-400 mt-1" x-text="'-' + formatRupiah(getRekonSummary().potonganMaterial + getRekonSummary().totalSudahDitagih)"></div>
+                            <span class="text-[10px] text-slate-400" x-text="'Selisih Mat: ' + formatRupiah(getRekonSummary().potonganMaterial) + ' | Tagihan: ' + formatRupiah(getRekonSummary().totalSudahDitagih)"></span>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-950/80 to-[#0c1222] border border-emerald-500/50 rounded-xl p-4 shadow-lg shadow-emerald-500/10">
+                            <span class="text-[10px] font-bold text-emerald-300 uppercase block">5. Sisa Hak Tagihan Subcont</span>
+                            <div class="text-lg font-extrabold font-mono text-emerald-400 mt-1" x-text="formatRupiah(getRekonSummary().sisaTagihanSubcont)"></div>
+                            <span class="text-[10px] text-emerald-200/80" x-text="'Sisa Vol Pekerjaan: ' + getRekonSummary().sisaVolumeTotal.toLocaleString('id-ID') + ' unit/m'"></span>
+                        </div>
+                    </div>
+
+                    <!-- TABEL 1: REKON VOLUME JASA & PEKERJAAN TAMBAH KURANG PER ITEM -->
+                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/50">
+                            <div>
+                                <h4 class="text-xs font-bold text-cyan-400 uppercase">1. Hasil Rekon Jasa & Pekerjaan Tambah / Kurang (Opname Lapangan)</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Perbandingan Volume SPK Awal vs Volume Hasil Rekon, otomatis menghitung Volume Tambah (+), Volume Kurang (-), dan Total Nilai Jasa Hasil Rekon.</p>
+                            </div>
+                            <div class="text-right font-mono text-xs">
+                                <span class="text-slate-400">Total Jasa Hasil Rekon: </span>
+                                <strong class="text-cyan-300" x-text="formatRupiah(getRekonSummary().totalJasaRekon)"></strong>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                        <th class="p-3">Subcont</th>
+                                        <th class="p-3">Designator & Uraian Pekerjaan</th>
+                                        <th class="p-3 text-center">Sat</th>
+                                        <th class="p-3 text-right">Vol SPK Awal</th>
+                                        <th class="p-3 text-right">Vol Tambah (+)</th>
+                                        <th class="p-3 text-right">Vol Kurang (-)</th>
+                                        <th class="p-3 text-right">Vol Hasil Rekon</th>
+                                        <th class="p-3 text-right">Harga Satuan</th>
+                                        <th class="p-3 text-right">Nilai SPK Awal</th>
+                                        <th class="p-3 text-right">Nilai Tambah/Kurang</th>
+                                        <th class="p-3 text-right">Total Nilai Rekon</th>
+                                        <th class="p-3 text-center">Edit Rekon</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60 text-xs font-mono">
+                                    <template x-for="row in getRekonJasaRows()" :key="'rk-jasa-' + row.id">
+                                        <tr class="hover:bg-slate-800/30">
+                                            <td class="p-3 font-sans font-semibold text-amber-300" x-text="getSubcontName(row.subcontId)"></td>
+                                            <td class="p-3 font-sans whitespace-normal max-w-[230px]">
+                                                <span class="font-mono text-indigo-300 font-bold" x-text="row.designator"></span>
+                                                <span x-show="row.isExtraWork" class="ml-1 px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[9px] font-bold">KERJA TAMBAH</span>
+                                                <div class="text-white text-[11px] mt-0.5" x-text="row.namaPekerjaan"></div>
+                                            </td>
+                                            <td class="p-3 font-sans text-center text-slate-400" x-text="row.satuan"></td>
+                                            <td class="p-3 text-right text-slate-300" x-text="row.volAwal.toLocaleString('id-ID')"></td>
+                                            <td class="p-3 text-right font-bold" :class="row.volTambah > 0 ? 'text-emerald-400' : 'text-slate-500'" x-text="row.volTambah > 0 ? '+' + row.volTambah.toLocaleString('id-ID') : '0'"></td>
+                                            <td class="p-3 text-right font-bold" :class="row.volKurang > 0 ? 'text-rose-400' : 'text-slate-500'" x-text="row.volKurang > 0 ? '-' + row.volKurang.toLocaleString('id-ID') : '0'"></td>
+                                            <td class="p-3 text-right font-bold text-white bg-slate-900/50" x-text="row.volRekon.toLocaleString('id-ID')"></td>
+                                            <td class="p-3 text-right text-slate-300" x-text="formatRupiah(row.hargaSubcont)"></td>
+                                            <td class="p-3 text-right text-slate-300" x-text="formatRupiah(row.nilaiAwal)"></td>
+                                            <td class="p-3 text-right font-bold" :class="row.nilaiSelisih >= 0 ? 'text-emerald-400' : 'text-rose-400'" x-text="(row.nilaiSelisih >= 0 ? '+' : '') + formatRupiah(row.nilaiSelisih)"></td>
+                                            <td class="p-3 text-right font-bold text-cyan-300" x-text="formatRupiah(row.nilaiRekon)"></td>
+                                            <td class="p-3 font-sans text-center">
+                                                <button type="button" @click="openQuickEditRekonVol(row)" class="px-2 py-1 rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-semibold">
+                                                    Update Vol
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="getRekonJasaRows().length === 0">
+                                        <td colspan="12" class="p-6 text-center font-sans text-slate-500 text-xs">Belum ada item SPK/BoQ Subcont pada filter project ini.</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot x-show="getRekonJasaRows().length > 0" class="bg-slate-900/90 border-t-2 border-slate-700 font-mono text-xs font-bold">
+                                    <tr>
+                                        <td colspan="3" class="p-3 font-sans text-right text-slate-300 uppercase">Total Rekap Jasa & Tambah/Kurang:</td>
+                                        <td class="p-3 text-right text-slate-200" x-text="getRekonSummary().volAwalTotal.toLocaleString('id-ID')"></td>
+                                        <td class="p-3 text-right text-emerald-400" x-text="'+' + getRekonSummary().volTambahTotal.toLocaleString('id-ID')"></td>
+                                        <td class="p-3 text-right text-rose-400" x-text="'-' + getRekonSummary().volKurangTotal.toLocaleString('id-ID')"></td>
+                                        <td class="p-3 text-right text-white" x-text="getRekonSummary().volRekonTotal.toLocaleString('id-ID')"></td>
+                                        <td class="p-3 text-right text-slate-500">-</td>
+                                        <td class="p-3 text-right text-slate-200" x-text="formatRupiah(getRekonSummary().nilaiKontrakAwal)"></td>
+                                        <td class="p-3 text-right" :class="getRekonSummary().nilaiTambahKurang >= 0 ? 'text-emerald-400' : 'text-rose-400'" x-text="(getRekonSummary().nilaiTambahKurang >= 0 ? '+' : '') + formatRupiah(getRekonSummary().nilaiTambahKurang)"></td>
+                                        <td class="p-3 text-right text-cyan-300" x-text="formatRupiah(getRekonSummary().totalJasaRekon)"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TABEL 2: REKONSILIASI MATERIAL (AMBIL GUDANG VS TERPASANG/RETURN & POTONGAN) -->
+                    <div class="bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                        <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 bg-slate-900/50">
+                            <div>
+                                <h4 class="text-xs font-bold text-amber-400 uppercase">2. Hasil Rekon Material Subcont (Material Keluar Gudang vs Terpasang & Return)</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Menghitung selisih material yang belum dikembalikan (hilang/rusak melebihi toleransi) sebagai dasar pemotongan tagihan subcont.</p>
+                            </div>
+                            <div class="text-right font-mono text-xs">
+                                <span class="text-slate-400">Total Potongan Material: </span>
+                                <strong class="text-rose-400" x-text="'-' + formatRupiah(getRekonSummary().potonganMaterial)"></strong>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                        <th class="p-3">Subcont</th>
+                                        <th class="p-3">Kode & Nama Material</th>
+                                        <th class="p-3 text-center">Sat</th>
+                                        <th class="p-3 text-right">Ambil Gudang (BAST)</th>
+                                        <th class="p-3 text-right">Terpasang (Rekon)</th>
+                                        <th class="p-3 text-right">Return Gudang</th>
+                                        <th class="p-3 text-right">Selisih / Minus</th>
+                                        <th class="p-3 text-right">Harga Satuan Klaim</th>
+                                        <th class="p-3 text-right">Nilai Potongan</th>
+                                        <th class="p-3">Keterangan</th>
+                                        <th class="p-3 text-center">Hapus</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60 text-xs font-mono">
+                                    <template x-for="m in getFilteredRekonMaterials()" :key="'rk-mat-' + m.id">
+                                        <tr class="hover:bg-slate-800/30">
+                                            <td class="p-3 font-sans font-semibold text-amber-300" x-text="getSubcontName(m.subcontId)"></td>
+                                            <td class="p-3 font-sans">
+                                                <span class="font-mono text-indigo-300 font-semibold" x-text="m.kodeBarang"></span>
+                                                <div class="text-white text-[11px]" x-text="m.namaBarang"></div>
+                                            </td>
+                                            <td class="p-3 font-sans text-center text-slate-400" x-text="m.satuan"></td>
+                                            <td class="p-3 text-right text-slate-200" x-text="Number(m.qtyAmbil).toLocaleString('id-ID')"></td>
+                                            <td class="p-3 text-right text-emerald-400" x-text="Number(m.qtyTerpasang).toLocaleString('id-ID')"></td>
+                                            <td class="p-3 text-right text-cyan-400" x-text="Number(m.qtyReturn).toLocaleString('id-ID')"></td>
+                                            <td class="p-3 text-right font-bold" :class="calcMaterialSelisih(m) > 0 ? 'text-rose-400' : 'text-emerald-400'" x-text="calcMaterialSelisih(m).toLocaleString('id-ID')"></td>
+                                            <td class="p-3 text-right text-slate-300" x-text="formatRupiah(m.hargaSatuan)"></td>
+                                            <td class="p-3 text-right font-bold text-rose-400" x-text="calcMaterialPotongan(m) > 0 ? '-' + formatRupiah(calcMaterialPotongan(m)) : 'Rp 0'"></td>
+                                            <td class="p-3 font-sans text-slate-400 whitespace-normal max-w-[180px]" x-text="m.keterangan || '-'"></td>
+                                            <td class="p-3 font-sans text-center">
+                                                <button type="button" @click="removeRekonMaterial(m.id)" class="text-slate-500 hover:text-rose-400 p-1">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="getFilteredRekonMaterials().length === 0">
+                                        <td colspan="11" class="p-5 text-center font-sans text-slate-500 text-xs">Belum ada catatan rekonsiliasi selisih material pada filter ini. Klik <strong>+ Rekon Material & Potongan</strong> untuk menambahkan.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TABEL 3: RINCIAN TAGIHAN INVOICE SUBCONT & PERHITUNGAN TOTAL SISA TAGIHAN -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <!-- Rincian Invoice Subcont yang Sudah Diajukan / Dibayar -->
+                        <div class="lg:col-span-2 bg-[#0c1222] border border-slate-800 rounded-xl overflow-hidden">
+                            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                                <div>
+                                    <h4 class="text-xs font-bold text-emerald-400 uppercase">3. Rincian Tagihan / Invoice Subcont pada Project Ini</h4>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Daftar termin tagihan subcont yang sudah diajukan, diverifikasi, maupun lunas dibayar.</p>
+                                </div>
+                                <button type="button" @click="openSubcontInvoiceModalForRekon()" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
+                                    + Ajukan Sisa Tagihan
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                            <th class="p-3">No Invoice</th>
+                                            <th class="p-3">Tanggal</th>
+                                            <th class="p-3">Subcont</th>
+                                            <th class="p-3">Termin</th>
+                                            <th class="p-3 text-right">Nominal Tagihan</th>
+                                            <th class="p-3 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/60 text-xs">
+                                        <template x-for="inv in getFilteredRekonInvoices()" :key="'rk-inv-' + inv.id">
+                                            <tr class="hover:bg-slate-800/30">
+                                                <td class="p-3 font-mono font-bold text-cyan-400" x-text="inv.noInvoice"></td>
+                                                <td class="p-3 text-slate-300" x-text="inv.tanggal"></td>
+                                                <td class="p-3 font-semibold text-amber-300" x-text="inv.subcontName"></td>
+                                                <td class="p-3 text-slate-300" x-text="inv.termin"></td>
+                                                <td class="p-3 text-right font-mono font-bold text-white" x-text="formatRupiah(inv.nominal)"></td>
+                                                <td class="p-3 text-center">
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                          :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-amber-500/10 text-amber-400'"
+                                                          x-text="inv.status"></span>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <tr x-show="getFilteredRekonInvoices().length === 0">
+                                            <td colspan="6" class="p-5 text-center text-slate-500 text-xs">Belum ada tagihan subcont yang masuk pada filter project/subcont ini.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Kartu Kalkulasi Final Sisa Tagihan Subcont -->
+                        <div class="bg-[#0c1222] border border-emerald-500/40 rounded-xl p-5 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider pb-3 border-b border-slate-800">
+                                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                                    <span>Ringkasan Akhir Sisa Tagihan</span>
+                                </div>
+                                <div class="space-y-2.5 mt-3 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-400">Nilai SPK Awal:</span>
+                                        <span class="font-mono text-slate-200" x-text="formatRupiah(getRekonSummary().nilaiKontrakAwal)"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-400">Pekerjaan Tambah (+):</span>
+                                        <span class="font-mono text-emerald-400" x-text="'+' + formatRupiah(getRekonSummary().nilaiTambah)"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-400">Pekerjaan Kurang (-):</span>
+                                        <span class="font-mono text-rose-400" x-text="'-' + formatRupiah(getRekonSummary().nilaiKurang)"></span>
+                                    </div>
+                                    <div class="flex justify-between pt-2 border-t border-slate-800 font-semibold">
+                                        <span class="text-cyan-300">Total Jasa Hasil Rekon:</span>
+                                        <span class="font-mono text-cyan-300" x-text="formatRupiah(getRekonSummary().totalJasaRekon)"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-400">Potongan Selisih Material:</span>
+                                        <span class="font-mono text-rose-400" x-text="'-' + formatRupiah(getRekonSummary().potonganMaterial)"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-400">Invoice Sudah Diajukan/Bayar:</span>
+                                        <span class="font-mono text-amber-300" x-text="'-' + formatRupiah(getRekonSummary().totalSudahDitagih)"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-bold text-emerald-300 uppercase">Total Sisa Tagihan Subcont</span>
+                                    <span class="text-[10px] font-mono text-emerald-200" x-text="'Sisa Vol: ' + getRekonSummary().sisaVolumeTotal.toLocaleString('id-ID')"></span>
+                                </div>
+                                <div class="text-xl font-extrabold font-mono text-emerald-400" x-text="formatRupiah(getRekonSummary().sisaTagihanSubcont)"></div>
+                                <p class="text-[10px] text-slate-300 leading-relaxed">
+                                    Nominal bersih yang masih dapat ditagihkan oleh Subcont setelah memperhitungkan pekerjaan tambah/kurang, selisih material, dan termin sebelumnya.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1867,6 +2181,132 @@
                 </div>
             </div>
 
+            <!-- Modal: Tambah Pekerjaan Tambah / Kurang Subcont -->
+            <form x-show="activeModal === 'rekon-adjust'" @submit.prevent="saveRekonAdjust()" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">1. Pilih Tim Subcont</label>
+                    <select x-model="formRekonAdjust.subcontId" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                        <option value="">-- Pilih Tim Subcont --</option>
+                        <template x-for="sid in (getProjectByCode(selectedRekonProject)?.subcontIds || [])" :key="'adj-s-' + sid">
+                            <option :value="sid" x-text="getSubcontName(sid)"></option>
+                        </template>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">2. Jenis Penyesuaian</label>
+                    <select x-model="formRekonAdjust.mode" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <option value="existing">Penyesuaian Volume Item SPK Existing (Tambah / Kurang)</option>
+                        <option value="new-extra">Item Pekerjaan Tambah Baru (Di Luar SPK Awal)</option>
+                    </select>
+                </div>
+
+                <template x-if="formRekonAdjust.mode === 'existing'">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Pilih Item SPK Subcont</label>
+                            <select x-model="formRekonAdjust.subcontBoqLineId" @change="onSelectExistingLineForRekon()" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                                <option value="">-- Pilih Item Pekerjaan --</option>
+                                <template x-for="sline in getSubcontBoqLines(selectedRekonProject, formRekonAdjust.subcontId)" :key="'adj-l-' + sline.id">
+                                    <option :value="sline.id" x-text="sline.designator + ' - ' + sline.namaPekerjaan + ' (Awal: ' + sline.volAwal + ', Saat Ini: ' + sline.volAkhir + ')'"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Volume SPK Awal</label>
+                                <input type="text" :value="formRekonAdjust.volAwalRef" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-400 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-cyan-400 font-bold uppercase mb-1">Volume Akhir Hasil Rekon</label>
+                                <input type="number" step="any" min="0" x-model.number="formRekonAdjust.volRekonBaru" required class="w-full bg-slate-950 border border-cyan-500/40 rounded-lg px-3 py-2 text-xs text-white font-mono font-bold">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="formRekonAdjust.mode === 'new-extra'">
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Designator</label>
+                                <input type="text" x-model="formRekonAdjust.designator" required placeholder="AC-OF-ADD-01" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Satuan</label>
+                                <input type="text" x-model="formRekonAdjust.satuan" required placeholder="Meter / Titik" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 uppercase mb-1">Uraian Pekerjaan Tambah</label>
+                            <input type="text" x-model="formRekonAdjust.namaPekerjaan" required placeholder="Pekerjaan Tambah Crossing Jalan / Re-routing" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-emerald-400 font-bold uppercase mb-1">Volume Kerja Tambah</label>
+                                <input type="number" step="any" min="0.01" x-model.number="formRekonAdjust.volRekonBaru" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 uppercase mb-1">Harga Satuan Subcont (Rp)</label>
+                                <input type="number" step="any" min="0" x-model.number="formRekonAdjust.hargaSubcont" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-amber-300 font-mono font-bold">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg text-xs">Simpan Hasil Rekon Jasa</button>
+                </div>
+            </form>
+
+            <!-- Modal: Tambah Rekon Material & Selisih Pemotongan -->
+            <form x-show="activeModal === 'rekon-material'" @submit.prevent="saveRekonMaterial()" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-amber-400 font-bold uppercase mb-1">1. Pilih Tim Subcont</label>
+                    <select x-model="formRekonMat.subcontId" required class="w-full bg-slate-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs text-amber-300 font-semibold">
+                        <option value="">-- Pilih Tim Subcont --</option>
+                        <template x-for="sid in (getProjectByCode(selectedRekonProject)?.subcontIds || [])" :key="'rmat-s-' + sid">
+                            <option :value="sid" x-text="getSubcontName(sid)"></option>
+                        </template>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">2. Pilih Material dari Master Barang</label>
+                    <select x-model="formRekonMat.kodeBarang" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <option value="">-- Pilih Material --</option>
+                        <template x-for="b in masterBarang" :key="'rmat-b-' + b.kodeBarang">
+                            <option :value="b.kodeBarang" x-text="b.kodeBarang + ' - ' + b.namaBarang + ' (' + b.sat + ')'"></option>
+                        </template>
+                    </select>
+                </div>
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">Qty Ambil Gudang</label>
+                        <input type="number" step="any" min="0" x-model.number="formRekonMat.qtyAmbil" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-emerald-400 uppercase mb-1">Qty Terpasang</label>
+                        <input type="number" step="any" min="0" x-model.number="formRekonMat.qtyTerpasang" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-cyan-400 uppercase mb-1">Qty Return Gudang</label>
+                        <input type="number" step="any" min="0" x-model.number="formRekonMat.qtyReturn" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-400 font-mono">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-rose-400 font-bold uppercase mb-1">Harga Satuan Klaim / Potongan Selisih (Rp)</label>
+                    <input type="number" step="any" min="0" x-model.number="formRekonMat.hargaSatuan" required placeholder="Contoh: 8500 (Rp 0 jika tidak dipotong)" class="w-full bg-slate-950 border border-rose-500/30 rounded-lg px-3 py-2 text-xs text-rose-300 font-mono font-bold">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1">Keterangan / Berita Acara Material</label>
+                    <input type="text" x-model="formRekonMat.keterangan" placeholder="Contoh: Selisih kabel sisa potongan tidak kembali ke gudang" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                </div>
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg text-xs">Simpan Rekon Material</button>
+                </div>
+            </form>
+
             <!-- Modal: Tambah Klien -->
             <form x-show="activeModal === 'client'" @submit.prevent="saveClient()" class="space-y-3">
                 <div>
@@ -2570,6 +3010,8 @@
                 selectedSubcontId: 'SUB-01',
                 selectedBoqProject: 'PLB-2026-001',
                 selectedBoqSubcontFilter: 'ALL',
+                selectedRekonProject: 'PLB-2026-001',
+                selectedRekonSubcont: 'ALL',
                 boqMode: 'awal',
                 activeModal: '',
                 modalTitle: '',
@@ -2633,6 +3075,9 @@
                     { id: 'SBL-3', kodeProject: 'PLB-2026-001', subcontId: 'SUB-02', designator: 'PU-S7.0-140', namaPekerjaan: 'Pemasangan Tiang Besi 7m', satuan: 'Batang', volAwal: 23, volAkhir: 18, hargaSubcont: 980000 }
                 ],
                 boqAdendumLogs: JSON.parse(localStorage.getItem('acm_boq_adendum_logs') || 'null') || [],
+                subcontRekonMaterials: JSON.parse(localStorage.getItem('acm_subcont_rekon_mat') || 'null') || [
+                    { id: 'RM-1', kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', kodeBarang: 'ADSS-024-YOFC', namaBarang: 'Kabel ADSS 24 Core YOFC (Free-Issue Klien)', satuan: 'Meter', qtyAmbil: 2300, qtyTerpasang: 2250, qtyReturn: 30, hargaSatuan: 8500, keterangan: 'Selisih 20m kabel tidak dikembalikan (klaim potong tagihan)' }
+                ],
 
                 // Data Waspang Harian
                 waspangForm: { tanggal: new Date().toISOString().split('T')[0], kodeProject: 'PLB-2026-001', subcontId: 'SUB-01', subcontBoqLineId: '', volume: '', attachmentUrl: '', attachmentName: '' },
@@ -2687,6 +3132,8 @@
                 formBoqAdendum: { lineId: '', designator: '', namaPekerjaan: '', isClientMaterial: false, volAwal: 0, hargaMaterial: 0, hargaJasa: 0, alasan: '' },
                 formSubcontBoq: { subcontId: '', boqLineId: '', volAwal: 0, volAkhir: 0, hargaSubcont: 0 },
                 formSubcontInv: { kodeProject: '', subcontId: '', noInvoice: '', termin: '', nominal: 0, attachmentUrl: '', attachmentName: '' },
+                formRekonAdjust: { subcontId: '', mode: 'existing', subcontBoqLineId: '', volAwalRef: 0, volRekonBaru: 0, designator: '', namaPekerjaan: '', satuan: 'Meter', hargaSubcont: 0 },
+                formRekonMat: { subcontId: '', kodeBarang: '', qtyAmbil: 0, qtyTerpasang: 0, qtyReturn: 0, hargaSatuan: 0, keterangan: '' },
                 formClientInv: { area: 'PALEMBANG', noPO: '', lokasiPekerjaan: '', termInv: 'INV I (40%)', noInvoice: '', tglInvoice: '', noFakturPajak: '', nilaiDpp: 0, pph175: 0, ppn11: 0, nettTerima: 0, tglCb: '', statusPembayaran: 'OUTSTANDING' },
                 formWhBarang: { kategori: 'Cable', jenis: 'ADSS', kodeBarang: '', namaBarang: '', isClientSupplied: false, sat: 'Meter' },
                 formWhGudang: { region: '', kodeGudang: '', namaGudang: '', tipeKepemilikan: 'Milik Sendiri', lokasi: '' },
@@ -2709,6 +3156,7 @@
                         localStorage.setItem('acm_boq_lines_v2', JSON.stringify(this.projectBoqLines));
                         localStorage.setItem('acm_subcont_boq_lines_v2', JSON.stringify(this.subcontBoqLines));
                         localStorage.setItem('acm_boq_adendum_logs', JSON.stringify(this.boqAdendumLogs));
+                        localStorage.setItem('acm_subcont_rekon_mat', JSON.stringify(this.subcontRekonMaterials));
                         localStorage.setItem('acm_waspang_logs_v2', JSON.stringify(this.waspangLogs));
                         localStorage.setItem('acm_wh_barang', JSON.stringify(this.masterBarang));
                         localStorage.setItem('acm_wh_gudang', JSON.stringify(this.masterGudang));
@@ -2723,6 +3171,310 @@
                         this.showToast('Peringatan kapasitas penyimpanan lokal penuh, gunakan link URL untuk file berukuran besar.', 'error');
                     }
                     this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                },
+
+                                // ==================== HASIL REKON SUBCONT (MATERIAL & JASA, TAMBAH/KURANG, SISA TAGIHAN) ====================
+                openProjectRekonTab(kodeProject) {
+                    this.selectedRekonProject = kodeProject;
+                    this.selectedRekonSubcont = 'ALL';
+                    this.switchTab('prj-rekon');
+                },
+
+                onRekonProjectChange() {
+                    this.selectedRekonSubcont = 'ALL';
+                },
+
+                openSubcontInvoiceModalForRekon() {
+                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    const defSub = (this.selectedRekonSubcont !== 'ALL') ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
+                    const sisa = this.getRekonSummary().sisaTagihanSubcont;
+                    this.modalTitle = 'Ajukan Sisa Tagihan Hasil Rekon Subcont';
+                    this.formSubcontInv = {
+                        kodeProject: this.selectedRekonProject,
+                        subcontId: defSub,
+                        noInvoice: '',
+                        termin: 'Pelunasan Hasil Rekon (100%)',
+                        nominal: sisa,
+                        attachmentUrl: '',
+                        attachmentName: ''
+                    };
+                    this.activeModal = 'subcont-inv';
+                },
+
+                getRekonJasaRows() {
+                    const lines = this.getSubcontBoqLines(this.selectedRekonProject, this.selectedRekonSubcont);
+                    return lines.map(l => {
+                        const volAwal = Number(l.volAwal) || 0;
+                        const volRekon = Number(l.volAkhir) || 0;
+                        const harga = Number(l.hargaSubcont) || 0;
+                        const delta = volRekon - volAwal;
+                        const volTambah = delta > 0 ? delta : 0;
+                        const volKurang = delta < 0 ? Math.abs(delta) : 0;
+                        const nilaiAwal = volAwal * harga;
+                        const nilaiRekon = volRekon * harga;
+                        const nilaiSelisih = nilaiRekon - nilaiAwal;
+                        return {
+                            ...l,
+                            volAwal,
+                            volRekon,
+                            volTambah,
+                            volKurang,
+                            hargaSubcont: harga,
+                            nilaiAwal,
+                            nilaiRekon,
+                            nilaiSelisih
+                        };
+                    });
+                },
+
+                getFilteredRekonMaterials() {
+                    return this.subcontRekonMaterials.filter(m =>
+                        m.kodeProject === this.selectedRekonProject &&
+                        (this.selectedRekonSubcont === 'ALL' || m.subcontId === this.selectedRekonSubcont)
+                    );
+                },
+
+                calcMaterialSelisih(m) {
+                    const selisih = (Number(m.qtyAmbil) || 0) - ((Number(m.qtyTerpasang) || 0) + (Number(m.qtyReturn) || 0));
+                    return selisih > 0 ? selisih : 0;
+                },
+
+                calcMaterialPotongan(m) {
+                    return this.calcMaterialSelisih(m) * (Number(m.hargaSatuan) || 0);
+                },
+
+                getFilteredRekonInvoices() {
+                    return this.subcontInvoices.filter(inv =>
+                        inv.kodeProject === this.selectedRekonProject &&
+                        (this.selectedRekonSubcont === 'ALL' || inv.subcontId === this.selectedRekonSubcont)
+                    );
+                },
+
+                getRekonSummary() {
+                    const jasaRows = this.getRekonJasaRows();
+                    let volAwalTotal = 0;
+                    let volTambahTotal = 0;
+                    let volKurangTotal = 0;
+                    let volRekonTotal = 0;
+                    let nilaiKontrakAwal = 0;
+                    let nilaiTambah = 0;
+                    let nilaiKurang = 0;
+                    let totalJasaRekon = 0;
+
+                    jasaRows.forEach(r => {
+                        volAwalTotal += r.volAwal;
+                        volTambahTotal += r.volTambah;
+                        volKurangTotal += r.volKurang;
+                        volRekonTotal += r.volRekon;
+                        nilaiKontrakAwal += r.nilaiAwal;
+                        if (r.nilaiSelisih > 0) nilaiTambah += r.nilaiSelisih;
+                        if (r.nilaiSelisih < 0) nilaiKurang += Math.abs(r.nilaiSelisih);
+                        totalJasaRekon += r.nilaiRekon;
+                    });
+
+                    const matRows = this.getFilteredRekonMaterials();
+                    const potonganMaterial = matRows.reduce((sum, m) => sum + this.calcMaterialPotongan(m), 0);
+
+                    const invRows = this.getFilteredRekonInvoices();
+                    const totalSudahDitagih = invRows.reduce((sum, inv) => sum + (Number(inv.nominal) || 0), 0);
+
+                    const nilaiTambahKurang = nilaiTambah - nilaiKurang;
+                    const sisaTagihanSubcont = Math.max(0, totalJasaRekon - potonganMaterial - totalSudahDitagih);
+                    const sisaVolumeTotal = Math.max(0, volAwalTotal - volRekonTotal);
+
+                    return {
+                        volAwalTotal,
+                        volTambahTotal,
+                        volKurangTotal,
+                        volRekonTotal,
+                        sisaVolumeTotal,
+                        nilaiKontrakAwal,
+                        nilaiTambah,
+                        nilaiKurang,
+                        nilaiTambahKurang,
+                        totalJasaRekon,
+                        potonganMaterial,
+                        totalSudahDitagih,
+                        sisaTagihanSubcont
+                    };
+                },
+
+                openRekonAdjustModal() {
+                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    const defSub = (this.selectedRekonSubcont !== 'ALL') ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
+                    this.modalTitle = 'Input Pekerjaan Tambah / Kurang Subcont';
+                    this.formRekonAdjust = {
+                        subcontId: defSub,
+                        mode: 'existing',
+                        subcontBoqLineId: '',
+                        volAwalRef: 0,
+                        volRekonBaru: 0,
+                        designator: '',
+                        namaPekerjaan: '',
+                        satuan: 'Meter',
+                        hargaSubcont: 0
+                    };
+                    this.activeModal = 'rekon-adjust';
+                },
+
+                openQuickEditRekonVol(row) {
+                    this.modalTitle = 'Update Volume Hasil Rekon Item';
+                    this.formRekonAdjust = {
+                        subcontId: row.subcontId,
+                        mode: 'existing',
+                        subcontBoqLineId: row.id,
+                        volAwalRef: row.volAwal,
+                        volRekonBaru: row.volRekon,
+                        designator: row.designator,
+                        namaPekerjaan: row.namaPekerjaan,
+                        satuan: row.satuan,
+                        hargaSubcont: row.hargaSubcont
+                    };
+                    this.activeModal = 'rekon-adjust';
+                },
+
+                onSelectExistingLineForRekon() {
+                    const line = this.subcontBoqLines.find(s => s.id === this.formRekonAdjust.subcontBoqLineId);
+                    if (line) {
+                        this.formRekonAdjust.volAwalRef = Number(line.volAwal) || 0;
+                        this.formRekonAdjust.volRekonBaru = Number(line.volAkhir) || 0;
+                    }
+                },
+
+                saveRekonAdjust() {
+                    if (this.formRekonAdjust.mode === 'existing') {
+                        const line = this.subcontBoqLines.find(s => s.id === this.formRekonAdjust.subcontBoqLineId);
+                        if (!line) return;
+                        line.volAkhir = Number(this.formRekonAdjust.volRekonBaru) || 0;
+
+                        const parentBoq = this.projectBoqLines.find(b => b.kodeProject === this.selectedRekonProject && b.designator === line.designator);
+                        if (parentBoq) {
+                            parentBoq.volAkhir = this.subcontBoqLines
+                                .filter(s => s.kodeProject === this.selectedRekonProject && s.designator === line.designator)
+                                .reduce((sum, s) => sum + (Number(s.volAkhir) || 0), 0);
+                        }
+                        this.showToast(`Volume hasil rekon ${line.designator} diperbarui menjadi ${line.volAkhir}!`);
+                    } else {
+                        if (!this.formRekonAdjust.subcontId) return;
+                        const volTambah = Number(this.formRekonAdjust.volRekonBaru) || 0;
+                        this.subcontBoqLines.push({
+                            id: 'SBL-EXT-' + Date.now(),
+                            kodeProject: this.selectedRekonProject,
+                            subcontId: this.formRekonAdjust.subcontId,
+                            designator: this.formRekonAdjust.designator.toUpperCase(),
+                            namaPekerjaan: this.formRekonAdjust.namaPekerjaan,
+                            satuan: this.formRekonAdjust.satuan,
+                            volAwal: 0,
+                            volAkhir: volTambah,
+                            hargaSubcont: Number(this.formRekonAdjust.hargaSubcont) || 0,
+                            isExtraWork: true
+                        });
+                        this.showToast(`Pekerjaan tambah baru (${this.formRekonAdjust.designator.toUpperCase()}) ditambahkan ke hasil rekon!`);
+                    }
+                    this.persistAll();
+                    this.activeModal = '';
+                },
+
+                openRekonMaterialModal() {
+                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    const defSub = (this.selectedRekonSubcont !== 'ALL') ? this.selectedRekonSubcont : (prj?.subcontIds?.[0] || '');
+                    this.modalTitle = 'Input Rekonsiliasi Material Subcont';
+                    this.formRekonMat = {
+                        subcontId: defSub,
+                        kodeBarang: '',
+                        qtyAmbil: 0,
+                        qtyTerpasang: 0,
+                        qtyReturn: 0,
+                        hargaSatuan: 0,
+                        keterangan: ''
+                    };
+                    this.activeModal = 'rekon-material';
+                },
+
+                saveRekonMaterial() {
+                    const brg = this.masterBarang.find(b => b.kodeBarang === this.formRekonMat.kodeBarang);
+                    if (!brg || !this.formRekonMat.subcontId) return;
+                    this.subcontRekonMaterials.unshift({
+                        id: 'RM-' + Date.now(),
+                        kodeProject: this.selectedRekonProject,
+                        subcontId: this.formRekonMat.subcontId,
+                        kodeBarang: brg.kodeBarang,
+                        namaBarang: brg.namaBarang,
+                        satuan: brg.sat,
+                        qtyAmbil: Number(this.formRekonMat.qtyAmbil) || 0,
+                        qtyTerpasang: Number(this.formRekonMat.qtyTerpasang) || 0,
+                        qtyReturn: Number(this.formRekonMat.qtyReturn) || 0,
+                        hargaSatuan: Number(this.formRekonMat.hargaSatuan) || 0,
+                        keterangan: this.formRekonMat.keterangan
+                    });
+                    this.persistAll();
+                    this.activeModal = '';
+                    this.showToast('Data rekonsiliasi material subcont berhasil disimpan.');
+                },
+
+                removeRekonMaterial(id) {
+                    this.subcontRekonMaterials = this.subcontRekonMaterials.filter(m => m.id !== id);
+                    this.persistAll();
+                    this.showToast('Baris rekon material dihapus.');
+                },
+
+                exportRekonSubcontCSV() {
+                    const prj = this.getProjectByCode(this.selectedRekonProject);
+                    const sum = this.getRekonSummary();
+                    const headers = ['Kategori', 'Subcont', 'Kode / Designator', 'Uraian', 'Satuan', 'Vol Awal / Ambil', 'Vol Tambah / Terpasang', 'Vol Kurang / Return', 'Vol Rekon / Selisih', 'Harga Satuan', 'Nilai Total'];
+                    const rows = [];
+
+                    this.getRekonJasaRows().forEach(r => {
+                        rows.push([
+                            'Rekon Jasa',
+                            this.getSubcontName(r.subcontId),
+                            r.designator,
+                            r.namaPekerjaan,
+                            r.satuan,
+                            r.volAwal,
+                            r.volTambah,
+                            r.volKurang,
+                            r.volRekon,
+                            r.hargaSubcont,
+                            r.nilaiRekon
+                        ]);
+                    });
+
+                    this.getFilteredRekonMaterials().forEach(m => {
+                        rows.push([
+                            'Rekon Material (Potongan)',
+                            this.getSubcontName(m.subcontId),
+                            m.kodeBarang,
+                            m.namaBarang,
+                            m.satuan,
+                            m.qtyAmbil,
+                            m.qtyTerpasang,
+                            m.qtyReturn,
+                            this.calcMaterialSelisih(m),
+                            m.hargaSatuan,
+                            -this.calcMaterialPotongan(m)
+                        ]);
+                    });
+
+                    this.getFilteredRekonInvoices().forEach(inv => {
+                        rows.push([
+                            'Tagihan Diajukan (' + inv.status + ')',
+                            inv.subcontName,
+                            inv.noInvoice,
+                            inv.termin,
+                            'Termin',
+                            1,
+                            0,
+                            0,
+                            1,
+                            inv.nominal,
+                            -inv.nominal
+                        ]);
+                    });
+
+                    rows.push(['RINGKASAN AKHIR', this.selectedRekonSubcont === 'ALL' ? 'Semua Subcont' : this.getSubcontName(this.selectedRekonSubcont), prj?.kodeProject || '', 'SISA TAGIHAN SUBCONT BERSIH', '', sum.volAwalTotal, sum.volTambahTotal, sum.volKurangTotal, sum.volRekonTotal, '', sum.sisaTagihanSubcont]);
+
+                    this.downloadCSV(`ACM_Hasil_Rekon_Subcont_${prj?.kodeProject || 'Project'}_${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
                 },
 
                 // ==================== EXPORT / CETAK PDF SPK SUBCONT ====================
@@ -2868,6 +3620,7 @@
                         'prj-list': 'Project • Daftar Project • Subcont • Progress Keuangan',
                         'prj-boq': 'Project • BoQ Utama • SPK Subcont & Adendum',
                         'prj-subcont-inv': 'Project • Tagihan Subcont',
+                        'prj-rekon': 'Project • Hasil Rekon Material & Jasa • Sisa Tagihan Subcont',
                         'waspang-daily': 'Waspang • Input Volume Harian Subcont',
                         'wh-barang': 'Warehouse • Master Barang',
                         'wh-gudang': 'Warehouse • Master Gudang',
