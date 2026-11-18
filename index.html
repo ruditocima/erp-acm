@@ -23,6 +23,8 @@
     </script>
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <!-- jsPDF for Auto Kwitansi PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.454.0"></script>
     <!-- Supabase JS -->
@@ -68,14 +70,23 @@
                 visibility: visible !important;
                 padding: 2mm !important;
             }
-            body.printing-rekon #printable-bast, body.printing-rekon #printable-spk { display: none !important; }
+            body.printing-rekon #printable-bast, body.printing-rekon #printable-spk, body.printing-rekon #printable-kwitansi { display: none !important; }
 
-            #printable-bast *, #printable-spk *, #printable-rekon * { visibility: visible !important; }
+            body.printing-kwitansi #printable-kwitansi {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                visibility: visible !important;
+                padding: 4mm !important;
+            }
+            body.printing-kwitansi #printable-bast, body.printing-kwitansi #printable-spk, body.printing-kwitansi #printable-rekon { display: none !important; }
+
+            #printable-bast *, #printable-spk *, #printable-rekon *, #printable-kwitansi * { visibility: visible !important; }
         }
     </style>
 </head>
 <body class="antialiased selection:bg-cyan-500 selection:text-slate-950"
-      :class="printMode === 'spk' ? 'printing-spk' : (printMode === 'bast' ? 'printing-bast' : (printMode === 'rekon' ? 'printing-rekon' : ''))"
+      :class="printMode === 'spk' ? 'printing-spk' : (printMode === 'bast' ? 'printing-bast' : (printMode === 'rekon' ? 'printing-rekon' : (printMode === 'kwitansi' ? 'printing-kwitansi' : '')))"
       x-data="acmErpApp()">
 
     <!-- ==================== 1. LOGIN SCREEN (DIVISION ACCESS) ==================== -->
@@ -1106,6 +1117,12 @@
                                         <span class="font-bold" :class="inv.tanggalBayar ? 'text-emerald-400' : 'text-slate-500'" x-text="inv.tanggalBayar || 'Belum Cair'"></span>
                                     </div>
                                 </div>
+                                <div x-show="inv.status === 'Paid'" class="pt-1 flex items-center justify-between gap-2">
+                                    <span class="text-[10px] font-mono text-emerald-300" x-text="inv.noKwitansi || ''"></span>
+                                    <button type="button" @click="downloadKwitansiPdf(inv)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold inline-flex items-center gap-1.5 shadow">
+                                        <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Download Kwitansi PDF
+                                    </button>
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -1123,6 +1140,7 @@
                                     <th class="p-3 text-right">Nominal Pembayaran</th>
                                     <th class="p-3 text-center">Tgl Dicairkan Accounting</th>
                                     <th class="p-3 text-center">Lampiran BAP</th>
+                                    <th class="p-3 text-center">Kwitansi Lunas</th>
                                     <th class="p-3 text-center">Status Pencairan</th>
                                 </tr>
                             </thead>
@@ -1153,6 +1171,16 @@
                                             <span x-show="!inv.attachmentUrl" class="text-[10px] text-slate-500">-</span>
                                         </td>
                                         <td class="p-3 text-center">
+                                            <template x-if="inv.status === 'Paid'">
+                                                <button type="button" @click="downloadKwitansiPdf(inv)"
+                                                        class="px-2.5 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 text-[10px] font-semibold inline-flex items-center gap-1 transition"
+                                                        :title="'Download Kwitansi PDF (' + (inv.noKwitansi || inv.noInvoice) + ')'">
+                                                    <i data-lucide="file-down" class="w-3 h-3"></i> Kwitansi PDF
+                                                </button>
+                                            </template>
+                                            <span x-show="inv.status !== 'Paid'" class="text-[10px] text-slate-500 italic">-</span>
+                                        </td>
+                                        <td class="p-3 text-center">
                                             <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
                                                 :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'"
                                                 x-text="inv.status === 'Paid' ? 'LUNAS DICAIRKAN ACCOUNTING' : inv.status === 'Verified' ? 'DIVERIFIKASI KEUANGAN' : 'MENUNGGU PROSES KEUANGAN'"></span>
@@ -1160,7 +1188,7 @@
                                     </tr>
                                 </template>
                                 <tr x-show="getFilteredSubcontInvoicesList().length === 0">
-                                    <td colspan="9" class="p-6 text-center text-slate-500 text-xs">Tidak ada data invoice / pembayaran subcont sesuai filter yang dipilih.</td>
+                                    <td colspan="10" class="p-6 text-center text-slate-500 text-xs">Tidak ada data invoice / pembayaran subcont sesuai filter yang dipilih.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1398,7 +1426,7 @@
                                             <th class="p-3">Termin</th>
                                             <th class="p-3 text-center">Tgl Cair Accounting</th>
                                             <th class="p-3 text-right">Nominal</th>
-                                            <th class="p-3 text-center">Status</th>
+                                            <th class="p-3 text-center">Status & Kwitansi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-800/60 text-xs">
@@ -1412,10 +1440,18 @@
                                                     <span x-show="inv.status !== 'Paid' || !inv.tanggalBayar" class="text-[10px] font-sans text-slate-500 italic">-</span>
                                                 </td>
                                                 <td class="p-3 text-right font-mono font-bold text-white" x-text="formatRupiah(inv.nominal)"></td>
-                                                <td class="p-3 text-center">
-                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold"
-                                                          :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-amber-500/10 text-amber-400'"
-                                                          x-text="inv.status === 'Paid' ? 'CAIR / PAID' : inv.status"></span>
+                                                <td class="p-3 text-center space-y-1">
+                                                    <div>
+                                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                              :class="inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' : inv.status === 'Verified' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-amber-500/10 text-amber-400'"
+                                                              x-text="inv.status === 'Paid' ? 'CAIR / PAID' : inv.status"></span>
+                                                    </div>
+                                                    <template x-if="inv.status === 'Paid'">
+                                                        <button type="button" @click="downloadKwitansiPdf(inv)"
+                                                                class="px-2 py-0.5 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 text-[9.5px] font-semibold inline-flex items-center gap-1">
+                                                            <i data-lucide="file-down" class="w-2.5 h-2.5"></i> Kwitansi PDF
+                                                        </button>
+                                                    </template>
                                                 </td>
                                             </tr>
                                         </template>
@@ -2063,6 +2099,9 @@
                                     <div class="space-x-1.5">
                                         <button type="button" x-show="inv.status === 'Pending'" @click="processSubcontInvoice(inv, 'Verified')" class="bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1.5 rounded text-[11px] font-semibold">Verifikasi</button>
                                         <button type="button" x-show="inv.status !== 'Paid'" @click="openPaySubcontConfirmModal(inv)" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded text-[11px] font-semibold">Cairkan / Lunas</button>
+                                        <button type="button" x-show="inv.status === 'Paid'" @click="downloadKwitansiPdf(inv)" class="bg-emerald-600/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1.5 rounded text-[11px] font-semibold inline-flex items-center gap-1">
+                                            <i data-lucide="file-down" class="w-3 h-3"></i> Kwitansi PDF
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -2125,6 +2164,9 @@
                                         <td class="p-3 text-right space-x-1.5">
                                             <button type="button" x-show="inv.status === 'Pending'" @click="processSubcontInvoice(inv, 'Verified')" class="bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded text-[10px] font-semibold">Verifikasi</button>
                                             <button type="button" x-show="inv.status !== 'Paid'" @click="openPaySubcontConfirmModal(inv)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[10px] font-semibold">Bayar (Lunas)</button>
+                                            <button type="button" x-show="inv.status === 'Paid'" @click="downloadKwitansiPdf(inv)" class="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded text-[10px] font-semibold inline-flex items-center gap-1" title="Download Kwitansi PDF">
+                                                <i data-lucide="file-down" class="w-3 h-3"></i> Kwitansi PDF
+                                            </button>
                                         </td>
                                     </tr>
                                 </template>
@@ -2254,12 +2296,21 @@
                                                   :class="inv.status === 'Paid' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : inv.status === 'Verified' ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30' : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'"
                                                   x-text="inv.status === 'Paid' ? 'Lunas Dicairkan' : inv.status === 'Verified' ? 'Diverifikasi' : 'Menunggu Pencairan'"></span>
                                         </div>
-                                        <template x-if="inv.attachmentUrl">
-                                            <button type="button" @click="openAttachmentPreview('Bukti BAP / Transfer • ' + inv.noInvoice, inv.attachmentUrl, inv.attachmentName)"
-                                                    class="px-2 py-0.5 rounded bg-indigo-500/15 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
-                                                <i data-lucide="eye" class="w-2.5 h-2.5"></i> Bukti BAP
-                                            </button>
-                                        </template>
+                                        <div class="flex flex-wrap items-center justify-center gap-1">
+                                            <template x-if="inv.status === 'Paid'">
+                                                <button type="button" @click="downloadKwitansiPdf(inv)"
+                                                        class="px-2 py-0.5 rounded bg-emerald-600/25 hover:bg-emerald-600/45 text-emerald-300 border border-emerald-500/40 text-[10px] font-semibold inline-flex items-center gap-1"
+                                                        title="Download Kwitansi Pembayaran PDF">
+                                                    <i data-lucide="file-down" class="w-2.5 h-2.5"></i> Kwitansi PDF
+                                                </button>
+                                            </template>
+                                            <template x-if="inv.attachmentUrl">
+                                                <button type="button" @click="openAttachmentPreview('Bukti BAP / Transfer • ' + inv.noInvoice, inv.attachmentUrl, inv.attachmentName)"
+                                                        class="px-2 py-0.5 rounded bg-indigo-500/15 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                                    <i data-lucide="eye" class="w-2.5 h-2.5"></i> Bukti BAP
+                                                </button>
+                                            </template>
+                                        </div>
                                     </td>
                                 </tr>
                             </template>
@@ -2301,9 +2352,15 @@
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Catatan / Referensi Transfer Bank (Opsional)</label>
                     <input type="text" x-model="paySubcontDraft.catatanBayar" placeholder="Contoh: Transfer Mandiri Ref #882910" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
                 </div>
-                <div class="flex justify-end gap-2 pt-3">
+                <div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[11px] text-emerald-200 flex items-center gap-2">
+                    <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                    <span>Sistem otomatis menerbitkan & mengunduh <strong>Kwitansi PDF Lunas</strong> serta menyimpannya agar dapat diunduh langsung oleh <strong>Divisi Project</strong>.</span>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="activeModal = ''" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs">Konfirmasi Lunas & Sinkron ke Project</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs inline-flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Bayar / Lunas & Buat Kwitansi PDF
+                    </button>
                 </div>
             </form>
 
@@ -3603,6 +3660,66 @@
         </table>
     </div>
 
+    <!-- ==================== 6. PRINTABLE KWITANSI PEMBAYARAN SUBCONT (MODE PRINTING-KWITANSI) ==================== -->
+    <div id="printable-kwitansi" class="hidden text-black bg-white">
+        <div style="border: 2px solid #0f172a; padding: 16px; border-radius: 6px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 14px;">
+                <div>
+                    <h1 style="font-size: 16px; font-weight: 800; margin: 0;">PT ACERO CETHA METALINDO</h1>
+                    <p style="font-size: 9.5px; color: #334155; margin: 2px 0;">Telecommunication Infrastructure, FTTH Rollout & Engineering Services</p>
+                    <p style="font-size: 8.5px; color: #64748b; margin: 0;">Divisi Finance & Accounting • Sumatera Region</p>
+                </div>
+                <div style="text-align:right;">
+                    <div style="border: 2px solid #047857; color: #047857; padding: 4px 12px; font-weight: 800; font-size: 12px; letter-spacing: 0.8px;">KWITANSI PEMBAYARAN • LUNAS</div>
+                    <div style="font-family: monospace; font-size: 10px; font-weight: 700; margin-top: 4px;" x-text="'No: ' + (kwitansiPrintData.noKwitansi || '-')"></div>
+                </div>
+            </div>
+
+            <table style="width:100%; border-collapse: collapse; font-size: 10.5px; margin-bottom: 12px;">
+                <tr>
+                    <td style="padding: 5px 4px; width: 170px; color: #475569;">Sudah Terima / Dibayarkan Kepada</td>
+                    <td style="padding: 5px 4px; font-weight: 700;">: <span x-text="kwitansiPrintData.subcontName"></span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px 4px; color: #475569;">Uang Sejumlah (Terbilang)</td>
+                    <td style="padding: 5px 4px; background: #f1f5f9; border: 1px solid #cbd5e1; font-style: italic; font-weight: 600; text-transform: capitalize;">: <span x-text="terbilangRupiah(kwitansiPrintData.nominal)"></span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px 4px; color: #475569;">Untuk Pembayaran</td>
+                    <td style="padding: 5px 4px;">: <strong x-text="kwitansiPrintData.termin"></strong> — Project <strong x-text="kwitansiPrintData.kodeProject"></strong> (<span x-text="kwitansiPrintData.projectName"></span>)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px 4px; color: #475569;">Referensi Invoice / Tagihan</td>
+                    <td style="padding: 5px 4px; font-family: monospace;">: <span x-text="kwitansiPrintData.noInvoice"></span> (Diajukan: <span x-text="kwitansiPrintData.tanggal"></span>)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px 4px; color: #475569;">Tanggal Pencairan / Lunas</td>
+                    <td style="padding: 5px 4px; font-family: monospace; font-weight: 700;">: <span x-text="kwitansiPrintData.tanggalBayar"></span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px 4px; color: #475569;">Referensi Transfer / Catatan</td>
+                    <td style="padding: 5px 4px;">: <span x-text="kwitansiPrintData.catatanBayar || 'Transfer Bank Lunas'"></span></td>
+                </tr>
+            </table>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid #cbd5e1; padding-top: 12px; margin-top: 10px;">
+                <div style="border: 2px solid #0f172a; background: #f8fafc; padding: 8px 14px;">
+                    <div style="font-size: 9px; color: #475569; text-transform: uppercase;">Jumlah Pembayaran Bersih</div>
+                    <div style="font-size: 15px; font-weight: 800; font-family: monospace; color: #047857;" x-text="formatRupiah(kwitansiPrintData.nominal)"></div>
+                </div>
+                <div style="text-align:center; font-size: 10px;">
+                    <div x-text="'Pekanbaru / Sumatera, ' + (kwitansiPrintData.tanggalBayar || '')"></div>
+                    <div style="font-weight: 700; margin-top: 2px;">PT ACERO CETHA METALINDO</div>
+                    <div style="height: 44px; display:flex; align-items:center; justify-content:center;">
+                        <span style="border: 1.5px solid #047857; color: #047857; padding: 2px 8px; font-size: 9px; font-weight: 800; letter-spacing: 1px; transform: rotate(-4deg);">VERIFIED &amp; PAID</span>
+                    </div>
+                    <div style="font-weight: 700; text-decoration: underline;" x-text="kwitansiPrintData.paidBy || 'Finance & Accounting'"></div>
+                    <div style="font-size: 9px; color: #475569;">Divisi Finance &amp; Accounting</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST NOTIFICATION -->
     <div x-show="toast.show" x-transition class="fixed bottom-5 right-5 z-50 bg-slate-900 border border-cyan-500/40 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs print:hidden" x-cloak>
         <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400"></i>
@@ -3799,6 +3916,8 @@
                         nominal: 3500000,
                         status: 'Paid',
                         tanggalBayar: '2026-03-18',
+                        noKwitansi: 'KWT/ACM/2026/001',
+                        paidBy: 'FINANCE ACC',
                         catatanBayar: 'Transfer Mandiri Ref #20260318-091',
                         attachmentUrl: 'https://placehold.co/800x500/0f172a/10b981?text=Bukti+Transfer+Accounting+%26+BAP+INV-SUB-000',
                         attachmentName: 'bukti-cair-inv-sub-000.jpg'
@@ -3815,6 +3934,8 @@
                         nominal: 3450000,
                         status: 'Paid',
                         tanggalBayar: '2026-03-19',
+                        noKwitansi: 'KWT/ACM/2026/002',
+                        paidBy: 'FINANCE ACC',
                         catatanBayar: 'Transfer BCA Ref #884120',
                         attachmentUrl: 'https://placehold.co/800x500/0f172a/10b981?text=Bukti+Transfer+Accounting+INV-SUB-SRW-01',
                         attachmentName: 'bukti-cair-srw-01.jpg'
@@ -3843,6 +3964,7 @@
                 selectedProjectPayModal: { kodeProject: '', projectName: '', noPO: '', subcontIds: [] },
                 selectedProjectPaySubcontFilter: 'ALL',
                 paySubcontDraft: { id: '', noInvoice: '', subcontName: '', projectName: '', termin: '', nominal: 0, tanggalBayar: new Date().toISOString().split('T')[0], catatanBayar: '' },
+                kwitansiPrintData: {},
 
                 clientInvoices: [
                     { id: 'CINV-01', area: 'Palembang', noPO: 'PO-YOFC-2026-011', lokasiPekerjaan: 'FTTH Rollout Cluster Jakabaring Selatan', termInv: 'Term 1 (30% DP)', noInvoice: 'INV/ACM/2026/001', tglInvoice: '2026-03-05', noFakturPajak: '010.008-26.00000011', nilaiDpp: 20000000, pph175: 350000, ppn11: 2200000, nettTerima: 21850000, tglCb: '2026-03-16', statusPembayaran: 'LUNAS' },
@@ -5111,34 +5233,221 @@
                     this.activeModal = 'pay-subcont-confirm';
                 },
 
+                ensureKwitansiMetadata(inv) {
+                    const year = (inv.tanggalBayar || new Date().toISOString().split('T')[0]).slice(0, 4);
+                    if (!inv.noKwitansi) {
+                        const paidSeq = this.subcontInvoices.filter(i => i.status === 'Paid' && i.noKwitansi).length + 1;
+                        inv.noKwitansi = 'KWT/ACM/' + year + '/' + String(paidSeq).padStart(3, '0');
+                    }
+                    if (!inv.paidBy) {
+                        inv.paidBy = this.currentUser || 'Finance & Accounting';
+                    }
+                },
+
                 confirmPaySubcontInvoice() {
                     const inv = this.subcontInvoices.find(x => x.id === this.paySubcontDraft.id);
                     if (!inv) return;
                     inv.tanggalBayar = this.paySubcontDraft.tanggalBayar || new Date().toISOString().split('T')[0];
                     inv.catatanBayar = this.paySubcontDraft.catatanBayar || '';
-                    this.processSubcontInvoice(inv, 'Paid', inv.tanggalBayar);
+                    inv.paidBy = this.currentUser || inv.paidBy || 'Finance & Accounting';
+                    this.processSubcontInvoice(inv, 'Paid', inv.tanggalBayar, true);
                     this.activeModal = '';
                 },
 
-                processSubcontInvoice(inv, newStatus, customPayDate) {
+                processSubcontInvoice(inv, newStatus, customPayDate, autoDownloadPdf = false) {
                     inv.status = newStatus;
                     if (newStatus === 'Paid') {
                         inv.tanggalBayar = customPayDate || inv.tanggalBayar || new Date().toISOString().split('T')[0];
+                        this.ensureKwitansiMetadata(inv);
                         this.notifications.unshift({
                             id: 'NTF-' + Date.now(),
                             type: 'SUBCONT_PAID',
-                            title: 'Pencairan Subcont Lunas: ' + inv.subcontName + ' (' + inv.kodeProject + ')',
+                            title: 'Pencairan Subcont Lunas & Kwitansi PDF Terbit: ' + inv.subcontName + ' (' + inv.kodeProject + ')',
                             nominal: Number(inv.nominal) || 0,
-                            detail: inv.noInvoice + ' • ' + inv.termin + ' • Cair Tgl: ' + inv.tanggalBayar,
+                            detail: inv.noKwitansi + ' • ' + inv.noInvoice + ' • ' + inv.termin + ' • Cair Tgl: ' + inv.tanggalBayar,
                             timestamp: 'Baru saja',
                             isRead: false
                         });
+                        this.saveLocalState();
+                        if (autoDownloadPdf) {
+                            this.downloadKwitansiPdf(inv, true);
+                        }
+                    } else {
+                        this.saveLocalState();
                     }
-                    this.saveLocalState();
                     this.showToast(newStatus === 'Paid'
-                        ? ('Tagihan ' + inv.noInvoice + ' LUNAS dicairkan tgl ' + inv.tanggalBayar + ' & disinkronkan ke Divisi Project.')
+                        ? ('Tagihan ' + inv.noInvoice + ' LUNAS! Kwitansi PDF (' + inv.noKwitansi + ') otomatis dibuat & tersedia di Divisi Project.')
                         : ('Status tagihan ' + inv.noInvoice + ' diperbarui menjadi ' + newStatus));
                     this.$nextTick(() => lucide.createIcons());
+                },
+
+                downloadKwitansiPdf(inv, isAuto = false) {
+                    if (!inv) return;
+                    this.ensureKwitansiMetadata(inv);
+                    this.saveLocalState();
+
+                    if (window.jspdf && window.jspdf.jsPDF) {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a5' });
+                        const w = doc.internal.pageSize.getWidth(); // 210mm
+                        const h = doc.internal.pageSize.getHeight(); // 148mm
+
+                        // Outer double border
+                        doc.setDrawColor(15, 23, 42);
+                        doc.setLineWidth(0.7);
+                        doc.rect(7, 7, w - 14, h - 14);
+                        doc.setLineWidth(0.25);
+                        doc.rect(8.5, 8.5, w - 17, h - 17);
+
+                        // Header Left: Company
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(12);
+                        doc.setTextColor(15, 23, 42);
+                        doc.text('PT ACERO CETHA METALINDO', 13, 16.5);
+
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(7.5);
+                        doc.setTextColor(71, 85, 105);
+                        doc.text('Telecommunication Infrastructure, FTTH Rollout & Engineering Services', 13, 20.5);
+                        doc.text('Divisi Finance & Accounting • Sumatera Region', 13, 24);
+
+                        // Header Right: Kwitansi Badge
+                        doc.setDrawColor(4, 120, 87);
+                        doc.setFillColor(236, 253, 245);
+                        doc.setLineWidth(0.5);
+                        doc.roundedRect(w - 69, 11.5, 56, 8.5, 1.5, 1.5, 'FD');
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(9.5);
+                        doc.setTextColor(4, 120, 87);
+                        doc.text('KWITANSI PEMBAYARAN', w - 41, 17, { align: 'center' });
+
+                        doc.setFont('courier', 'bold');
+                        doc.setFontSize(8.5);
+                        doc.setTextColor(15, 23, 42);
+                        doc.text('No: ' + inv.noKwitansi, w - 13, 24.5, { align: 'right' });
+
+                        // Divider line
+                        doc.setDrawColor(15, 23, 42);
+                        doc.setLineWidth(0.5);
+                        doc.line(13, 27.5, w - 13, 27.5);
+
+                        // Body Details
+                        const labelX = 13;
+                        const colonX = 63;
+                        const valX = 66;
+                        const maxValW = w - valX - 13;
+                        let y = 34.5;
+
+                        const drawRow = (label, value, isBold = false) => {
+                            doc.setFont('helvetica', 'normal');
+                            doc.setFontSize(8.5);
+                            doc.setTextColor(71, 85, 105);
+                            doc.text(label, labelX, y);
+                            doc.text(':', colonX, y);
+
+                            doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+                            doc.setTextColor(15, 23, 42);
+                            const wrapped = doc.splitTextToSize(String(value || '-'), maxValW);
+                            doc.text(wrapped, valX, y);
+                            y += Math.max(6.2, wrapped.length * 4.5 + 1.8);
+                        };
+
+                        drawRow('Sudah Dibayarkan Kepada', inv.subcontName, true);
+
+                        // Terbilang shaded box
+                        const terbilangStr = this.terbilangRupiah(inv.nominal);
+                        const terbilangLines = doc.splitTextToSize(terbilangStr.charAt(0).toUpperCase() + terbilangStr.slice(1), maxValW - 4);
+                        const boxH = Math.max(7.5, terbilangLines.length * 4.5 + 3);
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(8.5);
+                        doc.setTextColor(71, 85, 105);
+                        doc.text('Uang Sejumlah (Terbilang)', labelX, y);
+                        doc.text(':', colonX, y);
+                        doc.setFillColor(241, 245, 249);
+                        doc.setDrawColor(203, 213, 225);
+                        doc.setLineWidth(0.25);
+                        doc.rect(valX, y - 4, maxValW, boxH, 'FD');
+                        doc.setFont('helvetica', 'bolditalic');
+                        doc.setTextColor(15, 23, 42);
+                        doc.text(terbilangLines, valX + 2, y);
+                        y += boxH + 2.5;
+
+                        drawRow('Untuk Pembayaran', (inv.termin || '-') + ' — Project ' + (inv.kodeProject || '-') + ' (' + (inv.projectName || '-') + ')', false);
+                        drawRow('Ref. Invoice Subcont', (inv.noInvoice || '-') + '  |  Tgl Pengajuan: ' + (inv.tanggal || '-'), false);
+                        drawRow('Tanggal Pencairan / Lunas', inv.tanggalBayar || '-', true);
+                        drawRow('Referensi Transfer / Catatan', inv.catatanBayar || 'Transfer Bank Lunas', false);
+
+                        // Footer Section: Amount Box (Left) & Signature + PAID Stamp (Right)
+                        const footerY = Math.max(y + 3, 98);
+                        doc.setDrawColor(203, 213, 225);
+                        doc.setLineWidth(0.3);
+                        doc.line(13, footerY - 2, w - 13, footerY - 2);
+
+                        // Nominal Box
+                        doc.setFillColor(248, 250, 252);
+                        doc.setDrawColor(15, 23, 42);
+                        doc.setLineWidth(0.6);
+                        doc.rect(13, footerY + 3, 82, 19, 'FD');
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(7.5);
+                        doc.setTextColor(71, 85, 105);
+                        doc.text('JUMLAH PEMBAYARAN BERSIH', 17, footerY + 8.5);
+                        doc.setFont('courier', 'bold');
+                        doc.setFontSize(13);
+                        doc.setTextColor(4, 120, 87);
+                        doc.text(this.formatRupiah(inv.nominal), 17, footerY + 16.5);
+
+                        // Stamp PAID
+                        doc.setDrawColor(4, 120, 87);
+                        doc.setLineWidth(0.6);
+                        doc.roundedRect(13, footerY + 25, 42, 7.5, 1, 1, 'D');
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(8);
+                        doc.setTextColor(4, 120, 87);
+                        doc.text('STATUS: LUNAS / PAID', 34, footerY + 29.8, { align: 'center' });
+
+                        // Signature Right
+                        const sigCenterX = w - 45;
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(8);
+                        doc.setTextColor(15, 23, 42);
+                        doc.text('Diterbitkan tanggal: ' + (inv.tanggalBayar || '-'), sigCenterX, footerY + 5, { align: 'center' });
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('PT ACERO CETHA METALINDO', sigCenterX, footerY + 9.5, { align: 'center' });
+
+                        // Digital Verified Stamp inside signature area
+                        doc.setDrawColor(16, 185, 129);
+                        doc.setTextColor(4, 120, 87);
+                        doc.setFontSize(7);
+                        doc.rect(sigCenterX - 18, footerY + 13, 36, 6.5, 'D');
+                        doc.text('VERIFIED BY ACCOUNTING', sigCenterX, footerY + 17.2, { align: 'center' });
+
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(8.5);
+                        doc.setTextColor(15, 23, 42);
+                        doc.text(inv.paidBy || 'Finance & Accounting', sigCenterX, footerY + 26.5, { align: 'center' });
+                        doc.line(sigCenterX - 24, footerY + 27.5, sigCenterX + 24, footerY + 27.5);
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(7.5);
+                        doc.setTextColor(71, 85, 105);
+                        doc.text('Divisi Finance & Accounting', sigCenterX, footerY + 31.2, { align: 'center' });
+
+                        const safeFileName = 'Kwitansi_' + (inv.noKwitansi || inv.noInvoice || 'Subcont').replace(/[^a-zA-Z0-9_-]/g, '_') + '.pdf';
+                        doc.save(safeFileName);
+                        if (!isAuto) {
+                            this.showToast('Kwitansi PDF "' + safeFileName + '" berhasil diunduh.');
+                        }
+                    } else {
+                        // Fallback ke window.print() bila CDN jsPDF tidak tersedia (offline)
+                        this.kwitansiPrintData = { ...inv };
+                        this.printMode = 'kwitansi';
+                        this.$nextTick(() => {
+                            setTimeout(() => {
+                                window.print();
+                                setTimeout(() => { this.printMode = ''; }, 500);
+                            }, 150);
+                        });
+                    }
                 },
 
                 // --- ACTIONS: INVOICE KLIEN & REKAP CB (ACCOUNTING) ---
