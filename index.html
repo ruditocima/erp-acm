@@ -3344,21 +3344,39 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Area</label>
-                        <input type="text" x-model="formClientInv.area" required placeholder="Palembang" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <select x-model="formClientInv.area" @change="onClientInvAreaChange()" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                            <option value="">-- Pilih Area --</option>
+                            <template x-for="reg in getUniqueProjectRegions()" :key="'cinv-reg-' + reg">
+                                <option :value="reg" x-text="reg"></option>
+                            </template>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] text-slate-400 uppercase mb-1">No PO</label>
-                        <input type="text" x-model="formClientInv.noPO" required placeholder="PO-2026-0881" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">No PO (Otomatis)</label>
+                        <input type="text" x-model="formClientInv.noPO" readonly required placeholder="Otomatis dari Lokasi Pekerjaan" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-cyan-400 font-mono">
                     </div>
                 </div>
                 <div>
                     <label class="block text-[10px] text-slate-400 uppercase mb-1">Lokasi Pekerjaan</label>
-                    <input type="text" x-model="formClientInv.lokasiPekerjaan" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                    <select x-model="formClientInv.lokasiPekerjaan" @change="onClientInvLokasiChange()" required :disabled="!formClientInv.area" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white disabled:opacity-50">
+                        <option value="">-- Pilih Lokasi Pekerjaan --</option>
+                        <template x-for="prj in getProjectsByRegion(formClientInv.area)" :key="'cinv-prj-' + prj.kodeProject">
+                            <option :value="prj.projectName" x-text="prj.projectName"></option>
+                        </template>
+                    </select>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Term Inv</label>
-                        <input type="text" x-model="formClientInv.termInv" required placeholder="Term 1 (30%)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                        <select x-model="formClientInv.termInv" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white">
+                            <option value="Term I (40%)">Term I (40%)</option>
+                            <option value="Term II (30%)">Term II (30%)</option>
+                            <option value="Term III (25%)">Term III (25%)</option>
+                            <option value="Term IV (5%)">Term IV (5%)</option>
+                            <option value="Term I (80%)">Term I (80%)</option>
+                            <option value="Term II (20%)">Term II (20%)</option>
+                            <option value="Term (100%)">Term (100%)</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">No Invoice</label>
@@ -3371,26 +3389,29 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] text-slate-400 uppercase mb-1">No Faktur Pajak</label>
-                        <input type="text" x-model="formClientInv.noFakturPajak" placeholder="010.008-26.00000123" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
+                        <label class="block text-[10px] text-slate-400 uppercase mb-1">
+                            No Faktur Pajak
+                            <span x-show="(Number(formClientInv.nilaiDpp) || 0) < 0" class="text-amber-400 normal-case font-normal">(Opsional jika DPP minus)</span>
+                        </label>
+                        <input type="text" x-model="formClientInv.noFakturPajak" :required="(Number(formClientInv.nilaiDpp) || 0) >= 0 && formClientInv.statusPembayaran !== 'BELUM DITAGIHKAN'" placeholder="010.008-26.00000123" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono">
                     </div>
                     <div>
                         <label class="block text-[10px] text-slate-400 uppercase mb-1">Nilai DPP (Rp)</label>
-                        <input type="number" x-model.number="formClientInv.nilaiDpp" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-emerald-400 font-mono font-bold">
+                        <input type="number" step="any" x-model.number="formClientInv.nilaiDpp" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono font-bold" :class="(Number(formClientInv.nilaiDpp) || 0) < 0 ? 'text-rose-400' : 'text-emerald-400'">
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono">
                     <div>
                         <span class="block text-[9px] text-slate-400">PPh 1.75% (Auto)</span>
-                        <span class="text-rose-400" x-text="formatRupiah(Math.round((formClientInv.nilaiDpp || 0) * 0.0175))"></span>
+                        <span class="text-rose-400" x-text="formatRupiah(calcClientInvoiceTaxes(formClientInv.nilaiDpp).pph175)"></span>
                     </div>
                     <div>
                         <span class="block text-[9px] text-slate-400">PPN 11% (Auto)</span>
-                        <span class="text-cyan-400" x-text="formatRupiah(Math.round((formClientInv.nilaiDpp || 0) * 0.11))"></span>
+                        <span class="text-cyan-400" x-text="formatRupiah(calcClientInvoiceTaxes(formClientInv.nilaiDpp).ppn11)"></span>
                     </div>
                     <div>
                         <span class="block text-[9px] text-slate-400">Nett Cash & Bank</span>
-                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(calcNettClientInvoice(formClientInv.nilaiDpp || 0))"></span>
+                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(calcClientInvoiceTaxes(formClientInv.nilaiDpp).nettTerima)"></span>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -5574,23 +5595,78 @@
                 },
 
                 // --- ACTIONS: INVOICE KLIEN & REKAP CB (ACCOUNTING) ---
+                getUniqueProjectRegions() {
+                    const regions = this.masterProject
+                        .map(p => (p.region || '').trim())
+                        .filter(Boolean);
+                    return [...new Set(regions)];
+                },
+
+                getProjectsByRegion(area) {
+                    if (!area) return [];
+                    return this.masterProject.filter(p => (p.region || '').trim() === area.trim());
+                },
+
+                onClientInvAreaChange() {
+                    const projects = this.getProjectsByRegion(this.formClientInv.area);
+                    if (projects.length > 0) {
+                        this.formClientInv.lokasiPekerjaan = projects[0].projectName;
+                        this.formClientInv.noPO = projects[0].noPO || '';
+                    } else {
+                        this.formClientInv.lokasiPekerjaan = '';
+                        this.formClientInv.noPO = '';
+                    }
+                },
+
+                onClientInvLokasiChange() {
+                    const matched = this.masterProject.find(
+                        p => (p.region || '').trim() === (this.formClientInv.area || '').trim() &&
+                             p.projectName === this.formClientInv.lokasiPekerjaan
+                    ) || this.masterProject.find(p => p.projectName === this.formClientInv.lokasiPekerjaan);
+                    this.formClientInv.noPO = matched ? (matched.noPO || '') : '';
+                },
+
+                calcClientInvoiceTaxes(rawDpp) {
+                    const dpp = Number(rawDpp) || 0;
+                    if (dpp < 0) {
+                        return { pph175: 0, ppn11: 0, nettTerima: dpp };
+                    }
+                    const pph175 = Math.round(dpp * 0.0175);
+                    const ppn11 = Math.round(dpp * 0.11);
+                    const nettTerima = dpp - pph175 + ppn11;
+                    return { pph175, ppn11, nettTerima };
+                },
+
                 calcNettClientInvoice(dpp) {
-                    const pph = Math.round(dpp * 0.0175);
-                    const ppn = Math.round(dpp * 0.11);
-                    return dpp - pph + ppn;
+                    return this.calcClientInvoiceTaxes(dpp).nettTerima;
                 },
 
                 openClientInvoiceModal() {
                     this.modalTitle = 'Input Invoice Klien & Rekap Cash Bank';
-                    this.formClientInv = { area: 'Palembang', noPO: 'PO-YOFC-2026-011', lokasiPekerjaan: '', termInv: 'Term 1 (30%)', noInvoice: '', tglInvoice: new Date().toISOString().split('T')[0], noFakturPajak: '', nilaiDpp: 0, statusPembayaran: 'OUTSTANDING', tglCb: '' };
+                    const regions = this.getUniqueProjectRegions();
+                    const defaultArea = regions.length > 0 ? regions[0] : '';
+                    const areaProjects = this.getProjectsByRegion(defaultArea);
+                    const defaultLokasi = areaProjects.length > 0 ? areaProjects[0].projectName : '';
+                    const defaultNoPO = areaProjects.length > 0 ? (areaProjects[0].noPO || '') : '';
+
+                    this.formClientInv = {
+                        area: defaultArea,
+                        noPO: defaultNoPO,
+                        lokasiPekerjaan: defaultLokasi,
+                        termInv: 'Term I (40%)',
+                        noInvoice: '',
+                        tglInvoice: new Date().toISOString().split('T')[0],
+                        noFakturPajak: '',
+                        nilaiDpp: 0,
+                        statusPembayaran: 'OUTSTANDING',
+                        tglCb: ''
+                    };
                     this.activeModal = 'client-inv';
                 },
 
                 saveClientInvoice() {
                     const dpp = Number(this.formClientInv.nilaiDpp) || 0;
-                    const pph175 = Math.round(dpp * 0.0175);
-                    const ppn11 = Math.round(dpp * 0.11);
-                    const nettTerima = dpp - pph175 + ppn11;
+                    const { pph175, ppn11, nettTerima } = this.calcClientInvoiceTaxes(dpp);
 
                     this.clientInvoices.unshift({
                         id: 'CINV-' + Date.now(),
