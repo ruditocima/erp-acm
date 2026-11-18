@@ -183,7 +183,11 @@
                                 </a>
 
                                 <a href="#" @click.prevent="switchTab('prj-list')" :class="currentTab === 'prj-list' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
-                                    <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Data Project & Keuangan
+                                    <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i> Master Project
+                                </a>
+
+                                <a href="#" @click.prevent="switchTab('prj-keuangan')" :class="currentTab === 'prj-keuangan' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-transparent font-medium transition">
+                                    <i data-lucide="wallet" class="w-3.5 h-3.5"></i> Keuangan Project
                                 </a>
 
                                 <!-- PARENT ACCORDION: MASTER SUBCONT -->
@@ -525,12 +529,12 @@
                     </div>
                 </div>
 
-                <!-- ==================== MENU PROJECT 3: DATA PROJECT & MULTI-SUBCONT PROGRESS ==================== -->
+                <!-- ==================== MENU PROJECT 3A: MASTER PROJECT ==================== -->
                 <div x-show="currentTab === 'prj-list'" class="space-y-4" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-sm font-bold text-white">Daftar Project & Progress Keuangan</h3>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Klik tombol <strong class="text-emerald-300">Rincian Bayar Subcont</strong> pada kolom Progress Keuangan untuk melihat detail tanggal dicairkan Accounting, nominal, dan termin subcont.</p>
+                            <h3 class="text-sm font-bold text-white">Master Project & Tim Subcont Pelaksana</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Kelola identitas project, nomor PO, versi KHS acuan, pembagian tim subcont pelaksana, serta penerbitan SPK PDF.</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <button type="button" @click="exportProjectsCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2.5 rounded-lg flex items-center gap-1.5">
@@ -542,9 +546,9 @@
                         </div>
                     </div>
 
-                    <!-- MOBILE CARD VIEW -->
+                    <!-- MOBILE CARD VIEW: MASTER PROJECT -->
                     <div class="block md:hidden space-y-3">
-                        <template x-for="prj in masterProject" :key="'mob-prj-' + prj.kodeProject">
+                        <template x-for="prj in masterProject" :key="'mob-mprj-' + prj.kodeProject">
                             <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 space-y-3">
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
@@ -556,25 +560,11 @@
                                 </div>
 
                                 <div>
-                                    <div class="text-[10px] font-bold text-indigo-400" x-text="getClientName(prj.clientId)"></div>
-                                    <div class="font-semibold text-white text-xs mt-0.5" x-text="prj.projectName"></div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono">
-                                    <div>
-                                        <span class="block text-[9px] font-sans text-slate-400">BoQ Klien (Awal / Akhir)</span>
-                                        <span class="text-slate-300 block" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal'))"></span>
-                                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir'))"></span>
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                        <span class="text-[10px] font-bold text-indigo-400" x-text="getClientName(prj.clientId)"></span>
+                                        <span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9px] font-mono" x-text="getKhsVersionNameById(prj.khsVersionId)"></span>
                                     </div>
-                                    <div>
-                                        <span class="block text-[9px] font-sans text-slate-400">Bayar Subcont Cair</span>
-                                        <span class="text-amber-400 font-bold block" x-text="formatRupiah(getProjectSubcontPaid(prj.kodeProject))"></span>
-                                        <button type="button" @click="openProjectSubcontPaymentsModal(prj)"
-                                                class="mt-1.5 w-full px-2 py-1 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-sans text-[10px] font-semibold inline-flex items-center justify-center gap-1">
-                                            <i data-lucide="receipt-text" class="w-3 h-3"></i>
-                                            <span x-text="'Rincian Bayar (' + getProjectSubcontPaidCount(prj.kodeProject) + ' Cair)'"></span>
-                                        </button>
-                                    </div>
+                                    <div class="font-semibold text-white text-xs mt-1" x-text="prj.projectName"></div>
                                 </div>
 
                                 <div class="space-y-1.5">
@@ -582,7 +572,7 @@
                                     <template x-if="!prj.subcontIds || prj.subcontIds.length === 0">
                                         <div class="text-[11px] text-slate-500 italic">Belum ada subcont ditugaskan</div>
                                     </template>
-                                    <template x-for="sid in (prj.subcontIds || [])" :key="'mob-sub-' + sid">
+                                    <template x-for="sid in (prj.subcontIds || [])" :key="'mob-msub-' + sid">
                                         <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-[11px]">
                                             <span class="font-semibold text-amber-300" x-text="getSubcontName(sid)"></span>
                                             <div class="flex items-center gap-2">
@@ -598,8 +588,8 @@
                                         <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> + Kelola Subcont
                                     </button>
                                     <div class="flex items-center gap-1.5">
-                                        <button type="button" @click="openProjectRekonTab(prj.kodeProject)" class="px-2.5 py-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
-                                            Rekon
+                                        <button type="button" @click="switchTab('prj-keuangan')" class="px-2.5 py-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold">
+                                            Keuangan
                                         </button>
                                         <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="px-3 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold">
                                             BoQ & SPK →
@@ -610,44 +600,42 @@
                         </template>
                     </div>
 
-                    <!-- DESKTOP TABLE VIEW -->
+                    <!-- DESKTOP TABLE VIEW: MASTER PROJECT -->
                     <div class="hidden md:block bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
                             <thead>
                                 <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
                                     <th class="p-3">Kode Project / No PO</th>
-                                    <th class="p-3">Klien & Nama Project</th>
-                                    <th class="p-3">Tim Subcont</th>
-                                    <th class="p-3 text-right">BoQ Klien (Awal / Akhir)</th>
-                                    <th class="p-3 text-right">BoQ Subcont</th>
-                                    <th class="p-3 text-center">Progress Total</th>
-                                    <th class="p-3">Progress Keuangan</th>
-                                    <th class="p-3 text-right">Aksi</th>
+                                    <th class="p-3">Klien & Versi KHS</th>
+                                    <th class="p-3">Nama Project & Region</th>
+                                    <th class="p-3">Tim Subcont Pelaksana & SPK</th>
+                                    <th class="p-3 text-center">Progress Fisik</th>
+                                    <th class="p-3 text-right">Aksi Project</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-800/60 text-xs">
-                                <template x-for="prj in masterProject" :key="prj.kodeProject">
+                                <template x-for="prj in masterProject" :key="'mprj-' + prj.kodeProject">
                                     <tr class="hover:bg-slate-800/30 align-top">
                                         <td class="p-3">
                                             <div class="font-mono font-bold text-cyan-400" x-text="prj.kodeProject"></div>
-                                            <div class="text-[10px] text-slate-400 font-mono" x-text="'PO: ' + (prj.noPO || '-')"></div>
-                                            <span class="inline-block mt-1 px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-slate-300" x-text="prj.region"></span>
+                                            <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'PO: ' + (prj.noPO || '-')"></div>
                                         </td>
-                                        <td class="p-3 whitespace-normal max-w-[240px]">
-                                            <div class="text-[10px] font-bold text-indigo-400" x-text="getClientName(prj.clientId)"></div>
-                                            <div class="font-medium text-white mt-0.5" x-text="prj.projectName"></div>
+                                        <td class="p-3">
+                                            <div class="font-bold text-indigo-400" x-text="getClientName(prj.clientId)"></div>
+                                            <span class="inline-block mt-1 px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-mono" x-text="getKhsVersionNameById(prj.khsVersionId)"></span>
+                                        </td>
+                                        <td class="p-3 whitespace-normal max-w-[260px]">
+                                            <div class="font-semibold text-white" x-text="prj.projectName"></div>
+                                            <span class="inline-block mt-1 px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300" x-text="prj.region"></span>
                                         </td>
                                         <td class="p-3">
                                             <div class="space-y-1.5">
                                                 <template x-if="!prj.subcontIds || prj.subcontIds.length === 0">
                                                     <div class="text-[11px] text-slate-500 italic">Belum ada subcont</div>
                                                 </template>
-                                                <template x-for="sid in (prj.subcontIds || [])" :key="sid">
+                                                <template x-for="sid in (prj.subcontIds || [])" :key="'mprj-s-' + sid">
                                                     <div class="flex items-center justify-between gap-2 bg-slate-950/90 border border-slate-800 px-2.5 py-1 rounded-lg">
-                                                        <div>
-                                                            <div class="text-[11px] font-semibold text-amber-300" x-text="getSubcontName(sid)"></div>
-                                                            <div class="text-[9px] text-slate-400 font-mono" x-text="'BoQ: ' + formatRupiah(getSubcontProjectBoqTotal(prj.kodeProject, sid, 'awal'))"></div>
-                                                        </div>
+                                                        <span class="text-[11px] font-semibold text-amber-300" x-text="getSubcontName(sid)"></span>
                                                         <div class="flex items-center gap-1.5">
                                                             <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono"
                                                                   x-text="getSubcontPhysicalProgress(prj.kodeProject, sid) + '%'"></span>
@@ -662,6 +650,147 @@
                                                 </button>
                                             </div>
                                         </td>
+                                        <td class="p-3 text-center">
+                                            <div class="w-28 mx-auto">
+                                                <div class="flex justify-between text-[10px] mb-1">
+                                                    <span class="text-slate-400">Realisasi</span>
+                                                    <span class="font-bold text-cyan-400" x-text="getProjectPhysicalProgress(prj.kodeProject) + '%'"></span>
+                                                </div>
+                                                <div class="w-full bg-slate-800 rounded-full h-1.5">
+                                                    <div class="bg-cyan-500 h-1.5 rounded-full" :style="'width:' + getProjectPhysicalProgress(prj.kodeProject) + '%'"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-3 text-right space-x-1">
+                                            <button type="button" @click="switchTab('prj-keuangan')" class="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold">
+                                                Keuangan
+                                            </button>
+                                            <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold">
+                                                BoQ & SPK →
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ==================== MENU PROJECT 3B: KEUANGAN PROJECT ==================== -->
+                <div x-show="currentTab === 'prj-keuangan'" class="space-y-4" x-cloak>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Keuangan Project, Margin & Realisasi Pembayaran</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Rekap nilai kontrak BoQ Klien vs Subcont, estimasi margin, realisasi cair klien, serta rincian pencairan subcont dari Accounting.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="exportProjectsCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2.5 rounded-lg flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Keuangan CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Ringkasan Keuangan Seluruh Project -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Total Kontrak Klien (Awal)</span>
+                            <div class="text-base font-bold font-mono text-white mt-1" x-text="formatRupiah(totalProjectContractValue())"></div>
+                            <span class="text-[10px] text-emerald-400 font-mono" x-text="'Akhir: ' + formatRupiah(masterProject.reduce((s, p) => s + getProjectBoqTotal(p.kodeProject, 'akhir'), 0))"></span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-amber-500/20 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-amber-400 uppercase block">Total Komitmen SPK Subcont</span>
+                            <div class="text-base font-bold font-mono text-amber-300 mt-1" x-text="formatRupiah(masterProject.reduce((s, p) => s + getAllSubcontsProjectBoqTotal(p.kodeProject, 'awal'), 0))"></div>
+                            <span class="text-[10px] text-slate-400 font-mono" x-text="'Akhir: ' + formatRupiah(masterProject.reduce((s, p) => s + getAllSubcontsProjectBoqTotal(p.kodeProject, 'akhir'), 0))"></span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-cyan-500/20 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-cyan-400 uppercase block">Estimasi Gross Margin Kontrak</span>
+                            <div class="text-base font-bold font-mono text-cyan-300 mt-1" x-text="formatRupiah(totalProjectContractValue() - masterProject.reduce((s, p) => s + getAllSubcontsProjectBoqTotal(p.kodeProject, 'awal'), 0))"></div>
+                            <span class="text-[10px] text-slate-400">BoQ Klien Awal - SPK Subcont Awal</span>
+                        </div>
+                        <div class="bg-[#0c1222] border border-emerald-500/20 rounded-xl p-4">
+                            <span class="text-[10px] font-bold text-emerald-400 uppercase block">Arus Kas Masuk vs Keluar</span>
+                            <div class="text-xs font-mono font-bold text-emerald-400 mt-1" x-text="'In Klien: ' + formatRupiah(totalClientCashIn())"></div>
+                            <div class="text-xs font-mono font-bold text-amber-400 mt-0.5" x-text="'Out Subcont: ' + formatRupiah(totalSubcontPaidAll())"></div>
+                        </div>
+                    </div>
+
+                    <!-- MOBILE CARD VIEW: KEUANGAN PROJECT -->
+                    <div class="block md:hidden space-y-3">
+                        <template x-for="prj in masterProject" :key="'mob-fprj-' + prj.kodeProject">
+                            <div class="bg-[#0c1222] border border-slate-800 rounded-xl p-4 space-y-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <span class="font-mono font-bold text-cyan-400 text-xs" x-text="prj.kodeProject"></span>
+                                        <div class="text-[10px] text-slate-400 font-mono" x-text="'PO: ' + (prj.noPO || '-')"></div>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[10px]" x-text="getProjectFinanceStatusText(prj)"></span>
+                                </div>
+                                <div class="font-semibold text-white text-xs" x-text="prj.projectName"></div>
+
+                                <div class="grid grid-cols-2 gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono">
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">BoQ Klien (Awal / Akhir)</span>
+                                        <span class="text-slate-300 block" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal'))"></span>
+                                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir'))"></span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">BoQ Subcont (Awal / Akhir)</span>
+                                        <span class="text-amber-300 block" x-text="formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'awal'))"></span>
+                                        <span class="text-amber-400 font-bold" x-text="formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'akhir'))"></span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">Cair Klien</span>
+                                        <span class="text-emerald-400 font-bold" x-text="formatRupiah(getProjectClientPaid(prj.noPO))"></span>
+                                    </div>
+                                    <div>
+                                        <span class="block text-[9px] font-sans text-slate-400">Bayar Subcont Cair</span>
+                                        <span class="text-amber-400 font-bold" x-text="formatRupiah(getProjectSubcontPaid(prj.kodeProject))"></span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                                    <button type="button" @click="openProjectSubcontPaymentsModal(prj)"
+                                            class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="receipt-text" class="w-3 h-3"></i>
+                                        <span x-text="'Rincian Bayar (' + getProjectSubcontPaidCount(prj.kodeProject) + ' Cair)'"></span>
+                                    </button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" @click="openProjectRekonTab(prj.kodeProject)" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold">
+                                            Rekon Subcont
+                                        </button>
+                                        <button type="button" @click="selectedBoqProject = prj.kodeProject; selectedBoqSubcontFilter = 'ALL'; switchTab('prj-boq')" class="px-2.5 py-1.5 rounded-lg bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-semibold">
+                                            BoQ →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- DESKTOP TABLE VIEW: KEUANGAN PROJECT -->
+                    <div class="hidden md:block bg-[#0c1222] border border-slate-800 rounded-xl overflow-x-auto">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-slate-400 text-[10px] uppercase bg-slate-900/70">
+                                    <th class="p-3">Project & No PO</th>
+                                    <th class="p-3 text-right">BoQ Klien (Awal / Akhir)</th>
+                                    <th class="p-3 text-right">BoQ Subcont (Awal / Akhir)</th>
+                                    <th class="p-3 text-right">Est. Gross Margin</th>
+                                    <th class="p-3">Realisasi Pembayaran & Status</th>
+                                    <th class="p-3 text-right">Aksi Keuangan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60 text-xs">
+                                <template x-for="prj in masterProject" :key="'fprj-' + prj.kodeProject">
+                                    <tr class="hover:bg-slate-800/30 align-top">
+                                        <td class="p-3 whitespace-normal max-w-[240px]">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-mono font-bold text-cyan-400" x-text="prj.kodeProject"></span>
+                                                <span class="text-[10px] text-slate-400 font-mono" x-text="'PO: ' + (prj.noPO || '-')"></span>
+                                            </div>
+                                            <div class="font-medium text-white mt-0.5" x-text="prj.projectName"></div>
+                                            <div class="text-[10px] text-indigo-400 mt-0.5" x-text="getClientName(prj.clientId)"></div>
+                                        </td>
                                         <td class="p-3 text-right font-mono">
                                             <div class="text-slate-300 text-[11px]" x-text="'Awal: ' + formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal'))"></div>
                                             <div class="font-bold text-emerald-400 mt-0.5" x-text="'Akhir: ' + formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir'))"></div>
@@ -670,24 +799,17 @@
                                             <div class="text-amber-300 text-[11px]" x-text="'Awal: ' + formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'awal'))"></div>
                                             <div class="font-bold text-amber-400 mt-0.5" x-text="'Akhir: ' + formatRupiah(getAllSubcontsProjectBoqTotal(prj.kodeProject, 'akhir'))"></div>
                                         </td>
-                                        <td class="p-3 text-center">
-                                            <div class="w-24 mx-auto">
-                                                <div class="flex justify-between text-[10px] mb-1">
-                                                    <span class="text-slate-400">Fisik</span>
-                                                    <span class="font-bold text-cyan-400" x-text="getProjectPhysicalProgress(prj.kodeProject) + '%'"></span>
-                                                </div>
-                                                <div class="w-full bg-slate-800 rounded-full h-1.5">
-                                                    <div class="bg-cyan-500 h-1.5 rounded-full" :style="'width:' + getProjectPhysicalProgress(prj.kodeProject) + '%'"></div>
-                                                </div>
-                                            </div>
+                                        <td class="p-3 text-right font-mono">
+                                            <div class="text-cyan-300 font-bold" x-text="formatRupiah(getProjectBoqTotal(prj.kodeProject, 'awal') - getAllSubcontsProjectBoqTotal(prj.kodeProject, 'awal'))"></div>
+                                            <div class="text-[10px] text-slate-400 mt-0.5" x-text="'Akhir: ' + formatRupiah(getProjectBoqTotal(prj.kodeProject, 'akhir') - getAllSubcontsProjectBoqTotal(prj.kodeProject, 'akhir'))"></div>
                                         </td>
                                         <td class="p-3">
                                             <div class="space-y-1.5 text-[10px]">
-                                                <div class="flex items-center justify-between gap-3">
+                                                <div class="flex items-center justify-between gap-4">
                                                     <span class="text-slate-400">Cair Klien:</span>
                                                     <span class="font-mono font-bold text-emerald-400" x-text="formatRupiah(getProjectClientPaid(prj.noPO))"></span>
                                                 </div>
-                                                <div class="flex items-center justify-between gap-3">
+                                                <div class="flex items-center justify-between gap-4">
                                                     <span class="text-slate-400">Bayar Subcont:</span>
                                                     <span class="font-mono font-bold text-amber-400" x-text="formatRupiah(getProjectSubcontPaid(prj.kodeProject))"></span>
                                                 </div>
@@ -4138,7 +4260,8 @@
                         'dashboard': 'Dashboard Eksekutif & Ringkasan Terpadu',
                         'prj-khs': 'Project • Master KHS (Multi-Versi) & Klien',
                         'prj-subcont': 'Project • Master Subcont > Data Master & Rate Subcont',
-                        'prj-list': 'Project • Data Project & Progress Multi-Subcont',
+                        'prj-list': 'Project • Master Project & Tim Subcont Pelaksana',
+                        'prj-keuangan': 'Project • Keuangan Project, Margin & Realisasi Pembayaran',
                         'prj-boq': 'Project • Master Subcont > BoQ Project & SPK Subcont',
                         'prj-subcont-inv': 'Project • Master Subcont > Invoice & Pencairan Subcont',
                         'prj-rekon': 'Project • Master Subcont > Rekon & Sisa Tagihan Subcont',
